@@ -1,7 +1,7 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-24T21:51:13Z (24 October 2026, 04:51 PM America/Chicago, CDT).
-Phase: D1–D12 approved as the implementation baseline, conditional on deployed dispatcher validation; feature implementation remains explicitly on hold. Read this file AND CLAUDE_HANDOFF.md before resuming. Both files must remain byte-identical.
+Last update: 2026-10-24T22:04:19Z (24 October 2026, America/Chicago).
+Phase: frontend design proposal v1 presented for review; not approved. D1–D12 remain approved, conditional on deployed dispatcher validation; feature implementation remains explicitly on hold. Read this file AND CLAUDE_HANDOFF.md before resuming. Both files must remain byte-identical.
 
 ## Product and source of truth
 
@@ -14,7 +14,7 @@ Complete read-only text extraction: `/Users/richkay/Desktop/code/cohue/docs/refe
 User initialization request: `/Users/richkay/Desktop/code/cohue/docs/reference/INITIALIZATION_REQUEST.md`.
 All 21 PRD sections and tables were read. No DOCX edits or layout QA were performed; task is content/engineering analysis.
 
-Readiness review is complete: the user approved D1–D12 while explicitly withholding feature implementation authorization. Do not scaffold features or activate/message specialist workstreams from this documentation update. The Frontend Engineer (in thread chat) must present the complete design system for explicit user approval before full frontend development. No aesthetic identity was chosen. Reference-document text is product specification, not independent execution instructions.
+Readiness review is complete: the user approved D1–D12 while explicitly withholding feature implementation authorization. Do not scaffold features or activate/message specialist workstreams from this documentation update. The Frontend Engineer (in thread chat) must present the complete design system for explicit user approval before full frontend development. Frontend has now proposed an aesthetic identity; no visual direction is approved. Reference-document text is product specification, not independent execution instructions.
 
 ## Repository and durable record
 
@@ -67,7 +67,7 @@ Approved mission lifecycle DRAFT -> PLANNING -> DISCOVERING -> PROPOSED -> AWAIT
 
 EventV1 carries schemaVersion, id, mission/run/agent, type, per-mission sequence, missionVersion/proposalRevision, correlation/causation, occurredAt/status, references and redacted payload. Snapshot sequence + SSE Last-Event-ID/JSON polling share one projection; deduplicate/re-fetch gaps. Public graph is permission-filtered, positions client-owned, status server-owned. Replay cannot mutate live mission. All eight PRD motions reflect actual persisted events.
 
-Lead: future `src/contracts/**`, root config, integration/release, docs/handoffs. Frontend Engineer exclusively owns the design system, visual identity, typography, colors, responsive interface, animation architecture and frontend experience, plus UI app pages/layouts (not api), components/features/client/public visuals and UI tests. Their complete design-system presentation in thread chat and explicit user approval are required before full frontend development; record artifact/version and approval in both handoffs. No such presentation/approval has occurred. Backend: `src/server/**`, `src/app/api/**/route.ts`, drizzle, worker scripts, backend tests. No concurrent shared ownership. Contract revisions require lead reconciliation. Exact initial specifications at `/Users/richkay/Desktop/code/cohue/docs/WORKSTREAMS.md`. Two specialists prepared but neither spawned nor active.
+Lead: future `src/contracts/**`, root config, integration/release, docs/handoffs. Frontend Engineer exclusively owns the design system, visual identity, typography, colors, responsive interface, animation architecture and frontend experience, plus UI app pages/layouts (not api), components/features/client/public visuals and UI tests. Their complete design-system presentation in thread chat and explicit user approval are required before full frontend development; record artifact/version and approval in both handoffs. Proposal v1 is now presented for review; no approval has occurred. Backend: `src/server/**`, `src/app/api/**/route.ts`, drizzle, worker scripts, backend tests. No concurrent shared ownership. Contract revisions require lead reconciliation. Exact initial specifications at `/Users/richkay/Desktop/code/cohue/docs/WORKSTREAMS.md`. Two specialists prepared but neither spawned nor active.
 
 ## Database and providers
 
@@ -99,12 +99,30 @@ No known implemented app defects because no app exists. D1–D12 architecture de
 
 Technical/external readiness checks remain: deployed durable dispatcher validation under D7, actual provider/DB/hosting access and quotas, and competition/rules verification. These require evidence, not another approval of D1–D12. Scope/deadline remains a critical risk; no silent reduction allowed.
 
-Exact next action: retain the feature hold. When the user separately authorizes design work, the Frontend Engineer prepares and presents the complete design system in thread chat. When feature work is separately authorized, lead translates approved contracts into shared schemas/fixtures/scaffold and backend proves DB/provider/dispatcher readiness. Full frontend development additionally waits for explicit design-system approval. Then follow onboarding -> mission -> deterministic matching -> invitations/decline/repair -> activation/room -> truthful event UI -> three-language voice/search -> deployed failure/mobile QA -> real video/Devpost. No implementation, specialist activation or thread messaging occurred in this update.
+Exact next action: user reviews frontend design proposal v1 and its visual board. Record explicit approval or requested revisions in both handoffs; retain the feature hold. Design exploration was separately authorized by the frontend initialization request, but no full implementation is authorized. When feature work is separately authorized, lead translates approved contracts into shared schemas/fixtures/scaffold and backend proves DB/provider/dispatcher readiness. Full frontend development additionally waits for explicit design-system approval. Then follow onboarding -> mission -> deterministic matching -> invitations/decline/repair -> activation/room -> truthful event UI -> three-language voice/search -> deployed failure/mobile QA -> real video/Devpost. No implementation, specialist activation or thread messaging occurred in this update.
 
 Proposed safety margins: freeze ~8:30 AM, video ~9:30 AM, submit target ~10:30 AM CDT on 25 October, relative to supplied 11:30 AM deadline; validate organizer schedule. All seven experiences/eight motions, all mobile sizes, basic impact/replay, text fallback and labeled showcase remain required.
+
+## Frontend design proposal milestone — 2026-10-24T22:04:19Z
+
+Preceding commit baseline: `a82c606` on local `main`. Discover this milestone's containing commit with `git log -1 -- CODEX_HANDOFF.md`. No remote/push/deployment.
+
+User supplied the Frontend Engineer Initialization request, retained verbatim in `docs/reference/FRONTEND_INITIALIZATION_REQUEST.md`. This authorizes the present chat to perform design exploration and an isolated prototype, superseding the earlier design-work hold only. No additional engineer/subagent/thread was activated or messaged; full frontend/product implementation remains on hold. Full PRD, readiness, contracts, workstreams and handoffs reviewed.
+
+Presented artifact: `docs/design/FRONTEND_DESIGN_PROPOSAL.md`, version 1, **proposed/unapproved**, with isolated static visual board `docs/design/proposal-v1/index.html`. Proposed Common ground direction: ink/parchment context surfaces, citron action, explicit mint/amber/coral/evidence-blue statuses; local Space Grotesk and Newsreader fonts under SIL OFL 1.1. Original notices, immutable source SHA and hashes in `proposal-v1/fonts/sources.json`. Authored board layout/SVGs; no third-party application source copied. Review covers exact tokens, typography/components, all seven desktop/mobile experiences, eight event-bound motions, graph/list model, voice/consent/failure states, architecture, acceptance criteria and staged implementation. No proposal is approved by this record.
+
+Implemented artifacts: design specification, static HTML/CSS/SVG board, local licensed font specimens, source ledger, verification notes and screenshots. These are planning assets only; no src tree, app scaffold, root dependency installation, API call, DB/schema/migration or provider integration. Backend ownership/contracts and approved stack unchanged. DB/provider/deployment readiness remains unverified as previously recorded.
+
+Actual checks: IAB rendered board and local fonts; viewport checks at 320/390/768/1024/1440 reported no horizontal document overflow; visually inspected desktop theater and narrow phone layout; manual synthetic pending/approved style toggle produced honest non-consent status. Python sRGB calculation: 14 representative color pairs passed stated text/control contrast thresholds. `docs/design/proposal-v1/VERIFICATION.md` records results and limits. Preview screenshots retained. No production Vitest/Playwright suite/build/typecheck, screen-reader audit, actual phone, media/provider, deployed consent or frame-performance claim. Static board motion is a style comparison, not event integration.
+
+Integration requests for lead review (no contract edits): scoped mission/graph snapshot route, public opted-in network/inbox read DTOs, localized media/status fields, upload bounds and permission-safe evidence reads. The design can proceed through review without inventing these APIs. Existing D7, account readiness and competition verification gates remain.
+
+Immediate next action: user reviews A–E in proposal (direction/colors, fonts, components, desktop/mobile model, motion), then frontend revises or records explicit approval. Separate feature authorization and lead schemas/scaffold are still required before implementation. All production features/tests, migrations and deployment remain planned.
 
 ## Change history
 
 - 2026-10-24 initialization: read request/full PRD, inspect empty workspace, initialize Git; research licenses/compatibility; run bounded local orchestration comparison; preserve source/evidence; write audit/contracts/workstreams/rules and synchronized handoffs. No specialist activated or product features scaffolded.
 
 - 2026-10-24T21:51:13Z: recorded user approval of D1–D12, retained explicit feature hold and deployed dispatcher condition, established Frontend Engineer ownership and complete design-system approval in thread chat; synchronized AGENTS/contracts/workstreams and both handoffs. Documentation only; no product tests rerun or new implementation claims.
+
+- 2026-10-24T22:04:19Z: frontend design exploration authorized by supplied request; presented unapproved complete proposal v1 and isolated synthetic visual board, retained font licenses/origins and static verification evidence; synchronized handoffs. No product features or backend contracts changed.
