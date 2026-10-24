@@ -1,0 +1,217 @@
+{
+  "version": "1.0",
+  "status": "approved",
+  "purpose": "Design documentation only; no production runtime installed",
+  "colors": {
+    "canvas": "#F5F3EF",
+    "surface": "#FFFFFF",
+    "canvas-graph": "#FCFCFA",
+    "surface-subtle": "#F7F8F6",
+    "surface-hover": "#EAEDE8",
+    "text-primary": "#202323",
+    "text-secondary": "#626662",
+    "line-subtle": "#E2E5DF",
+    "line-panel": "#D5D9D1",
+    "line-control": "#7B847C",
+    "grid-dot": "#DEDFD8",
+    "action": "#315CCE",
+    "action-hover": "#254DAF",
+    "action-pressed": "#1E408F",
+    "selected-bg": "#EDF2FF",
+    "approved": "#216747",
+    "approved-bg": "#E6F2E9",
+    "pending": "#785317",
+    "pending-bg": "#FFF2D6",
+    "declined": "#A13F36",
+    "declined-bg": "#FBE4DE",
+    "evidence": "#466A84",
+    "evidence-bg": "#EDF3F7",
+    "suggested": "#626662",
+    "activated": "#216747",
+    "activated-bg": "#E6F2E9",
+    "overlay": "rgba(32,35,35,.32)",
+    "media-ink": "#202323",
+    "on-media-ink": "#FFFFFF"
+  },
+  "typography": {
+    "family": "Space Grotesk",
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ],
+    "fallback": "Arial, sans-serif",
+    "license": "SIL OFL 1.1",
+    "fontSources": "proposal-v1/fonts/sources.json",
+    "styles": {
+      "entry": {
+        "desktop": [
+          64,
+          68
+        ],
+        "boardMaxPx": 72,
+        "phoneSizePx": [
+          40,
+          48
+        ],
+        "phoneLinePx": [
+          44,
+          50
+        ],
+        "weight": 500,
+        "trackingEm": -0.05
+      },
+      "experience": {
+        "desktop": [
+          38,
+          44
+        ],
+        "phoneSizePx": [
+          30,
+          32
+        ],
+        "phoneLinePx": 36,
+        "weight": 500,
+        "trackingEm": -0.04
+      },
+      "section": {
+        "desktop": [
+          24,
+          30
+        ],
+        "phone": [
+          22,
+          28
+        ],
+        "weight": 500,
+        "trackingEm": -0.025
+      },
+      "panel": {
+        "sizePx": 18,
+        "linePx": 26,
+        "weight": 600,
+        "trackingEm": -0.015
+      },
+      "body": {
+        "sizePx": 16,
+        "linePx": 24,
+        "weight": 400
+      },
+      "compact": {
+        "sizePx": 14,
+        "linePx": 20,
+        "weight": 500
+      },
+      "metadata": {
+        "sizePx": 12,
+        "linePx": 18,
+        "weight": [
+          400,
+          500
+        ]
+      }
+    }
+  },
+  "spacingPx": [
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64,
+    80,
+    96
+  ],
+  "radiusPx": {
+    "compact": 6,
+    "field": 8,
+    "button": 10,
+    "panel": 16,
+    "sheet": 24
+  },
+  "layout": {
+    "guttersPx": {
+      "phone": 16,
+      "tablet": 24,
+      "desktop": 32,
+      "largeDesktop": 48
+    },
+    "maxContentPx": 1600,
+    "maxReadingPx": 680,
+    "minTouchTargetPx": 44,
+    "primaryControlPx": [
+      48,
+      56
+    ],
+    "targetGapPx": 8,
+    "inputPaddingPx": [
+      12,
+      14
+    ],
+    "focusWidthPx": 2,
+    "focusOffsetPx": 3,
+    "selectionWidthPx": 2,
+    "breakpointsPx": [
+      320,
+      390,
+      480,
+      768,
+      1024,
+      1440
+    ],
+    "layers": {
+      "canvas": 0,
+      "controls": 10,
+      "navigation": 20,
+      "sheet": 40,
+      "modal": 60,
+      "toast": 80
+    }
+  },
+  "motion": {
+    "durationMs": {
+      "instant": 0,
+      "press": 80,
+      "feedback": 120,
+      "enter": 180,
+      "exit": 120,
+      "sheet": 240,
+      "graph": 320,
+      "activationMax": 480
+    },
+    "easing": {
+      "standard": [
+        0.2,
+        0.8,
+        0.2,
+        1
+      ],
+      "exit": [
+        0.4,
+        0,
+        1,
+        1
+      ]
+    },
+    "spring": {
+      "stiffness": 420,
+      "damping": 38,
+      "mass": 1
+    },
+    "staggerMs": 24,
+    "staggerMaxTotalMs": 120,
+    "pressScale": 0.98,
+    "entranceMaxTranslatePx": 6,
+    "reducedMotion": "Immediate state; optional opacity <=100ms; no transform/camera/stagger/waveform motion"
+  },
+  "logo": {
+    "direction": "A / Open Circle",
+    "masters": "brand/open-circle/masters",
+    "usage": "brand/open-circle/USAGE.md"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "approvedDate": "2026-10-24",
+  "timezone": "America/Chicago",
+  "sourceCommit": "ef001e5",
+  "approval": "I approve the COHUE visual design direction presented. Lock this as Design System v1.0, preserving the selected colors, typography, logo, component language, spacing, and overall visual identity.",
+  "constraints": [
+    "Do not redesign the visual direction",
+    "Do not begin full application implementation yet",
+    "Production faithfully implements this direction with exceptional fluidity, sophisticated event-driven animation and polished mobile UX"
+  ],
+  "approvedSourceHashes": [
+    {
+      "path": "docs/design/proposal-v2/index.html",
+      "sha256": "7c380b4ca2541455f90ade57001221c33a1cd728cb7b63a606af42c9537e4a87"
+    },
+    {
+      "path": "docs/design/proposal-v2/DESIGN_SYSTEM.md",
+      "sha256": "a75ea383ba722bacb043cedef43d8f30dded92e44d9c63aafc0ff127f3a89714"
+    },
+    {
+      "path": "docs/design/brand/open-circle/USAGE.md",
+      "sha256": "0abdf2f6fe3835c86d66dc69b79c8936c593ecd3eebbbf1f144528899bc0bdab"
+    },
+    {
+      "path": "docs/design/proposal-v1/fonts/spacegrotesk-variable.ttf",
+      "sha256": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72"
+    },
+    {
+      "path": "docs/design/brand/open-circle/masters/cohue-horizontal-reversed.svg",
+      "sha256": "2ff9a90fbbf3f126408a0e9a94813e2b81ad543be33ab858d2124bb1da688ddc"
+    },
+    {
+      "path": "docs/design/brand/open-circle/masters/cohue-horizontal.svg",
+      "sha256": "00d8b40547d8e235b7eabfb0859f45b41cc6ac37167ca3d836fd1d6c9f2285ad"
+    },
+    {
+      "path": "docs/design/brand/open-circle/masters/cohue-stacked.svg",
+      "sha256": "5128aefe59eed3c0cdf3a11ffb0f17d62fe24596fdd6bffb7e8f2fec12be2303"
+    },
+    {
+      "path": "docs/design/brand/open-circle/masters/cohue-symbol-reversed.svg",
+      "sha256": "f66f6323ef4fd9196d6426c6d45aa4e3a8c94d46d292da861e1c4506e92c7344"
+    },
+    {
+      "path": "docs/design/brand/open-circle/masters/cohue-symbol-small.svg",
+      "sha256": "9cc307a0bc1e384b33fc57939aefae058e7a47a73a53cf3fbb4d709198dced34"
+    },
+    {
+      "path": "docs/design/brand/open-circle/masters/cohue-symbol.svg",
+      "sha256": "1a7cdb987d86815667a205cb0357edad201e9ef5890e7c12c617beefff4bf14f"
+    },
+    {
+      "path": "docs/design/brand/open-circle/masters/cohue-wordmark.svg",
+      "sha256": "ae9e944a3970d7e7fcae00c0ddc87cc1c5908d7231b9fe5091ff33a3488ec570"
+    }
+  ]
+}
