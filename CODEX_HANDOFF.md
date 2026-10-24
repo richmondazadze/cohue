@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-24T22:04:19Z (24 October 2026, America/Chicago).
+Last update: 2026-10-24T22:16:58Z (24 October 2026, America/Chicago).
 Phase: frontend design proposal v1 presented for review; not approved. D1–D12 remain approved, conditional on deployed dispatcher validation; feature implementation remains explicitly on hold. Read this file AND CLAUDE_HANDOFF.md before resuming. Both files must remain byte-identical.
 
 ## Product and source of truth
@@ -126,3 +126,13 @@ Immediate next action: user reviews A–E in proposal (direction/colors, fonts, 
 - 2026-10-24T21:51:13Z: recorded user approval of D1–D12, retained explicit feature hold and deployed dispatcher condition, established Frontend Engineer ownership and complete design-system approval in thread chat; synchronized AGENTS/contracts/workstreams and both handoffs. Documentation only; no product tests rerun or new implementation claims.
 
 - 2026-10-24T22:04:19Z: frontend design exploration authorized by supplied request; presented unapproved complete proposal v1 and isolated synthetic visual board, retained font licenses/origins and static verification evidence; synchronized handoffs. No product features or backend contracts changed.
+
+## Light inspiration research — 2026-10-24T22:16:58Z
+
+Preceding baseline `91fa285`, local main; no remote/deployment changes. User requested direct browsing of Dribbble/Mobbin for clean light inspiration. Inspected visible references and retained four review screenshots plus attributed source links and adaptation judgments in `docs/design/inspiration/SHORTLIST.md`. Ranked: Jeremy Blaze / Never Before Seen's Edit an automation; Base44 entry highlight on Mobbin; Outcrowd Task Management Dashboard; Dima Golovenko node-based workflow canvas. Mercury/Plane detailed Mobbin views were restricted/unavailable; not represented as inspected flows. Recommended light graph/inspector plus warm mission-entry surfaces.
+
+Design research only: proposal v1 remains unapproved and unchanged, all exact tokens still proposed. Screenshots are third-party reference material, not adopted/shipped assets; no app source copied, licenses to reuse not asserted. No social saves/messages/purchases, dependencies, contract changes, DB/migrations, provider integrations or deployment. Ownership and approved architecture unchanged. Browser visual inspection only; no app tests warranted or run. Checked synchronized handoffs, screenshot files and git whitespace before commit.
+
+Immediate next action: user reviews shortlist; frontend prepares isolated light-direction v2 if requested. Full feature work remains on hold; design approval remains required. All existing provider/DB/dispatcher/deployed-device test gates remain.
+
+- 2026-10-24T22:16:58Z: recorded light-interface reference shortlist and source-attributed screenshots, without implementation or approval claims.
