@@ -1,0 +1,28 @@
+
+=== a-v2.svg  (333 bytes)
+viewBox 0 0 256 256 · aspect 1.0 (square)
+colours 1: #171a18 · gradients 0 · anchors 14
+margins L32.0 R24.0 T32.0 B32.0 · bbox fill 0.586
+· INFO [off-centre-x] Horizontal margins differ (left 32.0, right 24.0). Intentional optical centring? Otherwise centre it.
+production-readiness score: 99/100 (heuristic)
+
+=== b-v2.svg  (373 bytes)
+viewBox 0 0 256 256 · aspect 1.0 (square)
+colours 1: #171a18 · gradients 0 · anchors 27
+margins L32.0 R32.0 T40.0 B40.0 · bbox fill 0.516
+✔ no issues found
+production-readiness score: 100/100 (heuristic)
+
+=== c-v2.svg  (361 bytes)
+viewBox 0 0 256 256 · aspect 1.0 (square)
+colours 1: #171a18 · gradients 0 · anchors 13
+margins L76.0 R77.6 T32.8 B31.2 · bbox fill 0.3
+· INFO [small-in-canvas] The mark occupies little of its square canvas; tighten the viewBox or scale up.
+production-readiness score: 99/100 (heuristic)
+
+=== c-wordmark-v2.svg  (742 bytes)
+viewBox 0 0 544 256 · aspect 2.125 (wide)
+colours 1: #171a18 · gradients 0 · anchors 70
+margins L30.0 R30.0 T66.0 B66.0 · bbox fill 0.431
+✔ no issues found
+production-readiness score: 100/100 (heuristic)

@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-24",
+  "purpose": "User-provided visual reference; not product artwork",
+  "files": [
+    {
+      "path": "/Users/richkay/Downloads/Inspo 1.webp",
+      "sha256": "16a8b6cd7ae6dc7bc99c183f2f4d1be36d49af6741b9a45c7f6b3d4f8a5d6a50"
+    },
+    {
+      "path": "/Users/richkay/Downloads/Inspo 2.png",
+      "sha256": "621418d3d580fe50d21f4fa82aa53ef0bda35829685420613fa1735a5345e1e3"
+    }
+  ]
+}

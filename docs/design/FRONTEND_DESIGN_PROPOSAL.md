@@ -1,5 +1,7 @@
 # COHUE frontend design proposal v1 — Common ground
 
+> A revised, still-unapproved light system is now in [proposal-v2/DESIGN_SYSTEM.md](proposal-v2/DESIGN_SYSTEM.md). This v1 remains the historical design exploration.
+
 24 October 2026. Status: **proposed, awaiting explicit user approval**. Design exploration authorized by the pasted Frontend Engineer Initialization request. Full application implementation remains on hold. This specification and `proposal-v1/index.html` are isolated planning artifacts, not production pages, working providers, an authenticated app or backend integration. Every illustrated person, event and metric is synthetic. Static samples illustrate states; they do not demonstrate matching, consent or durable execution.
 
 Sources: complete 21-section Master Plan v1.0 (adjacent reference extraction), AGENTS.md, both synchronized handoffs, ENGINEERING_READINESS, approved CONTRACTS v0.1 and WORKSTREAMS. D1–D12 supersede historical PRD ambiguities. No contracts changed, no backend code, no specialist agents activated. The current chat acts as the frontend designer. The proposal retains all seven experiences, eight event-bound motions and the English/Spanish/French final requirement.
