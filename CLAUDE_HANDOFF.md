@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-24T23:50:30.269Z (America/Chicago display dates apply).
+Last update: 2026-10-24T23:51:47.114Z (America/Chicago display dates apply).
 Current milestone: lead continuation in Claude Code. Foundation I0 complete; contract 1.1.0 adds the invitation share-link operation; lead integration harness for I2/I3 is committed but has not run against a backend. No frontend or backend work has landed and no specialist conversation is known to be active, so I1 is unstarted. Deployed D7 remains UNVERIFIED.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -183,3 +183,10 @@ Actual checks: `npm run check` passed (frozen hashes, synchronized handoffs, pin
 Unchanged blockers: no DB, auth, matcher, consent, runner, providers, API handlers or product UI; accounts/keys/models/quotas, Tiger Data, Vercel/scheduler, remote/DNS and real phones unverified; D7 unverified. Deadline (supplied, unconfirmed) Sunday 25 Oct 11:30 AM CDT with freeze 8:30 AM leaves about 13.5 build hours from this note.
 
 Next: user delivers FRONTEND_IMPLEMENTATION_SCOPE.md and BACKEND_IMPLEMENTATION_SCOPE.md (both now name contract 1.1.0) or assigns scope to the lead. When B3 lands, run I2 with COHUE_REQUIRE_INTEGRATION=1 against an isolated database; then I3 after B4 and F3.
+
+
+## Milestone from docs/status/lead/OWNERSHIP_TRANSFER.md
+
+User explicitly assigned both specialist roles to the Claude Code lead continuation thread at 2026-10-24T23:45:54Z ("You are assigned both roles. Cordinate and execute flawlessly"). Preceding baseline df360e8. This thread now owns lead, FRONTEND_IMPLEMENTATION_SCOPE.md and BACKEND_IMPLEMENTATION_SCOPE.md paths and must meet both work orders; no other conversation was messaged or created. Specialist status reports will be written under docs/status/frontend and docs/status/backend as each slice lands, with combined lead checks.
+
+Development database: isolated local PostgreSQL 17.11 (Homebrew binaries, project-private data directory, port 54329, databases cohue_dev and cohue_test). It is local evidence only, not Tiger Data. User was asked to place DATABASE_URL (Tiger Data), GEMINI/ELEVENLABS/SERPAPI keys and Vercel/GitHub access in ignored .env.local; none present yet. No credentials inspected or stored. Next: B1 schema/migrations/sessions, then B3 matcher and F2 join/composer for I2.
