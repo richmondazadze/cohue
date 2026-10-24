@@ -1,0 +1,301 @@
+{
+  "contractVersion": "1.0.0",
+  "operations": [
+    {
+      "name": "taxonomy",
+      "method": "GET",
+      "path": "/api/taxonomy",
+      "auth": "PUBLIC",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "parseProfile",
+      "method": "POST",
+      "path": "/api/participants/parse",
+      "auth": "SESSION",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "extractMission",
+      "method": "POST",
+      "path": "/api/missions/parse",
+      "auth": "SESSION",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "approveLocalization",
+      "method": "POST",
+      "path": "/api/localizations/:id/approve",
+      "auth": "SESSION",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "createSession",
+      "method": "POST",
+      "path": "/api/sessions",
+      "auth": "PUBLIC",
+      "status": 201,
+      "idempotentCommand": true
+    },
+    {
+      "name": "getSession",
+      "method": "GET",
+      "path": "/api/session",
+      "auth": "SESSION",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "createParticipant",
+      "method": "POST",
+      "path": "/api/participants",
+      "auth": "SESSION",
+      "status": 201,
+      "idempotentCommand": true
+    },
+    {
+      "name": "getParticipant",
+      "method": "GET",
+      "path": "/api/participants/:id",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "updateParticipant",
+      "method": "PATCH",
+      "path": "/api/participants/:id",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "deleteParticipant",
+      "method": "DELETE",
+      "path": "/api/participants/:id",
+      "auth": "OWNER",
+      "status": 202,
+      "idempotentCommand": true
+    },
+    {
+      "name": "network",
+      "method": "GET",
+      "path": "/api/network",
+      "auth": "PUBLIC",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "inbox",
+      "method": "GET",
+      "path": "/api/participants/:id/invitations",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "createMission",
+      "method": "POST",
+      "path": "/api/missions",
+      "auth": "SESSION",
+      "status": 201,
+      "idempotentCommand": true
+    },
+    {
+      "name": "updateMission",
+      "method": "PATCH",
+      "path": "/api/missions/:id",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "parseMission",
+      "method": "POST",
+      "path": "/api/missions/:id/parse",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "startMission",
+      "method": "POST",
+      "path": "/api/missions/:id/start",
+      "auth": "OWNER",
+      "status": 202,
+      "idempotentCommand": true
+    },
+    {
+      "name": "snapshot",
+      "method": "GET",
+      "path": "/api/missions/:id/snapshot",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "events",
+      "method": "GET",
+      "path": "/api/missions/:id/events",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "proposals",
+      "method": "GET",
+      "path": "/api/missions/:id/proposals",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "selectProposal",
+      "method": "POST",
+      "path": "/api/missions/:id/proposals/:proposalId/select",
+      "auth": "OWNER",
+      "status": 201,
+      "idempotentCommand": true
+    },
+    {
+      "name": "previewInvitation",
+      "method": "GET",
+      "path": "/api/invitations/:token",
+      "auth": "PUBLIC",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "redeemInvitation",
+      "method": "POST",
+      "path": "/api/invitations/:token/redeem",
+      "auth": "PUBLIC",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "getInvitation",
+      "method": "GET",
+      "path": "/api/invitations/:id/detail",
+      "auth": "INVITATION",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "respondInvitation",
+      "method": "POST",
+      "path": "/api/invitations/:id/respond",
+      "auth": "INVITATION",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "activateMission",
+      "method": "POST",
+      "path": "/api/missions/:id/activate",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "room",
+      "method": "GET",
+      "path": "/api/missions/:id/room",
+      "auth": "MEMBER",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "updateTask",
+      "method": "PATCH",
+      "path": "/api/missions/:id/tasks/:taskId",
+      "auth": "MEMBER",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "requestReview",
+      "method": "POST",
+      "path": "/api/missions/:id/reviews",
+      "auth": "MEMBER",
+      "status": 201,
+      "idempotentCommand": true
+    },
+    {
+      "name": "updateReview",
+      "method": "PATCH",
+      "path": "/api/missions/:id/reviews/:reviewId",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "cancelMission",
+      "method": "POST",
+      "path": "/api/missions/:id/cancel",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "retryMission",
+      "method": "POST",
+      "path": "/api/missions/:id/retry",
+      "auth": "OWNER",
+      "status": 202,
+      "idempotentCommand": true
+    },
+    {
+      "name": "resumeMission",
+      "method": "POST",
+      "path": "/api/missions/:id/resume",
+      "auth": "OWNER",
+      "status": 202,
+      "idempotentCommand": true
+    },
+    {
+      "name": "transcribe",
+      "method": "POST",
+      "path": "/api/voice/transcribe",
+      "auth": "SESSION",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "synthesize",
+      "method": "POST",
+      "path": "/api/voice/synthesize",
+      "auth": "SESSION",
+      "status": 202,
+      "idempotentCommand": true
+    },
+    {
+      "name": "media",
+      "method": "GET",
+      "path": "/api/media/:id",
+      "auth": "SESSION",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "replay",
+      "method": "GET",
+      "path": "/api/missions/:id/replay",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
+      "name": "health",
+      "method": "GET",
+      "path": "/api/providers/health",
+      "auth": "OPERATOR",
+      "status": 200,
+      "idempotentCommand": false
+    }
+  ]
+}

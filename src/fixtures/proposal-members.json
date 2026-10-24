@@ -1,0 +1,104 @@
+[
+  {
+    "participantId": "00000000-0000-4000-8000-000000000001",
+    "profileVersion": 1,
+    "role": "Coordinator",
+    "coveredRequirementIds": [],
+    "terms": {
+      "participantId": "00000000-0000-4000-8000-000000000001",
+      "missionId": "00000000-0000-4000-8000-000000000064",
+      "role": "Coordinator",
+      "responsibilities": ["Coordinate the first prototype session"],
+      "schedule": {
+        "start": "2026-10-25T14:00:00Z",
+        "end": "2026-10-25T16:00:00Z",
+        "timezone": "America/Chicago"
+      },
+      "disclosedGroup": [
+        {
+          "participantId": "00000000-0000-4000-8000-000000000001",
+          "role": "Coordinator"
+        },
+        {
+          "participantId": "00000000-0000-4000-8000-000000000002",
+          "role": "Designer"
+        },
+        {
+          "participantId": "00000000-0000-4000-8000-000000000003",
+          "role": "Hardware engineer"
+        }
+      ],
+      "objective": "Build an accessible hardware prototype",
+      "expectedOutput": "An agreed prototype plan and assigned first tasks"
+    },
+    "termsHash": "7c1818b2642a091617a4437220c54f05a92b9e65511b86d4b06f6a48b2e2b9e4"
+  },
+  {
+    "participantId": "00000000-0000-4000-8000-000000000002",
+    "profileVersion": 1,
+    "role": "Designer",
+    "coveredRequirementIds": ["00000000-0000-4000-8000-000000000065"],
+    "terms": {
+      "participantId": "00000000-0000-4000-8000-000000000002",
+      "missionId": "00000000-0000-4000-8000-000000000064",
+      "role": "Designer",
+      "responsibilities": ["Design the accessible prototype interface"],
+      "schedule": {
+        "start": "2026-10-25T14:00:00Z",
+        "end": "2026-10-25T16:00:00Z",
+        "timezone": "America/Chicago"
+      },
+      "disclosedGroup": [
+        {
+          "participantId": "00000000-0000-4000-8000-000000000001",
+          "role": "Coordinator"
+        },
+        {
+          "participantId": "00000000-0000-4000-8000-000000000002",
+          "role": "Designer"
+        },
+        {
+          "participantId": "00000000-0000-4000-8000-000000000003",
+          "role": "Hardware engineer"
+        }
+      ],
+      "objective": "Build an accessible hardware prototype",
+      "expectedOutput": "An agreed prototype plan and assigned first tasks"
+    },
+    "termsHash": "9870b199265aacae5d99309f2022cfcd3c3ade807ea768235b601d34bdb0cb60"
+  },
+  {
+    "participantId": "00000000-0000-4000-8000-000000000003",
+    "profileVersion": 1,
+    "role": "Hardware engineer",
+    "coveredRequirementIds": ["00000000-0000-4000-8000-000000000066"],
+    "terms": {
+      "participantId": "00000000-0000-4000-8000-000000000003",
+      "missionId": "00000000-0000-4000-8000-000000000064",
+      "role": "Hardware engineer",
+      "responsibilities": ["Plan the accessible hardware prototype"],
+      "schedule": {
+        "start": "2026-10-25T14:00:00Z",
+        "end": "2026-10-25T16:00:00Z",
+        "timezone": "America/Chicago"
+      },
+      "disclosedGroup": [
+        {
+          "participantId": "00000000-0000-4000-8000-000000000001",
+          "role": "Coordinator"
+        },
+        {
+          "participantId": "00000000-0000-4000-8000-000000000002",
+          "role": "Designer"
+        },
+        {
+          "participantId": "00000000-0000-4000-8000-000000000003",
+          "role": "Hardware engineer"
+        }
+      ],
+      "objective": "Build an accessible hardware prototype",
+      "expectedOutput": "An agreed prototype plan and assigned first tasks"
+    },
+    "termsHash": "0fbc6a7eb716532079ed948e7acfb548015ae79f70d5e676afd425eceb66b0d4"
+  }
+]

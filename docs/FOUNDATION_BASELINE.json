@@ -1,0 +1,18 @@
+{
+  "contractVersion": "1.0.0",
+  "precedingCommit": "76de780",
+  "canonicalDesignHashes": [
+    {
+      "path": "docs/design/DESIGN_SYSTEM_V1.0.md",
+      "sha256": "dbd8a568438da19f6e434f03de7b6a0eb3f06e7f6c9b32bd5abe0a54e40ada80"
+    },
+    {
+      "path": "docs/design/tokens.v1.0.json",
+      "sha256": "4da450ffab9a55f926c4f8bdc442ebbf0c287205dc9e86e4183c954d8a80c169"
+    },
+    {
+      "path": "docs/design/APPROVAL_V1.0.json",
+      "sha256": "76a446036c8aa955d01d91bf01b4fb45c4f26076f44303df6b9a1105fc09f7dc"
+    }
+  ]
+}
