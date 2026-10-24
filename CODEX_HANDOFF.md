@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-24T23:29:30.623Z (America/Chicago display dates apply).
+Last update: 2026-10-24T23:38:39.347Z (America/Chicago display dates apply).
 Current milestone: user-authorized shared implementation foundation COMPLETE; root frontend/backend work orders ready for user delivery. The user approved architecture D1–D12, Backend Engineering Readiness and Design System v1.0 and explicitly authorized lead-owned foundation implementation. No frontend/backend conversation has been messaged, activated or assumed to have received an assignment. Lead stops after foundation/report delivery so user can activate engineers individually. No redesign. Deployed D7 remains UNVERIFIED.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -159,3 +159,12 @@ Actual verification: clean npm ci (ignore scripts) passed; npm run check passed 
 Remaining: actual PG/TLS/migrations/DB concurrency/auth/matcher/consent/repair/activation/room/tasks/providers and all product UI; keys/models/quotas/account permissions unverified; deployed D7 unattended restart/lease/fence/ordering/domain uniqueness proof remains critical. Actual phone/two-device/multilingual/search/accessibility/performance, video/Devpost and organizer deadline confirmation still outstanding. No credentials inspected or included.
 
 Next: stop for user to deliver independent assignments; frontend approved visual/primitives/mobile adapter work can parallel backend PG/session/migration/provider probes/early D7. Integrate working join/create/match then consent/repair/activation before signature breadth and advanced polish. Preserve QA/video/submission window and current locked design. Both handoffs updated under exclusive script lock; stage only this milestone’s owned files and both handoffs, serial Git commits.
+
+
+## Milestone from docs/status/lead/CLAUDE_TRANSFER.md
+
+User requested Claude Code temporarily continue this Lead Product Engineer role while Codex is unavailable, then Codex resume from repository continuity. Verified clean main at be6c8b1 before transfer documentation. No implementation changes, specialist activation, external conversation message, Claude process launch or scheduled automatic resume occurred.
+
+Created root CLAUDE_CONTINUATION.md as a self-contained startup/continuation prompt: baseline and completed checks, locked D1–D12/design, ownership, exact work orders, vertical checkpoints, outstanding account/DB/provider/deployed-D7 proof, protected recording/submission window and return-to-Codex protocol. Updated AGENTS/CLAUDE startup to distinguish completed foundation-stop from newly requested lead continuation. Specialist scopes remain user-delivered; Claude does not silently acquire frontend/backend ownership.
+
+Both handoffs updated through serialized append script; documentation integrity/whitespace checked, no product tests rerun for this documentation-only transfer. Previous 24 contract tests, one Chromium smoke/build/typecheck and zero-known-vulnerability audit remain baseline evidence, not new test execution. Next action: user opens Claude Code in this repository and delivers CLAUDE_CONTINUATION.md. On return, Codex reads latest Git/status reports and both synchronized handoffs rather than restarting or assuming no changes. Usage reset time and automatic continuation are not asserted.
