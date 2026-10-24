@@ -1,0 +1,238 @@
+{
+  "checkedAt": "2026-10-24T21:32:52.079Z",
+  "repos": [
+    {
+      "repo": "xyflow/xyflow",
+      "branch": "main",
+      "sha": "8523d8dd9f1551954bc221dccabd6a3119ef9e22",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/xyflow/xyflow/blob/main/LICENSE"
+    },
+    {
+      "repo": "openflowkit/openflowkit",
+      "branch": "main",
+      "sha": "a252135b7ace600df15cc9fe9d66961828118e47",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/openflowkit/openflowkit/blob/main/LICENSE"
+    },
+    {
+      "repo": "666ghj/MiroFish",
+      "branch": "main",
+      "sha": "7657031ac01184afe2cb220f5ee3545573b5e843",
+      "license": "AGPL-3.0",
+      "licenseUrl": "https://github.com/666ghj/MiroFish/blob/main/LICENSE"
+    },
+    {
+      "repo": "mastra-ai/mastra",
+      "branch": "main",
+      "sha": "ceb2e7b0a93e56a47e879dbd3385a8629d2c5f71",
+      "license": "NOASSERTION",
+      "licenseUrl": "https://github.com/mastra-ai/mastra/blob/main/LICENSE.md"
+    },
+    {
+      "repo": "triggerdotdev/trigger.dev",
+      "branch": "main",
+      "sha": "aed084860135c47f2d4cbdfb912216d2f18096e5",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/triggerdotdev/trigger.dev/blob/main/LICENSE"
+    },
+    {
+      "repo": "sjorsbogers/Dashboard-Design",
+      "branch": "main",
+      "sha": "7705dfc0d13889e45c26a55ad5908da6a7a9a605",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/sjorsbogers/Dashboard-Design/blob/main/LICENSE"
+    }
+  ],
+  "packages": [
+    {
+      "name": "next",
+      "version": "16.4.3",
+      "engines": {
+        "node": ">=20.9.0"
+      },
+      "peers": {
+        "sass": "^1.3.0",
+        "react": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+        "react-dom": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+        "@playwright/test": "^1.51.1",
+        "@opentelemetry/api": "^1.1.0",
+        "babel-plugin-react-compiler": "*"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "react",
+      "version": "19.3.1",
+      "engines": {
+        "node": ">=0.10.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "react-dom",
+      "version": "19.3.1",
+      "peers": {
+        "react": "^19.3.1"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "tailwindcss",
+      "version": "4.3.3",
+      "license": "MIT"
+    },
+    {
+      "name": "@xyflow/react",
+      "version": "12.12.0",
+      "peers": {
+        "react": ">=17",
+        "react-dom": ">=17",
+        "@types/react": ">=17",
+        "@types/react-dom": ">=17"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "elkjs",
+      "version": "0.12.0",
+      "license": "EPL-2.0 OR GPL-3.0-or-later"
+    },
+    {
+      "name": "motion",
+      "version": "14.6.0",
+      "peers": {
+        "react": "^18.0.0 || ^19.0.0",
+        "react-dom": "^18.0.0 || ^19.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "zustand",
+      "version": "5.0.16",
+      "engines": {
+        "node": ">=12.20.0"
+      },
+      "peers": {
+        "immer": ">=9.0.6",
+        "react": ">=18.0.0",
+        "@types/react": ">=18.0.0",
+        "use-sync-external-store": ">=1.2.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "@tanstack/react-query",
+      "version": "5.104.5",
+      "peers": {
+        "react": "^18 || ^19",
+        "@types/react": "^18 || ^19"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "drizzle-orm",
+      "version": "0.45.4",
+      "peers": {
+        "pg": ">=8",
+        "gel": ">=2",
+        "knex": "*",
+        "kysely": "*",
+        "mysql2": ">=2",
+        "sql.js": ">=1",
+        "sqlite3": ">=5",
+        "postgres": ">=3",
+        "@types/pg": "*",
+        "bun-types": "*",
+        "@netlify/db": ">=0.4.0",
+        "expo-sqlite": ">=14.0.0",
+        "@types/sql.js": "*",
+        "@libsql/client": ">=0.10.0",
+        "@prisma/client": "*",
+        "@upstash/redis": ">=1.34.7",
+        "better-sqlite3": ">=7",
+        "@xata.io/client": "*",
+        "@vercel/postgres": ">=0.8.0",
+        "@opentelemetry/api": "^1.4.1",
+        "@libsql/client-wasm": ">=0.10.0",
+        "@electric-sql/pglite": ">=0.2.0",
+        "@planetscale/database": ">=1.13",
+        "@tidbcloud/serverless": "*",
+        "@types/better-sqlite3": "*",
+        "@aws-sdk/client-rds-data": ">=3",
+        "@neondatabase/serverless": ">=0.10.0",
+        "@cloudflare/workers-types": ">=4",
+        "@op-engineering/op-sqlite": ">=2"
+      },
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "zod",
+      "version": "4.6.7",
+      "license": "MIT"
+    },
+    {
+      "name": "vitest",
+      "version": "5.0.5",
+      "engines": {
+        "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
+      },
+      "peers": {
+        "vite": "^6.4.0 || ^7.0.0 || ^8.0.0",
+        "jsdom": "*",
+        "happy-dom": "*",
+        "@vitest/ui": "5.0.5",
+        "@types/node": "^22.0.0 || >=24.0.0",
+        "@edge-runtime/vm": "*",
+        "@opentelemetry/api": "^1.9.0",
+        "@vitest/coverage-v8": "5.0.5",
+        "@vitest/browser-preview": "5.0.5",
+        "@vitest/coverage-istanbul": "5.0.5",
+        "@vitest/browser-playwright": "5.0.5",
+        "@vitest/browser-webdriverio": "^5.0.0-beta.5 || >=5.0.0"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "@playwright/test",
+      "version": "1.64.1",
+      "engines": {
+        "node": ">=20"
+      },
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@google/genai",
+      "version": "2.31.0",
+      "engines": {
+        "node": ">=20.0.0"
+      },
+      "peers": {
+        "@modelcontextprotocol/sdk": "^1.25.2"
+      },
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@mastra/core",
+      "version": "1.79.0",
+      "engines": {
+        "node": ">=22.13.0"
+      },
+      "peers": {
+        "zod": "^3.25.0 || ^4.0.0"
+      },
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "@mastra/libsql",
+      "version": "1.27.0",
+      "engines": {
+        "node": ">=22.13.0"
+      },
+      "peers": {
+        "@mastra/core": ">=1.76.0-0 <2.0.0-0"
+      },
+      "license": "Apache-2.0"
+    }
+  ]
+}

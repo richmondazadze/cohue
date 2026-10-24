@@ -1,0 +1,8 @@
+{"engine":"mastra","action":"start","status":"suspended"}
+{"engine":"mastra","action":"inspect","status":"suspended"}
+{"engine":"mastra","action":"reject","status":"suspended"}
+{"engine":"mastra","action":"inspect","status":"suspended"}
+{"engine":"mastra","action":"resume","status":"success","result":{"missionId":"mission-1","objective":"accessibility collaboration","state":"ACTIVATED"}}
+{"engine":"custom","action":"start","id":"mission-1","state":"AWAITING_APPROVAL","objective":"accessibility collaboration","activations":0}
+{"engine":"custom","action":"resume","id":"mission-1","state":"ACTIVATED","objective":"accessibility collaboration","activations":1}
+{"engine":"custom","action":"resume","id":"mission-1","state":"ACTIVATED","objective":"accessibility collaboration","activations":1}

@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@mastra/core": "^1.79.0",
+    "@mastra/libsql": "^1.27.0",
+    "zod": "^4.6.7"
+  }
+}

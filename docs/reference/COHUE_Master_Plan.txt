@@ -1,0 +1,636 @@
+COHUE
+AUTONOMOUS MULTILINGUAL HUMAN COORDINATION SYSTEM
+Full Product Requirements, Experience Architecture, Technical Specification & HackTX Competition Plan
+Domain: cohue.tech  |  HackTX 2026  |  Solo development  |  Version 1.0 — 24 October 2026
+Status: Product direction and technology stack approved. Detailed visual design system (fonts, colors, visual tokens) remains the designated frontend designer’s responsibility.
+Document purpose
+This master document consolidates the agreed product concept, full interaction model, experience and animation standards, technical architecture, agent tools, data model, API and security requirements, deployment plan, test standards, competition strategy, and operational milestones. It distinguishes required features from conditional enhancements and competition facts from implementation recommendations. No existing UI screenshots or concept illustrations should be interpreted as completed functionality.
+Executive decision record
+Decision
+Locked position
+Brand
+COHUE — from French cohue: a crowd or bustling gathering
+Domain
+cohue.tech (secured)
+Core thesis
+An intent-to-outcome engine that turns disconnected human potential into agreed, actionable collaborations
+Primary award objective
+HackTX Best Overall
+Main non-MLH targets
+Meta; Best Use of SerpApi; provisionally Most Entertaining
+Additional competition
+Best Pitch, if participating and eligible
+MLH eligibility
+Unlimited qualifying MLH challenge entries, independent of the three non-MLH slots (reconfirmed on organizer Discord)
+Implementation
+TypeScript modular monolith; Next.js 16; Gemini; ElevenLabs; SerpApi; Tiger Data
+Signature demonstration
+Speak a mission → discover feasible group → invite across languages → participant declines → replan → activate agreed mission
+Submission deadline
+Sunday, 25 October 2026, 11:30 AM CDT; demo video mandatory
+1. Vision, problem, narrative, and positioning
+1.1 The problem
+A crowd can contain the skills, perspectives, connections, and resources to accomplish a meaningful objective, yet these complementary capabilities remain invisible. Language barriers, fragmented networks, unknown availability, and lack of coordination prevent collaboration. Existing assistants usually generate advice; directories surface profiles; project tools organize teams that already exist. COHUE aims to bridge the missing stage: forming viable collaborations from unconnected participants.
+1.2 Product thesis
+Human ambition, collectively realized. Tell COHUE what you want to accomplish. Its agents discover who and what you need, coordinate across language barriers, and bring the right people together to make it happen.
+1.3 Brand story and positioning
+COHUE comes from the French word for a bustling gathering. The idea is that within a crowd are undiscovered possibilities. COHUE transforms those possibilities into purposeful, mutually agreed action. Brand narrative: “From strangers to something extraordinary.”
+Three product verbs: DISCOVER (surface hidden capability and resources), COORDINATE (form feasible groups and request consent), MAKE (activate a mission with assigned next steps).
+1.4 Differentiation and claims
+Do not position COHUE as a social network, generic matchmaking app, AI text wrapper, or chatbot.
+The proposed differentiator is multi-person mission formation with constraint-based optimization, consent, multilingual coordination, event-driven autonomous tool execution, and dynamic replanning.
+A proposal is not a commitment; an external search result is not an accepted collaborator; a mission activates only when required participants approve.
+Do not claim COHUE invents agent orchestration, matching, or multilingual translation; several established products operate in adjacent categories.
+Success should be demonstrated by verifiable app states: requirements covered, approvals received, tasks assigned, and documented recovery after a decline.
+2. Users, jobs-to-be-done, and full scope
+2.1 Core user roles
+Role
+Need
+Critical actions
+Mission creator
+Turn an ambition into a viable collaboration
+Describe, edit, launch and monitor a mission
+Participant
+Understand relevant invitations and choose whether to participate
+Join, set skills/language/availability, accept/decline/counter
+Coordinator/operator
+Understand automated work and intervene when required
+Review agent decisions, retry, correct invalid plans
+Judge/demo participant
+Evaluate the real system quickly
+Join via QR, witness agent trace, test decline/replan, inspect evidence
+2.2 Tiered product scope
+Tier
+Features
+Release rule
+Tier 1 — Non-negotiable
+Guest onboarding; participant profiles; mission composer; deterministic matching; real graph; persistent invitations; human approval; decline/replan; activated Mission Room
+Must work end to end before expanding
+Tier 2 — Signature differentiation
+Gemini agent reasoning; real execution timeline; ElevenLabs speech and translated messages; SerpApi external opportunities; live visual transformations
+Ship as integrated, testable systems after core loop
+Tier 3 — Polish
+Advanced spatial motion; full event replay; additional languages; deeper analytics; extra infrastructure; optional voice-to-voice
+Only if no impact on completion/video
+2.3 Explicit exclusions
+No general social feed or full social media platform.
+No unrestricted autonomous email, outreach, or private-data scraping.
+No implied consent, fabricated participants, automatic enrollment, or fabricated partner agreements.
+No unnecessary Solana incentive economy, Snowflake integration, Kubernetes, Kafka, or generic enterprise agent builder.
+No requirement for full-duplex always-on voice or complex 3D engine to complete the central workflow.
+3. End-to-end product journeys
+3.1 First-run entry and onboarding
+Visitor arrives at cohue.tech; immediately sees a compelling but readable live-network introduction and clear “Start a Mission” / “Join a Mission” actions.
+Guest session is created with secure session state; traditional account creation is not mandatory.
+Participant supplies display name, preferred language, offered skills/capabilities, needs, availability, interests, and explicit participation/visibility choices.
+User may record voice or type, correct the transcript and structured profile, and submit.
+Validated participant node persists; a real-time update can introduce it into the living graph.
+3.2 Mission Genesis / composer
+Mission creator speaks or types a goal. Voice follows record → transcribe → understand → review → act.
+Gemini extracts objective, required skills, constraints, outcomes, and unknowns into schema-validated data.
+Creator corrects required skills, timing, group-size bounds, and expected output before launch.
+Mission state changes from draft to planning, and an actual orchestration run begins.
+UI presents requirements as connected mission elements rather than a standalone prose response.
+3.3 Discovery to activation
+Director decomposes the mission into capability/resource requirements.
+Scout queries internal participant profiles; where needed, optional SerpApi searches public events, organizations, and resources.
+Strategist computes and ranks feasible groups using structured capability coverage, availability, group-size constraints, and mutual benefit.
+Coordinator sends persisted invitations to individuals with role explanations in their preferred languages.
+Participants accept, decline, or counterpropose; only responses made by authenticated invitees count.
+On decline, the state transitions to replanning; keep valid accepted commitments, recompute missing coverage, and send replacement proposals without assuming consent.
+After all mission-critical approvals, COHUE creates a Mission Room with approved roles, responsibilities, tasks, source links, and next steps.
+3.4 Multilingual participant example
+Mission created in English. Spanish-speaking participant receives a translated written/spoken invitation and responds with adjusted availability. French-speaking participant declines. Coordinator interprets response, records the decline, and initiates real replanning. If a suitable internal replacement is unavailable, Scout presents attributed public opportunities rather than pretending they are confirmed participants. The approved team receives a shared mission summary in each selected language.
+3.5 Two demonstration modes
+Live Mode
+Showcase Mode
+Uses actual consenting participants and provider calls
+Uses labeled synthetic people, resources, and scripted input scenarios
+Real approvals, changes, and persistence
+Runs through the same algorithms and state machine, not a prerecorded fake success path
+Judge may join from own phone
+Reliable fallback if participant turnout, microphone permissions, or live network is poor
+4. Complete experience architecture: seven views
+View
+Must show
+Primary interaction
+01 Entry / Landing
+Living network, brand proposition, simple choices
+Start a mission / join a mission
+02 Identity / Onboarding
+Profile, voice or text, language, availability, consent
+Submit and revise participant profile
+03 Mission Composer
+Transcript, structured requirements, constraints, corrections
+Review and start discovery
+04 Mission Theater
+Interactive graph, agent events, candidate configurations, reasoning, requirement coverage
+Inspect agent trace and mission state
+05 Invitation / Negotiation
+Localized summary and voice, accept/decline/counterproposal
+Submit explicit participant response
+06 Mission Room
+Approved participants, tasks, resources, responsibilities, multilingual brief
+View and update shared mission
+07 Impact & Replay
+Actual coverage, confirmed memberships, recovery events and provenance
+Review trustworthy outcomes and replay
+The seven views describe required experiences, not necessarily seven page routes. Mission Theater and Mission Room may be state-driven sections of a single connected journey.
+5. Design excellence and responsive engineering
+5.1 Design authority
+The frontend designer owns the design system, final font pairings, color palette, component visual treatments, and cohesive brand styling. The PRD owns required screens, interactions, states, responsive behavior, accessibility, performance, and motion semantics. Do not force a preset palette or generic Inter-based SaaS template.
+5.2 Visual quality bar
+Distinctive, premium identity; no generic dashboard or monotonous cards.
+One visually continuous experience from spoken intent to active mission, not unrelated screens.
+Clear difference between proposed, pending, accepted, declined, rejected-by-constraints, activated, and failed.
+Every decorative animation must not masquerade as an actual agent action.
+Readable information hierarchy, accessible contrast, keyboard focus, touch targets, captions and non-audio alternatives.
+All motion must have reduced-motion behavior; animations degrade gracefully under reduced performance.
+Aim for fluid ~60 FPS interactions on capable devices; prioritize responsiveness over particle volume.
+5.3 Responsive information architecture
+Viewport
+Experience expectation
+Small phones ~320–389px
+Single-column, essential actions first, simplified touch network and bottom-sheet decisions
+Standard phones ~390–479px
+Deliberately designed mobile journey; compact graph; mission/activity views
+Tablets ~480–1023px
+Flexible one/two-pane navigation depending on usable width
+Desktop ≥1024px
+Full Mission Theater with graph, event timeline and agent inspector
+Large desktop ≥1440px
+Expanded graph, rich evidence and simultaneous agent detail
+Mobile must not be a shrunken desktop canvas: reduce node density and label clutter, offer list alternatives, separate interactions into focused panels, ensure usable recording controls, and test on actual phone browsers.
+5.4 Eight animation states
+Motion sequence
+Truth condition / implementation contract
+Network emergence
+Validated profiles arrive and actual stored graph edges are mapped to visible paths
+Mission creation
+Confirmed transcript/typed intent transforms into mission requirements
+Agent execution
+Active agent/timeline corresponds to persisted start, tool, success/failure and delegation events
+Opportunity discovery
+Internal candidates and attributed external results enter distinct layers
+Invitation dispatch
+Edge changes to pending only when real invitation is created
+Rejection & recovery
+Declined edge withdraws, unmet requirements return, recomputation produces a new plan
+Mission activation
+Accepted commitments create persistent Mission Room and task state
+Multilingual voice
+Waveform, transcript, language, generation and playback reflect actual media pipeline
+5.5 Motion system rules
+Immediate feedback to actions; routine transitions short, high-significance transitions intentionally paced.
+Prefer opacity/transform animation and avoid costly layout/reflow effects.
+Use React Flow + Motion; use ELK.js for layout. Do not default to heavy Three.js/PixiJS without performance justification.
+Animation timeline consumes actual backend event sequence; never infer completion from elapsed time.
+Support interrupted animations, tab visibility changes, retries, explicit error states and reduced-motion preferences.
+6. Locked technology stack
+Layer
+Technology
+Reason
+Full stack
+Next.js 16 + TypeScript
+One type system, modular full stack
+Styles
+Tailwind CSS v4
+Efficient responsive styles, designer-owned visual tokens
+Primitives
+Radix UI + selective shadcn/ui
+Accessible functionality without stock look
+Motion
+Motion for React
+Smooth transitions and layout relationships
+Graph
+@xyflow/react + ELK.js
+Interactive graph + reproducible layout
+Application state
+Zustand + TanStack Query
+Client/UI state + server synchronization
+Reasoning
+Gemini API
+Schema-validated mission reasoning and tool selection
+Orchestration
+Custom typed TS state machine
+Persisted and bounded agent lifecycle
+Voice
+ElevenLabs Scribe + TTS
+Speech input and multilingual spoken invitations
+Discovery
+SerpApi
+Sourced events/public opportunities
+Database
+Tiger Data PostgreSQL
+Participant, mission, event and invitation persistence
+ORM
+Drizzle ORM
+Type-safe persistence
+Validation
+Zod
+Contracts and provider output checks
+Auth
+Scoped guest sessions + invitation tokens
+Low friction, consent security
+Realtime
+Persisted events + SSE, polling fallback
+Observable transitions and resilience
+Jobs
+Database-backed runner
+Recoverable orchestration
+Frontend
+Vercel
+Deployment and public demo
+Optional worker
+Vultr
+Persistent background jobs when justified
+Testing
+Vitest + Playwright
+Engine and end-to-end verification
+Use security-patched stable Next.js packages at install time. Confirm provider model IDs and quotas from the actual account. Do not assume a 24-hour hackathon requires microservices.
+6.1 Suggested repository structure
+cohue/
+  src/app/(marketing), join, network, missions, api
+  src/components/network, theater, voice, missions
+  src/features/participants, matching, invitations, collaboration
+  src/server/agents, orchestration, tools, providers, database
+  src/lib, src/types
+  tests/unit, tests/integration, tests/e2e
+  drizzle/, scripts/, docs/
+7. Agent orchestration and safety boundaries
+7.1 Architecture
+One modular monolith exposing application routes, with typed internal agents and a shared persisted mission state. The agents are roles/capabilities, not separate distributed processes or four perpetual LLM conversations. A state machine controls transitions, validates tool outputs, enforces timeouts, and writes audit events.
+Agent
+Responsibility
+Allowed tools / outputs
+Director
+Interpret goal; decompose mission; track required outcomes
+decomposeMission, validateRequirements, assignSubtasks
+Scout
+Find internal profiles and external resources
+searchParticipants, searchExternalOpportunities, rankEvidence
+Strategist
+Find feasible groups, score proposals, repair
+findFeasibleGroups, scoreCollaboration, repairPlan
+Coordinator
+Create invitations; record consent; activate and repair
+createInvitations, recordConsent, activateMission, notifyParticipants
+7.2 State machine
+DRAFT → PLANNING → DISCOVERING → PROPOSED → AWAITING_APPROVAL → ACTIVATED. Branches include DECLINED → REPLANNING → REPROPOSED, plus FAILED, CANCELLED, EXPIRED and PAUSED_FOR_HUMAN. State changes require validated server-side commands and atomically committed records.
+7.3 Event model
+Persist event ID, mission ID, run ID, agent, event type, sequence number, correlation ID, input/output references, timestamp, status, duration, and structured metadata. Suggested event types: MISSION_CREATED, EXTRACTION_STARTED, REQUIREMENT_CREATED, SCOUT_SEARCH_STARTED, CANDIDATES_FOUND, PROPOSAL_CREATED, INVITATION_SENT, INVITATION_ACCEPTED, INVITATION_DECLINED, REPLAN_STARTED, REPLAN_COMPLETED, MISSION_ACTIVATED, TASK_CREATED, PROVIDER_FAILED. Replay reads these events, not handcrafted animation timestamps.
+7.4 Tool / privacy controls
+Gemini plans and requests tools but cannot fabricate database writes or approve invitations.
+All tool arguments are Zod-validated; limit recursion, tool counts, runtime, credits and retries.
+SerpApi public results retain URL, title, retrieval timestamp and source; unverified results never become confirmed partners.
+Participant responses require scoped authenticated tokens and idempotency.
+Avoid exposing private profile details in public graphs; use permissions and opt-in visibility.
+Permission changes, consent, and activation decisions are server-enforced and auditable.
+No automatic outbound spam, impersonation, or unsolicited contact.
+8. Graph optimization and matching
+8.1 Core mechanism
+AI may normalize free-form skill and mission descriptions into structured categories. Actual group feasibility is computed deterministically. The engine produces direct matches, complementary groups, and bounded reciprocal cycles subject to skill coverage, availability, team size, relevant preferences, and explicit participation permissions.
+Optimization objective: choose feasible group G to maximize U(G), where U combines required-skill coverage, availability compatibility, relevant interests, group stability and reciprocal benefit. Hard constraints override scores, and consent is required before activation rather than being estimated by a model.
+8.2 Repair behavior
+Invitation decline or scheduling change creates an event and invalidates affected proposal memberships.
+Recheck all hard constraints; preserve accepted commitments that still remain valid.
+Find candidate replacements or revised configurations, with deterministic tie-breaking and maximum search bounds.
+If no valid solution is found, report missing requirements and request creator intervention; never claim success without validation.
+In the UI, remove invalid links, surface uncovered requirements and animate verified replacement edges.
+8.3 Tests for engine
+Exact capability coverage; cross-taxonomy normalization; contradictory availability; minimum/maximum team size.
+Duplicate skill holders; no feasible group; deterministic tie resolution; participant opt-out; no consent bypass.
+Changing a constraint invalidates appropriate groups; accepted valid memberships are preserved where possible.
+Semantic extraction failure uses schema retry/manual editing and does not corrupt graph state.
+9. Multilingual audio and voice
+Input pipeline: microphone with explicit user activation → ElevenLabs Scribe transcription → editable transcript → Gemini structured mission/profile extraction → creator confirmation. Output pipeline: canonical approved invitation → Gemini localized text → ElevenLabs TTS → playback and transcript. TTS is not assumed to perform translation on its own.
+Initially test English, Spanish, and French thoroughly. Additional languages can share the pipeline when validated. Make text-only workflows function identically for users who cannot or do not wish to record audio. Avoid storing raw audio longer than necessary, and provide visible capture controls.
+9.1 Demo utterances
+Language
+Example
+Intended state transition
+English
+I want to start an accessibility project; I need a designer and hardware engineer.
+Mission requirements created
+Spanish
+Me interesa participar, pero solo estoy disponible mañana.
+Availability counterproposal
+French
+Je ne peux pas participer à ce projet.
+Decline → replanning
+9.2 Resilience
+If microphone permission fails, fall back to typed input. If transcription fails, enable manual transcript entry. If TTS is unavailable, show translated text. If translation confidence is uncertain, allow editing/review rather than silently changing commitments. All participation and consent actions are confirmed by direct user interaction.
+10. External discovery and provider budgets
+SerpApi supports external discovery of events, organizations, public resources, workshops and relevant opportunities. Scout runs tightly bounded queries and records source links. Its results are ranked against current mission gaps but are never interpreted as registered users or guaranteed invitations.
+User has approximately 1,000 SerpApi credits, subject to actual balance, plan and endpoint accounting. Suggested initial planning envelope: ~3 searches per mission for ~25 demonstration missions (75 searches), reserve ~300 credits for testing and iteration, and keep the remaining budget for retries/experimentation. This is a planning estimate, not a measured usage count.
+Provider protections: server-only keys, request caps, per-mission quota and deduplication; caching and cooldown for repeated searches; timeout and fallback statuses; do not allow runaway autonomous loops.
+11. Full data model
+Entity
+Core fields / constraints
+Participant
+id, guestSessionId, displayName, language, needs, availability, visibility/consent flags
+Capability
+id, participantId, normalized skill, category, level, evidence
+Mission
+id, creatorId, objective, state, version, constraints, createdAt
+MissionRequirement
+id, missionId, category, priority, minimum coverage
+AgentRun
+id, missionId, agent, status, startedAt, endedAt, resultRef
+AgentEvent
+id, runId, missionId, type, sequence, correlationId, payload, timestamp
+CandidateMatch
+id, missionId, participantId, coverage, score, reason
+GroupProposal
+id, missionId, revision, candidate IDs, rationale, constraints snapshot
+Invitation
+id, proposalId, participantId, language, hashedToken, expiration, status
+ParticipantResponse
+id, invitationId, response, reason, availabilityProposal
+ExternalOpportunity
+id, missionId, sourceURL, title, relevance, retrievedAt
+MissionMembership
+id, missionId, participantId, approvedRole, joinedAt
+MissionTask
+id, missionId, ownerId, description, status, dueDate
+AudioArtifact
+id, ownerId, language, purpose, short-lived reference, expiry
+Recommended database safeguards: foreign keys, unique active invitation constraints where applicable, index by mission/run/time, transaction boundaries for activation, hashed invitation tokens, and explicit event ordering. Define deletion and data-retention behavior.
+12. API contracts and application boundaries
+Endpoint / operation
+Method
+Contract / behavior
+/api/participants
+POST
+Create validated guest participant and profile
+/api/participants/:id
+PATCH
+Edit scoped profile and visibility preferences
+/api/missions
+POST
+Create mission draft and requirements
+/api/missions/:id/parse
+POST
+Structured extraction from text/transcript; reviewable response
+/api/missions/:id/start
+POST
+Validate and initiate orchestrated discovery
+/api/missions/:id/events
+GET
+Authenticated SSE event feed; cursor/sequence supported
+/api/missions/:id/proposals
+GET
+Ranked valid group proposals with reasons
+/api/invitations/:token
+GET
+Scoped invitation detail without sensitive profile leak
+/api/invitations/:token/respond
+POST
+Idempotent accept/decline/counter with auth check
+/api/missions/:id/activate
+POST
+Server verifies approval and coverage before activation
+/api/missions/:id/room
+GET
+Approved members, tasks, localized resources
+/api/voice/transcribe
+POST
+Authenticated upload with size/type limits
+/api/voice/synthesize
+POST
+Generate approved localized message audio
+/api/providers/health
+GET
+Redacted capability status; never expose secrets
+Route names are implementation recommendations, not preexisting deployed endpoints. Apply request validation, rate limits, role authorization, error serialization, and correlation IDs uniformly.
+13. Deployment, secrets, operations
+Primary host: Vercel for UI and short API functions. Database: Tiger Data PostgreSQL. Orchestration: checkpointed short-running jobs and persisted event-driven state. Add a Vultr worker only if long-running and retry-sensitive jobs demand a persistent process and the setup can be validated without destabilizing the app. Realtime: SSE with polling fallback. A local agent process is not assumed to survive serverless termination.
+13.1 Environment variables
+GEMINI_API_KEY=
+ELEVENLABS_API_KEY=
+SERPAPI_API_KEY=
+DATABASE_URL=
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+SESSION_SECRET=
+REDIS_URL=  # optional only
+Use .env.example with blank values; real .env.local is gitignored. Secrets belong only to server-side execution and deployment secret managers. Never commit keys, display them during judging, or copy secrets into this document.
+13.2 API readiness gate
+Gemini returns schema-validated JSON for a mission.
+ElevenLabs transcribes a spoken English sample and produces localized Spanish audio.
+SerpApi returns an attributable external resource with URL and retrieval timestamp.
+Database write/read works; migrations apply cleanly.
+Public deployment loads on a phone and supports second-device invitation flows.
+Event stream, reconnect, retry and polling fallback tested on deployment.
+14. Testing, accessibility, quality standards
+14.1 Definition of Done
+User can join and create a participant profile on a mobile device.
+Mission can be spoken, transcribed, parsed, corrected, and persisted.
+Matching engine produces at least one verified feasible group.
+Mission Theater visualizes real agent events without fake completion.
+Invitation can be opened and answered from a second device.
+Decline triggers a real recomputation while preserving valid commitments.
+English, Spanish, and French translations and audio work for invitation flow.
+SerpApi produces a properly attributed relevant external opportunity.
+Accepted group creates a persistent Mission Room and assigned tasks.
+Loading, empty, invalid, retry, failed-provider and denied-permission states function.
+Responsive layouts have no overflow, clipped labels, or unusable graph controls.
+Deployed live flow and backup scenario are recorded in a real demo video before deadline.
+14.2 Automation and QA
+Vitest unit tests for matcher, state machine and validation.
+API integration tests for sessions, invitations, event ordering and mission activation.
+Playwright mobile/desktop journey covering join → create → invite → decline → repair → accept → activate.
+Accessibility checks for keyboard focus, contrast, caption availability, tap targets and reduced-motion setting.
+Verify readable graph view at 320px, ~390px, tablet, 1024px and ≥1440px.
+Profile React render frequency and graph node count; ensure no expensive unnecessary rerenders.
+Cross-browser microphone permission behavior and text-only fallback.
+Screen-record complete flow; verify Devpost and source URLs independently.
+15. HackTX awards, eligibility and rules
+15.1 Confirmed competition framework
+Opening ceremony advertises 18 tracks, 1,000+ attendees, 24 hacking hours and $35,000 in total event prize value. The project must be built during the hackathon coding period, with a mandatory video in the Devpost submission. In-person judging attendance is expected. An individual participant is an allowed team. Best Overall is automatically considered; Best Novice is eligibility-based; Best Pitch applies to qualifying participation in the separate pitch competition.
+Organizer Discord clarified twice that no more than THREE non-MLH prize tracks may be opted into, excluding the explicitly exempt awards. Any number of MLH-marked challenges may be entered if their requirements are satisfied. The newest Discord message explicitly reiterates: “you can submit to any number of mlh challenges! It’s not included in your 3.”
+15.2 Recommended non-MLH selections
+Entry
+Type
+Fit / condition
+Best Overall — Cinderella’s Castle
+Automatic
+Primary prize; design, complexity, impact and unique vision
+Meta — Bringing People Closer Together with AI
+Non-MLH slot 1
+Best thematic fit: genuine human collaboration through AI
+Best Use of SerpApi
+Non-MLH slot 2
+External discovery must be substantive
+Most Entertaining — Jester’s Court
+Provisional non-MLH slot 3
+Only retain if interaction genuinely satisfies judging brief
+Best Pitch — A Bard’s Tale
+Separate conditional competition
+Opt in/participate if eligible; not part of three-slot cap per Discord
+15.3 All eight MLH categories
+Category
+Announced reward
+COHUE fit
+Best Use of Gemini API
+MLH + DEV swag bags
+Core: validated AI reasoning and mission interpretation
+Best Use of Solana
+Unruggable hardware wallets
+Not planned; avoid forced blockchain
+Best Use of Tiger Data
+Stream Deck Mini
+Potentially strong if storage/query is used in project
+Best Use of Vultr
+Portable screens
+Conditional on real Vultr deployment
+Best Use of Snowflake API
+Arduino kits
+Not planned; only if meaningful
+Your Hackathon A-Team with SpaceXSI
+Mechanical keyboards
+Conditional on challenge workflow and documentation
+Best Domain from .TECH
+Desktop microphone plus domain benefits
+cohue.tech secured; confirm other eligibility
+DEV Writing Challenge
+$100
+Independent eligible write-up about project
+ElevenLabs is a central product integration but not listed as a separate HackTX MLH award in the provided ceremony materials. Prize descriptions and final redemption conditions should be checked on actual category pages before opting in.
+15.4 Deadlines and physical logistics
+Time (CDT)
+Event
+Sat Oct 24, 11:30 AM
+Hacking starts
+Sat Oct 24, 11:30 PM
+Soft submission checkpoint
+Sun Oct 25, 11:30 AM
+Hacking ends / hard Devpost deadline
+Sun Oct 25, 1:00 PM
+Convergent pitching workshop
+Sun Oct 25, 2:00–5:00 PM
+Judging
+Sun Oct 25, 5:30 PM
+Pitching competition
+Sun Oct 25, 6:30 PM
+Closing ceremony
+Welch building unavailable from 11 PM to 6:30 AM; do not leave equipment there. Mentors can be found in GDC Atrium/Bridges or Discord; corporate and MLH coaches are stationed around Welch Grand Hallway. Verify last-minute room changes via organizer Discord.
+15.5 Competition preparation and submission materials
+Register/join on HackTX Devpost, make new repository, and confirm source-origin compliance.
+Secure cohue.tech and configure domain when deployment is stable.
+Capture live product screenshots and a real demo video (mandatory).
+Prepare succinct project overview, problem, how it works, technical stack, impact, challenges, what was learned, and partner integration evidence.
+Select up to three non-MLH slots; independently opt into each relevant MLH award with its own submission requirements.
+Demonstrate both actual end-to-end flow and evidence of technical implementation, not a visual mockup.
+16. Proposed execution phases and go/no-go gates
+Phase
+Deliverables
+Gate
+1. Infrastructure
+Repository, environment, DB, migration, deployment, provider health checks
+Provider and deployment readiness
+2. Domain + matching
+Typed entities, profiles, mission requirements, tested graph optimizer
+Real valid group found
+3. Orchestration
+Director/Scout/Strategist/Coordinator, checkpointed events, state machine
+Actual persisted agent action
+4. Consent loop
+Invitation tokens, second-device accept/decline, activation checks
+Decline causes recomputed feasible plan
+5. Multilingual
+ElevenLabs Scribe/TTS, Gemini localization, transcripts/fallbacks
+Three-language tested flow
+6. Discovery
+Bounded SerpApi search, attributed external opportunity
+External result changes mission recommendations
+7. Experience polish
+Designer-led brand tokens, network animation, mission theater, mobile UX
+Fluid usable responsive live demo
+8. Submission
+Tests, video, screenshots, README, Devpost tracks
+Submit before hard deadline
+First validation should prove transcription/structured extraction, graph matching of a 20-person synthetic dataset, constraint invalidation, and onboarding. If the mission logic or external APIs fail, narrow scope rather than fabricate success. Do not let optional polish consume the mandatory video window.
+17. Three-minute pitch and evidence
+Time
+Beat
+On-screen evidence
+0:00–0:25
+Speak ambition
+Real microphone/transcript and requirements
+0:25–1:05
+Agents discover potential
+Persisted tool events, candidate evidence and live graph
+1:05–1:40
+Bridge languages
+Spanish/French invitation with participant response
+1:40–2:15
+Break and recover
+Decline, uncovered requirement, actual replacement algorithm
+2:15–2:40
+Activate collaboration
+Accepted approvals, Mission Room, assignments
+2:40–3:00
+Technical proof and vision
+State machine, algorithm, logs, measured outcomes
+Suggested closing: “Most technology helps one person do more. COHUE helps people discover what they can accomplish together. The AI isn’t replacing human connection. It’s creating the conditions for it.”
+Report requirement coverage, confirmed participants, recovery success, and activated missions separately. Synthetic or simulated metrics must always be identified as such.
+18. Risk register and mitigation
+Risk
+Mitigation
+Building too many features
+Tier scope; finish fully working loop before adding spectacle
+Few real demo participants
+Labelled synthetic showcase sharing the same production algorithms
+LLM invents plan details
+Schemas, deterministic matching, hard constraints and review stages
+Translation changes meaning
+Show source transcript, allow correction, explicit consent
+ElevenLabs or microphone fails
+Typed mission and text invitation fallback
+SerpApi credits exhausted
+Per-run caps, caching and optional manual lookup
+Serverless jobs terminate
+DB checkpoints; add Vultr worker only if validated
+Mobile graph becomes unreadable
+Compact graph and list/sheet alternatives, actual device QA
+Animations run ahead of state
+Persisted event-driven playback and failure states
+Consent/privacy leak
+Scoped auth, opt-in visibility, hashed invitation tokens
+Video/submission missed
+Prioritize recording and Devpost ahead of last-minute enhancements
+19. Required pre-build resources
+Gemini API key and selected tested model IDs.
+ElevenLabs API key, remaining credit balance, Scribe and TTS access.
+SerpApi key and verified ~1,000 available search credits.
+Tiger Data PostgreSQL connection string and working migrations.
+Fresh GitHub repository and Vercel project with safe environment variables.
+Optional Vultr account/credit confirmation and .TECH prize registration rules.
+Devpost project draft created early.
+Synthetic dataset: ~30 fictional people, overlapping abilities, multilingual preferences, availability conflicts and explicit decline cases.
+Recorded or consented English/Spanish/French test audio with reference transcripts.
+Five rehearsable scenarios: successful formation, missing skill, declined invite, changed availability, multilingual approval.
+20. Approved design/engineering handoff boundaries
+Frontend designer defines
+Engineering/product specification defines
+Type system, colors, palette and brand tokens
+Navigation, screen content and state semantics
+Visual components, shape language and styling
+Graph events, interactions and mission workflow
+Final visual expression of motion tokens
+Performance, reduced motion and truthful animation triggers
+Responsive visual compositions
+Mandatory mobile behaviors, accessible interactions and complete user journeys
+The designer has freedom to make the interface exceptionally distinctive, provided the seven screen experiences, clear motion semantics, mobile quality, consent boundaries and performance requirements are preserved. No generic default template should be treated as the final visual system.
+21. Final signed-off statement
+COHUE is a multilingual intent-to-outcome collaboration engine. Its central capability is to transform a person’s spoken or written ambition into a mission, discover necessary people and public opportunities, calculate viable collaborative groups, secure each participant’s consent, recover gracefully from constraints and declines, and activate an actionable mission. The visual product should make this intelligence observable through a premium, mobile-first, event-driven, fluid interface. The primary objective is Best Overall at HackTX 2026, with a coherent Meta + SerpApi submission and unlimited qualifying MLH entries as newly confirmed by organizers. Scope is considered locked for implementation; aesthetic tokens remain delegated to the frontend designer.
+Source and verification references
+HackTX Devpost: https://hacktx26.devpost.com/
+HackTX organizers: https://hacktx.com/
+Opening ceremony presentation: https://docs.google.com/presentation/d/15bfAiaqpp6zrwkaB0Sq8_wXvoGQ4wvzyy15jGIOLoOI/
+MLH challenge list: https://mlh.link/hacktx
+Gemini API: https://ai.google.dev/gemini-api/docs
+ElevenLabs documentation: https://elevenlabs.io/docs
+SerpApi docs: https://serpapi.com/search-api
+MLH .TECH challenge: https://mlh.link/tech
+Organizer Discord extracts provided in conversation, including latest unlimited MLH entries clarification.
