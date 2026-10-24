@@ -7,7 +7,7 @@ Implementation authorized by user after architecture/backend-readiness/design ap
 - Root FRONTEND_IMPLEMENTATION_SCOPE.md: exact frontend deliverables, order, ownership, contracts/dependencies, responsive/motion/accessibility quality, tests and completion.
 - Root BACKEND_IMPLEMENTATION_SCOPE.md: exact database/runner/matching/consent/repair/agents/providers/read/media/deletion deliverables, ownership/order/acceptance and evidence.
 - docs/INTEGRATION_CHECKPOINTS.md: I0–I6 continuous runnable vertical slices and serialized handoff rules.
-- docs/CONTRACTS.md + CONTRACT_RESOLUTIONS.md + src/contracts/**: shared version1.0.0, not permission to invent duplicate types or privately change endpoints.
+- docs/CONTRACTS.md + CONTRACT_RESOLUTIONS.md + src/contracts/**: shared version 1.1.0, not permission to invent duplicate types or privately change endpoints.
 
 ## Ownership
 

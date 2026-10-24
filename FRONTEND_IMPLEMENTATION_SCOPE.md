@@ -1,6 +1,6 @@
 # COHUE Frontend Engineer implementation work order
 
-Status: ready for the user to deliver to the Frontend Engineer’s separate conversation. Creating/committing this file does not activate that conversation. Begin only when the user sends this work order as your implementation assignment. No other chat is assumed to have received it. Contract version 1.0.0; Design System v1.0 is approved and locked. D1–D12 remain approved, D7 awaits deployed validation. No redesign or new design approval cycle is authorized.
+Status: ready for the user to deliver to the Frontend Engineer’s separate conversation. Creating/committing this file does not activate that conversation. Begin only when the user sends this work order as your implementation assignment. No other chat is assumed to have received it. Contract version 1.1.0 (additive share-link operation over 1.0.0); Design System v1.0 is approved and locked. D1–D12 remain approved, D7 awaits deployed validation. No redesign or new design approval cycle is authorized.
 
 ## Read first and source authority
 
@@ -47,6 +47,6 @@ Check design fidelity against approved source at each checkpoint; original froze
 
 ## Integration and completion
 
-Use checkpoints I0–I6 from docs/INTEGRATION_CHECKPOINTS.md. Each slice must run with current backend on shared main, consume version 1.0.0 contracts and be committed with narrowly scoped files. Submit a self-contained milestone note under docs/status/frontend/ with commit, owned paths, contract/API changes requested, actual commands/results, screenshots/devices and defects/account dependencies. Update both cross-model handoffs together using serialized protocol. Do not message other chats unless the user explicitly authorizes it; user relays reports and lead owns integration reconciliation.
+Use checkpoints I0–I6 from docs/INTEGRATION_CHECKPOINTS.md. Each slice must run with current backend on shared main, consume the current (1.1.0) contracts and be committed with narrowly scoped files. Submit a self-contained milestone note under docs/status/frontend/ with commit, owned paths, contract/API changes requested, actual commands/results, screenshots/devices and defects/account dependencies. Update both cross-model handoffs together using serialized protocol. Do not message other chats unless the user explicitly authorizes it; user relays reports and lead owns integration reconciliation.
 
 Done only when all seven experiences/eight truthful motions, all responsive bands, complete core text loop, real second-device consent/repair/activation/room/tasks, three-language voice/text, attributed search evidence, failures/accessibility and basic replay meet actual deployed tests. Backend D7 is required product evidence even though frontend does not own it. No fake live participants/approvals/provider calls/impact. Return unresolved mandatory tests or blockers clearly; do not declare product complete from visual polish or static boards. Stop at handoff to lead/user for final integrated QA and recording; do not independently publish/submit or redesign.

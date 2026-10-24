@@ -1,6 +1,6 @@
 # COHUE Backend Engineer implementation work order
 
-Status: ready for user delivery to the Backend Engineer’s separate conversation. This document alone does not activate that conversation. Begin only when the user explicitly sends this work order as the implementation assignment. Do not assume the frontend conversation received instructions. Shared contract version 1.0.0; D1–D12 and approved Design System v1.0 preserved. D7 requires real deployment evidence, not local persistence claims.
+Status: ready for user delivery to the Backend Engineer’s separate conversation. This document alone does not activate that conversation. Begin only when the user explicitly sends this work order as the implementation assignment. Do not assume the frontend conversation received instructions. Shared contract version 1.1.0 (additive share-link operation over 1.0.0); D1–D12 and approved Design System v1.0 preserved. D7 requires real deployment evidence, not local persistence claims.
 
 ## Read first and authoritative inputs
 

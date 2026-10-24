@@ -163,6 +163,13 @@ export const ProviderHealthSchema = z.strictObject({
 });
 const empty = z.strictObject({});
 export const BearerTokenSchema = z.string().regex(/^[A-Za-z0-9_-]{32,256}$/);
+// Share-link disclosure for one invitation; the token appears only in this response body (see CONTRACT_RESOLUTIONS).
+export const InvitationLinkSchema = z.strictObject({
+  invitationId: IdSchema,
+  token: BearerTokenSchema,
+  linkEpoch: VersionSchema,
+  expiresAt: TimestampSchema,
+});
 const pathSchema = (path: string) =>
   z.strictObject(
     Object.fromEntries(
@@ -397,6 +404,15 @@ export const apiContracts = {
       invitations: z.array(InvitationSchema).max(8),
     }),
     201,
+    true,
+  ),
+  issueInvitationLink: route(
+    "POST",
+    "/api/invitations/:id/link",
+    "OWNER",
+    z.strictObject({ rotate: z.boolean() }),
+    InvitationLinkSchema,
+    200,
     true,
   ),
   previewInvitation: route(

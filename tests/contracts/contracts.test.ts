@@ -438,7 +438,7 @@ describe("consumer-facing API contracts", () => {
     ).toBe(false);
   });
   it("keeps the exported API operation manifest synchronized with executable contracts", () => {
-    expect(manifest.contractVersion).toBe("1.0.0");
+    expect(manifest.contractVersion).toBe("1.1.0");
     expect(manifest.operations).toEqual(
       Object.entries(apiContracts).map(
         ([name, { method, path, auth, status, idempotentCommand }]) => ({
@@ -520,5 +520,50 @@ describe("review-only extraction before persistence", () => {
     expect(apiContracts.createMission.input.safeParse(extracted).success).toBe(
       false,
     );
+  });
+});
+
+describe("invitation share-link disclosure (contract 1.1.0)", () => {
+  const token = "a".repeat(43);
+  it("issues a bearer link only through the owner command, never in invitation DTOs", () => {
+    const op = apiContracts.issueInvitationLink;
+    expect([
+      op.method,
+      op.path,
+      op.auth,
+      op.status,
+      op.idempotentCommand,
+    ]).toEqual(["POST", "/api/invitations/:id/link", "OWNER", 200, true]);
+    expect(op.params.safeParse({ id: invitation.id }).success).toBe(true);
+    expect(op.params.safeParse({ id: token }).success).toBe(false);
+    expect(op.input.safeParse({}).success).toBe(false);
+    expect(
+      op.response.safeParse({
+        data: {
+          invitationId: invitation.id,
+          token,
+          linkEpoch: 1,
+          expiresAt: invitation.expiresAt,
+        },
+        correlationId: fixtureId(900),
+      }).success,
+    ).toBe(true);
+    expect(InvitationSchema.safeParse({ ...invitation, token }).success).toBe(
+      false,
+    );
+  });
+  it("rejects short or non-url-safe tokens", () => {
+    for (const bad of ["short", `${"a".repeat(40)}/+=`])
+      expect(
+        apiContracts.issueInvitationLink.response.safeParse({
+          data: {
+            invitationId: invitation.id,
+            token: bad,
+            linkEpoch: 1,
+            expiresAt: invitation.expiresAt,
+          },
+          correlationId: fixtureId(900),
+        }).success,
+      ).toBe(false);
   });
 });

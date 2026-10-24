@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const CONTRACT_VERSION = "1.0.0" as const;
+export const CONTRACT_VERSION = "1.1.0" as const;
 export const IdSchema = z.uuid();
 export const TimestampSchema = z.iso.datetime({ offset: false });
 export const VersionSchema = z

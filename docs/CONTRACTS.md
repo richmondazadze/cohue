@@ -1,13 +1,13 @@
-# COHUE shared contracts version 1.0.0
+# COHUE shared contracts version 1.1.0
 
 Status: authoritative TypeScript/Zod foundation implemented after user authorization on 24 October 2026. D1–D12 and Backend Engineering Readiness approved; Design System v1.0 approved/locked. The architecture/design review gates are satisfied. Lead implements shared foundation only; user separately delivers each specialist work order. Database, auth, matcher, APIs, runner, providers and product UI are NOT implemented merely because their contracts exist. Deployed dispatcher validation (D7) remains outstanding.
 
 ## Authoritative sources
 
 - src/contracts/index.ts exports all public shared schemas, inferred types, constants and typed API registry.
-- primitives.ts: UUIDs, UTC intervals/timezones/BCP47, strict LIVE/SHOWCASE scope, pagination, version 1.0.0.
+- primitives.ts: UUIDs, UTC intervals/timezones/BCP47, strict LIVE/SHOWCASE scope, pagination, version 1.1.0.
 - domain.ts: participants/capabilities, mission/requirements, candidates/proposals/search evidence, canonical commitments/invitations/responses/lineage, memberships/tasks/resources, runs, reservations/review.
-- api.ts: 37 exact method/path/auth/request/path-parameter/success/error/status/idempotency operations; ApiInput/ApiOutput/ApiParams types. docs/API_OPERATIONS.json is generated navigation via npm run contracts:export, not a competing schema.
+- api.ts: 38 exact method/path/auth/request/path-parameter/success/error/status/idempotency operations; ApiInput/ApiOutput/ApiParams types. docs/API_OPERATIONS.json is generated navigation via npm run contracts:export, not a competing schema.
 - events.ts: EventV1 strict discriminated payload allowlist, real run requirement for execution, mission-level null run semantics.
 - projections.ts: authorized network/graph/snapshot/event pages/inbox/room, sequence/scope structure; server still enforces all permissions.
 - media.ts: upload limits and transcript/localization/audio lifecycle fields; agents.ts: bounded agent I/O/context/tool allowlist; execution.ts: checkpoint/job/receipt structure; policies.ts: operational limits/status mapping.
@@ -43,4 +43,4 @@ Scope/version/sequence are mandatory at relevant boundaries. Session scope is de
 
 ## Change and integration protocol
 
-Lead owns src/contracts/fixtures and root configuration; consumers request deltas before changing shared types. Version 1.0.0 replaces planning v0.1; both work orders consume it. Update runtime schema, typed registry, fixtures/negative tests, generated manifest and both handoffs in the same coordinated milestone. Contracts are not implementations of routes, auth or state machine. See root specialist work orders and INTEGRATION_CHECKPOINTS for exact ownership, continuous vertical slices and required deployed evidence. D7 remains conditional; no DB/API/account readiness claim from schema tests.
+Lead owns src/contracts/fixtures and root configuration; consumers request deltas before changing shared types. Version 1.0.0 replaced planning v0.1; additive 1.1.0 (25 Oct lead continuation) adds the issueInvitationLink share-link operation, see CONTRACT_RESOLUTIONS. Both work orders consume the current version. Update runtime schema, typed registry, fixtures/negative tests, generated manifest and both handoffs in the same coordinated milestone. Contracts are not implementations of routes, auth or state machine. See root specialist work orders and INTEGRATION_CHECKPOINTS for exact ownership, continuous vertical slices and required deployed evidence. D7 remains conditional; no DB/API/account readiness claim from schema tests.

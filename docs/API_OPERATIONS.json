@@ -1,5 +1,5 @@
 {
-  "contractVersion": "1.0.0",
+  "contractVersion": "1.1.0",
   "operations": [
     {
       "name": "taxonomy",
@@ -159,6 +159,14 @@
       "path": "/api/missions/:id/proposals/:proposalId/select",
       "auth": "OWNER",
       "status": 201,
+      "idempotentCommand": true
+    },
+    {
+      "name": "issueInvitationLink",
+      "method": "POST",
+      "path": "/api/invitations/:id/link",
+      "auth": "OWNER",
+      "status": 200,
       "idempotentCommand": true
     },
     {

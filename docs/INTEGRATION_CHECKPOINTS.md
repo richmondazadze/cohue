@@ -1,6 +1,6 @@
 # Continuous vertical integration checkpoints
 
-Contract1.0.0, Design System 1.0, approved D1–D12. The user activates separate engineer conversations by delivering the root work orders; none is automatically activated/messaged. Shared repository main is the source of truth. A work order is a dispatch artifact, not evidence the receiving engineer started. Lead stops after foundation delivery until the user activates/relays specialist work.
+Contract 1.1.0, Design System 1.0, approved D1–D12. The user activates separate engineer conversations by delivering the root work orders; none is automatically activated/messaged. Shared repository main is the source of truth. A work order is a dispatch artifact, not evidence the receiving engineer started. Lead stops after foundation delivery until the user activates/relays specialist work.
 
 ## Ownership and shared-file protocol
 
@@ -25,6 +25,12 @@ I4 graph/event work begins alongside I2/I3 rather than waiting until I3 finishes
 ## Common verification
 
 Before each checkpoint: `npm run check` (frozen source hashes, synchronized handoffs, exact dependency pins, lint, typecheck, Vitest, production build), `npm audit --audit-level=high`, and `npm run test:e2e` on built app. Add meaningful backend actual-DB tests, frontend reducers/browser and lead integrated browser flows as they exist; no skipped/mocked tests count as deployed proof. CI YAML exists but no remote/hosted run is implied. Enforce Node24 in CI/deploy, npm lockfile, reviewed dependency overrides. Preserve exact command results and conditions in status notes. Existing foundation smoke is one plain page only, not product E2E coverage.
+
+## Lead integration harness
+
+`tests/e2e/integration/support/contract-client.ts` prepares every request from `apiContracts` (path params, input, Idempotency-Key) and rejects any response that is not the documented success body or an ApiError with its mapped HTTP status. `device.ts` gives each simulated phone its own cookie jar. `i2-join-create-match.spec.ts` and `i3-consent-repair-activate.spec.ts` drive the real API: join, create, start, proposal, exact replay and changed-payload conflict, creator-only theater, exhausted no-solution, then select, share link, non-consuming preview, second-device redemption, accept, decline, genuine repair, reconsent on changed group terms, activation replay, room and task version conflict.
+
+The specs need a running backend on an isolated, disposable database, because they create LIVE participants labelled `[integration <run>]` and fail rather than respond for foreign participants. Run `npm run build && npm run test:e2e` with the server environment set, or point `COHUE_INTEGRATION_BASE_URL` at a staging deployment. Missing API routes produce a skip with the reason, never a pass; set `COHUE_REQUIRE_INTEGRATION=1` at I2 and later so a missing backend fails the run. `COHUE_INTEGRATION_TIMEOUT_MS` (default 90000) bounds waits for committed state. A local pass is not D7 evidence.
 
 ## Protected testing and submission window
 
