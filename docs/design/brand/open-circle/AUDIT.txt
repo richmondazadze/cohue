@@ -1,0 +1,49 @@
+
+=== cohue-horizontal-reversed.svg  (961 bytes)
+viewBox 0 0 760 256 · aspect 2.969 (horizontal)
+colours 1: #ffffff · gradients 0 · anchors 84
+margins L28.8 R26.0 T40.8 B42.4 · bbox fill 0.626
+✔ no issues found
+production-readiness score: 100/100 (heuristic)
+
+=== cohue-horizontal.svg  (943 bytes)
+viewBox 0 0 760 256 · aspect 2.969 (horizontal)
+colours 1: #315cce · gradients 0 · anchors 84
+margins L28.8 R26.0 T40.8 B42.4 · bbox fill 0.626
+✔ no issues found
+production-readiness score: 100/100 (heuristic)
+
+=== cohue-stacked.svg  (949 bytes)
+viewBox 0 0 512 360 · aspect 1.422 (wide)
+colours 1: #315cce · gradients 0 · anchors 84
+margins L62.0 R62.8 T25.6 B44.0 · bbox fill 0.61
+· INFO [off-centre-y] Vertical margins differ (top 25.6, bottom 44.0). Remember the optical centre sits slightly above the geometric centre.
+production-readiness score: 99/100 (heuristic)
+
+=== cohue-symbol-reversed.svg  (369 bytes)
+viewBox 0 0 256 256 · aspect 1.0 (square)
+colours 1: #ffffff · gradients 0 · anchors 14
+margins L32.0 R25.0 T32.0 B32.0 · bbox fill 0.583
+✔ no issues found
+production-readiness score: 100/100 (heuristic)
+
+=== cohue-symbol-small.svg  (343 bytes)
+viewBox 0 0 256 256 · aspect 1.0 (square)
+colours 1: #315cce · gradients 0 · anchors 14
+margins L32.0 R22.0 T32.0 B32.0 · bbox fill 0.592
+· INFO [off-centre-x] Horizontal margins differ (left 32.0, right 22.0). Intentional optical centring? Otherwise centre it.
+production-readiness score: 99/100 (heuristic)
+
+=== cohue-symbol.svg  (313 bytes)
+viewBox 0 0 256 256 · aspect 1.0 (square)
+colours 1: #315cce · gradients 0 · anchors 14
+margins L32.0 R24.0 T32.0 B32.0 · bbox fill 0.586
+· INFO [off-centre-x] Horizontal margins differ (left 32.0, right 24.0). Intentional optical centring? Otherwise centre it.
+production-readiness score: 99/100 (heuristic)
+
+=== cohue-wordmark.svg  (704 bytes)
+viewBox 0 0 544 256 · aspect 2.125 (wide)
+colours 1: #202323 · gradients 0 · anchors 70
+margins L30.0 R30.0 T66.0 B66.0 · bbox fill 0.431
+✔ no issues found
+production-readiness score: 100/100 (heuristic)

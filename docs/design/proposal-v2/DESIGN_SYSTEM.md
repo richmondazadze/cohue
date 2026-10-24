@@ -62,7 +62,7 @@ Use a single strong heading per view; uppercase overlines limited to 12/18 at .0
 
 4px spacing base; scale 4/8/12/16/20/24/32/40/48/64/80/96. Gutters 16 phone, 24 tablet, 32 desktop, 48 large desktop. Content max 1600px; reading column max 680px. 4/8/12-column structure. Controls ≥44px, main actions/record 48–56px, 8px target gap. Form padding 12px 14px. Radii 6 compact/8 field/10 button/16 panel/24 sheet; full rounding reserved for avatar/status. Informative borders 1px; selected node 2px action outline; focus 2px action with 3px offset, distinct from permanent selection. Shadow only on an elevated sheet or lightly floating canvas tools (`0 12px 32px rgba(32,35,35,.08)`); no animated blur or glass. Fine rules and whitespace replace nested card stacks.
 
-Layers: canvas 0, graph controls 10, navigation 20, sheet 40, modal 60, nonessential toast 80. Modal critical actions remain unobstructed. Header contains neutral COHUE name label pending logo selection. Proposed logo clear space/minimum sizes remain a final-kit task after selection. Do not distribute a concept as the final trademark-cleared brand.
+Layers: canvas 0, graph controls 10, navigation 20, sheet 40, modal 60, nonessential toast 80. Modal critical actions remain unobstructed. Header uses the selected Open Circle horizontal signature. Clear space/minimum sizes and digital files are in ../brand/open-circle/USAGE.md. Do not distribute a concept as the final trademark-cleared brand.
 
 ## 4. Component treatment and states
 
@@ -194,8 +194,8 @@ Acceptance: all seven experiences at 320, 390, 768, 1024 and 1440px without page
 
 Approval requested: (A) warm-neutral/white/blue visual direction and semantic colors; (B) Space Grotesk-only type system and scale; (C) light reading / light theater component treatments; (D) desktop theater and focused mobile list/graph/sheet model; (E) restrained event-driven motion language. A–E are a complete proposed system. They remain unapproved. Approval of this proposal alone does not authorize full feature work unless the user also says to begin implementation.
 
-## 14. Logo concept checkpoint
+## 14. Selected identity — Open Circle
 
-See logos/concepts.png and logos/BRIEF.md. A Open Circle (letterform, recommended), B Confluence (abstract), C Common Language (wordmark-led). Original path-only SVGs, no copied library outlines or font-dependent text. Concepts are shown separately from the neutral interface identity. No logo selected or approved. User picks a direction; then prepare final geometry, reversed/small-size files, lockups, favicon/app-icon exports and compact usage guide before integrating the chosen mark throughout this design system. Full logo kit is intentionally pending the skill's concept checkpoint, not a missing production feature.
+User selected Direction A in chat on 24 October 2026. The Open Circle mark is integrated into board header, Theater label, phone headers and favicon. The fixed custom wordmark remains path-only. Full digital kit and usage guide are at ../brand/open-circle/. Standard selected shape retained; small/reversed cuts and fixed horizontal/stacked lockups prepared. Original B/C concepts remain historical review artifacts.
 
-V2 visual proposal approval is separate from logo selection and feature authorization. This board does not authorize app development. All seven experiences/eight motion mappings and technical acceptance criteria above are retained.
+Logo direction selection is recorded; this does not approve the complete v2 system or authorize full frontend/product implementation. Brand blue/ink use follows the proposed v2 palette, subject to final system review. No trademark clearance or physical print proof is asserted. All seven experiences/eight motion mappings and engineering acceptance criteria are retained.

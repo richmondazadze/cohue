@@ -1,0 +1,43 @@
+{
+  "brand": "COHUE",
+  "tagline": "From strangers to something extraordinary.",
+  "brief": "A multilingual human coordination platform. The Open Circle identity makes room for another person while keeping their agency visible. Direction A selected by the user; full UI system remains under review.",
+  "adjectives": [
+    "open",
+    "human",
+    "precise",
+    "capable",
+    "calm"
+  ],
+  "industry": "consumer-app",
+  "nav": [
+    "Discover",
+    "Coordinate",
+    "Make"
+  ],
+  "brand_color": "#315CCE",
+  "greyscale": false,
+  "final": true,
+  "round": 2,
+  "concepts": [
+    {
+      "name": "Open Circle",
+      "symbol": "masters/cohue-symbol.svg",
+      "lockup": "masters/cohue-horizontal.svg",
+      "stacked": "masters/cohue-stacked.svg",
+      "symbol_on_dark": "masters/cohue-symbol-reversed.svg",
+      "lockup_on_dark": "masters/cohue-horizontal-reversed.svg",
+      "idea": "An open C makes room for one more person.",
+      "rationale": [
+        "The aperture connects the name to openness.",
+        "A detached square remains distinct: participation is a choice.",
+        "One-color geometry survives compact app use."
+      ]
+    }
+  ],
+  "recommendation": "Open Circle is the selected direction. Apply the fixed signature rather than rebuilding its parts.",
+  "next_steps": [
+    "Review integration in the light design system",
+    "Approve the complete visual system before frontend implementation"
+  ]
+}

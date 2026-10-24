@@ -1,0 +1,218 @@
+{
+  "version": "1.0",
+  "direction": "A / Open Circle",
+  "files": [
+    {
+      "path": "AUDIT.txt",
+      "sha256": "df9d2de6c3d81204bb9ff6debdd3ba20bcfb83395714eb5b52810eff6eb2663b"
+    },
+    {
+      "path": "CHECKS.md",
+      "sha256": "76ad17cdf3d2a1cad7a285c93061a97672a43a997f7a590a2cf836bd8b925364"
+    },
+    {
+      "path": "PACKAGE.md",
+      "sha256": "1dca092d555b727a8ccadd19ddb885e012716b94b7c44eaaf46cfe70be30aea8"
+    },
+    {
+      "path": "USAGE.md",
+      "sha256": "0abdf2f6fe3835c86d66dc69b79c8936c593ecd3eebbbf1f144528899bc0bdab"
+    },
+    {
+      "path": "digital/apple-touch-icon.png",
+      "sha256": "7175a07246d38f3ee1c030de49f0ac9ef4e8b3bf82c153d3264e7d8bf129bc16"
+    },
+    {
+      "path": "digital/cohue-app-icon-512.png",
+      "sha256": "4fdc1c008f57e328512af1471a7790ad2bd75b8587d61d827bc9264006993ebc"
+    },
+    {
+      "path": "digital/cohue-app-icon.svg",
+      "sha256": "c2215c495cc658d95d4a705874a34ddafe2bc01d9fd16c294817402b83662517"
+    },
+    {
+      "path": "digital/cohue-black-512.png",
+      "sha256": "a11c17f026d91d2846d4475f1631e8ceff5acd1a0e720883c12a63a262cd6662"
+    },
+    {
+      "path": "digital/cohue-black.svg",
+      "sha256": "887aa5457494bd4325461b163feed348a19ab83c4520d5b915bf2f7ad1b25863"
+    },
+    {
+      "path": "digital/cohue-favicon-512.png",
+      "sha256": "7e4bf67cfaa9646b2379a13975511e10635e4e0f0b089318506ac20ef72e54af"
+    },
+    {
+      "path": "digital/cohue-favicon.svg",
+      "sha256": "164504dd5a62da1558a2da4c7dabd2fbaf60527940247cece8e751be6ab39368"
+    },
+    {
+      "path": "digital/cohue-horizontal-black-1200.png",
+      "sha256": "881d7110f8c585788889338c61d1e2c00c630007e0087237baa5b6f7cbad859e"
+    },
+    {
+      "path": "digital/cohue-horizontal-black.svg",
+      "sha256": "d8e8e50099a167cbd958dd9f204e5da85152eac588e8b5a8000bdd9098c5f52a"
+    },
+    {
+      "path": "digital/cohue-horizontal-mono-202323-1200.png",
+      "sha256": "38cedc5abe609c880621337dfce6f295be59b1df9627295f97b4d81d1d51694e"
+    },
+    {
+      "path": "digital/cohue-horizontal-mono-202323.svg",
+      "sha256": "d7f5ace952067e771b8735074e418a0599d44f5615b83f62af58251d4e27efb6"
+    },
+    {
+      "path": "digital/cohue-horizontal-mono-315cce-1200.png",
+      "sha256": "b50324535440b962de933522d27488c3326d4e9e837afbc6a1009c4f9f905a7d"
+    },
+    {
+      "path": "digital/cohue-horizontal-mono-315cce.svg",
+      "sha256": "88ff2c9597189310ff4203cc660c561a54f7657cfbffc4222680b4d3e372593d"
+    },
+    {
+      "path": "digital/cohue-horizontal-white-1200.png",
+      "sha256": "7f77b3171d7bf6dd248d413c06d0f691c09ffcc912e0d1c39ae942cc14359d3c"
+    },
+    {
+      "path": "digital/cohue-horizontal-white.svg",
+      "sha256": "734cc934a7a502ac5baa4c5711fe410de457e628914add3dd27935cf486a72cb"
+    },
+    {
+      "path": "digital/cohue-mono-202323-512.png",
+      "sha256": "62789ba7213b56cb63f3508e87ed3550fb493b76b47449e4ce9575a5cb7c2133"
+    },
+    {
+      "path": "digital/cohue-mono-202323.svg",
+      "sha256": "14eeb0c778b5bdc0a5279b6ab53d57324dcbfafd4e0bfd590d05e0c75e396d9b"
+    },
+    {
+      "path": "digital/cohue-mono-315cce-512.png",
+      "sha256": "b6508bb26cb459537af6c8080187f3efd31f72200eb7c98e00e623581710fed9"
+    },
+    {
+      "path": "digital/cohue-mono-315cce.svg",
+      "sha256": "1f828d62b14f57d876dce7236a60f470c93785b33791116ba2a8ab48aff4dc6e"
+    },
+    {
+      "path": "digital/cohue-square-512.png",
+      "sha256": "79fbb7bcd50c5a2dff47a0f409f636f29f662c5d2a9bb8e0dab77c190c57da2c"
+    },
+    {
+      "path": "digital/cohue-square.svg",
+      "sha256": "5a77e1b83d074a7371ef13899b6ee8d8f57cc8fa0828f9e24033f6d7b4c350c7"
+    },
+    {
+      "path": "digital/cohue-stacked-black.svg",
+      "sha256": "59607c3fc0a6e26636cafd5fd7e262cd1ea5b5e5d16983a136dbf832dc488b1f"
+    },
+    {
+      "path": "digital/cohue-stacked-mono-315cce.svg",
+      "sha256": "95913945b3ecdc4faf7812e6e806b7c206e81afd5e9013083fe01ce4441b8c58"
+    },
+    {
+      "path": "digital/cohue-stacked-white.svg",
+      "sha256": "54588c385c409e88c4a92e6c075adc3d6881f7b8cc52e2b4d9fb273cecc749c9"
+    },
+    {
+      "path": "digital/cohue-white-512.png",
+      "sha256": "09774c804d11180897d03983ce8b9f58fa17cf522fc3047195f958215f1b5ffd"
+    },
+    {
+      "path": "digital/cohue-white.svg",
+      "sha256": "53d20795770d602ba5b3065c514c9218993c9a4a3d4e33508602723903eeb9e9"
+    },
+    {
+      "path": "digital/favicon-16.png",
+      "sha256": "d5719e3442ec2585ed282bacf50fd76c5e8769f58de881616884b1a45adbc48e"
+    },
+    {
+      "path": "digital/favicon-32.png",
+      "sha256": "7e492d82f2a2af42b8b059cd851fe89f7e15c571efffa7517ac076ddd1d893ed"
+    },
+    {
+      "path": "digital/favicon-48.png",
+      "sha256": "0135dd9d0685f4fb11093e29fdbe8a9722f7aa99966d7661a646db56aa266403"
+    },
+    {
+      "path": "digital/favicon.ico",
+      "sha256": "b20c1329315cbe7f37c480c068b1edc13cadccf39eed870258351771042bbbc5"
+    },
+    {
+      "path": "digital/favicon.svg",
+      "sha256": "164504dd5a62da1558a2da4c7dabd2fbaf60527940247cece8e751be6ab39368"
+    },
+    {
+      "path": "digital/head-snippet.html",
+      "sha256": "ddfd4a64c0cbb367e2714e3d621a0dbec5656ff19eb9a98db5ad037999632f58"
+    },
+    {
+      "path": "digital/icon-192.png",
+      "sha256": "b20b3ee1887112bb6d0823d8e7db437ebb3a72a9e3ad8d735b3742c6d8ca5fa7"
+    },
+    {
+      "path": "digital/icon-512.png",
+      "sha256": "6482118ec99d04803027c01e9641e890c7dcc047ab6e5e064efb5cfdb391842e"
+    },
+    {
+      "path": "digital/maskable-512.png",
+      "sha256": "56a3f1078c8ce84e9a004255f9da86b78dd7dd76bf39d7a77fc419461e141620"
+    },
+    {
+      "path": "digital/site.webmanifest",
+      "sha256": "b26ee67f48676528b453155d253003a00ade81704c809766c8f05be1140b734a"
+    },
+    {
+      "path": "masters/cohue-horizontal-reversed.svg",
+      "sha256": "2ff9a90fbbf3f126408a0e9a94813e2b81ad543be33ab858d2124bb1da688ddc"
+    },
+    {
+      "path": "masters/cohue-horizontal.svg",
+      "sha256": "00d8b40547d8e235b7eabfb0859f45b41cc6ac37167ca3d836fd1d6c9f2285ad"
+    },
+    {
+      "path": "masters/cohue-stacked.svg",
+      "sha256": "5128aefe59eed3c0cdf3a11ffb0f17d62fe24596fdd6bffb7e8f2fec12be2303"
+    },
+    {
+      "path": "masters/cohue-symbol-reversed.svg",
+      "sha256": "f66f6323ef4fd9196d6426c6d45aa4e3a8c94d46d292da861e1c4506e92c7344"
+    },
+    {
+      "path": "masters/cohue-symbol-small.svg",
+      "sha256": "9cc307a0bc1e384b33fc57939aefae058e7a47a73a53cf3fbb4d709198dced34"
+    },
+    {
+      "path": "masters/cohue-symbol.svg",
+      "sha256": "1a7cdb987d86815667a205cb0357edad201e9ef5890e7c12c617beefff4bf14f"
+    },
+    {
+      "path": "masters/cohue-wordmark.svg",
+      "sha256": "ae9e944a3970d7e7fcae00c0ddc87cc1c5908d7231b9fe5091ff33a3488ec570"
+    },
+    {
+      "path": "presentation-spec.json",
+      "sha256": "dc401a014d162b23b1c551e42b300a7b6c213d8831e503e9ee8c776187d4c4fa"
+    },
+    {
+      "path": "presentation.html",
+      "sha256": "4d8dfa1f1610ceeddf1a2ac25866bc96143aa70e6432892b2317212bec3316ba"
+    },
+    {
+      "path": "previews/cohue-horizontal.png",
+      "sha256": "13458c67f398abcc4b5a8b8fc097fc4130f0b7cc4fd6e254f118c0871320fd38"
+    },
+    {
+      "path": "previews/cohue-stacked.png",
+      "sha256": "5b4ef9bd25a197235ed04ab4423841ad1a87d2acf3436db6e005a8d8f2e85a38"
+    },
+    {
+      "path": "previews/identity-in-design.png",
+      "sha256": "05f3f33b92288d46d00b93ba156db22960685ffbf363ddcedba3fb85daddc68c"
+    },
+    {
+      "path": "quality-review.html",
+      "sha256": "07e1412935c978c823ba2fd905a0be10635d7fbf4c97844bbe79ff25c2b091b3"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-24T22:28:09Z (24 October 2026, America/Chicago).
-Phase: frontend light design system v2 and three logo concepts presented for review; no system or logo approval yet. D1–D12 remain approved, conditional on deployed dispatcher validation; feature implementation remains explicitly on hold. Read this file AND CLAUDE_HANDOFF.md before resuming. Both files must remain byte-identical.
+Last update: 2026-10-24T22:32:04Z (24 October 2026, America/Chicago).
+Phase: user selected Direction A / Open Circle; digital logo kit prepared and integrated into proposed v2. Complete system approval and feature authorization remain pending. D1–D12 remain approved, conditional on deployed dispatcher validation; feature implementation remains explicitly on hold. Read this file AND CLAUDE_HANDOFF.md before resuming. Both files must remain byte-identical.
 
 ## Product and source of truth
 
@@ -99,7 +99,7 @@ No known implemented app defects because no app exists. D1–D12 architecture de
 
 Technical/external readiness checks remain: deployed durable dispatcher validation under D7, actual provider/DB/hosting access and quotas, and competition/rules verification. These require evidence, not another approval of D1–D12. Scope/deadline remains a critical risk; no silent reduction allowed.
 
-Exact next action: user reviews frontend design proposal v2 and chooses a logo concept A/B/C; then final logo kit and integration follow selection. Record explicit approval or requested revisions in both handoffs; retain the feature hold. Design exploration was separately authorized by the frontend initialization request, but no full implementation is authorized. When feature work is separately authorized, lead translates approved contracts into shared schemas/fixtures/scaffold and backend proves DB/provider/dispatcher readiness. Full frontend development additionally waits for explicit design-system approval. Then follow onboarding -> mission -> deterministic matching -> invitations/decline/repair -> activation/room -> truthful event UI -> three-language voice/search -> deployed failure/mobile QA -> real video/Devpost. No implementation, specialist activation or thread messaging occurred in this update.
+Exact next action: user reviews the complete v2 design system with selected Open Circle identity integrated; record full design approval or requested revisions. Record explicit approval or requested revisions in both handoffs; retain the feature hold. Design exploration was separately authorized by the frontend initialization request, but no full implementation is authorized. When feature work is separately authorized, lead translates approved contracts into shared schemas/fixtures/scaffold and backend proves DB/provider/dispatcher readiness. Full frontend development additionally waits for explicit design-system approval. Then follow onboarding -> mission -> deterministic matching -> invitations/decline/repair -> activation/room -> truthful event UI -> three-language voice/search -> deployed failure/mobile QA -> real video/Devpost. No implementation, specialist activation or thread messaging occurred in this update.
 
 Proposed safety margins: freeze ~8:30 AM, video ~9:30 AM, submit target ~10:30 AM CDT on 25 October, relative to supplied 11:30 AM deadline; validate organizer schedule. All seven experiences/eight motions, all mobile sizes, basic impact/replay, text fallback and labeled showcase remain required.
 
@@ -152,3 +152,15 @@ Actual verification: v1 logo audit/renders revealed clipped C companion, correct
 No product tests/build/typecheck, production app, database/migrations, provider calls or deployment. Existing account/dispatcher/actual second-device/mobile/media/language/performance gates remain unverified. Nothing approved by this record. Immediate next action: user chooses A/B/C or requests changes; then finish selected logo kit and integrate into v2 brand board. Explicit complete design approval plus separate feature authorization still required for full frontend implementation.
 
 - 2026-10-24T22:28:09Z: recreated isolated v2 light design system and presented tested logo concepts for user choice; preserved sources, tests/limits and both handoffs.
+
+## Open Circle selected and integrated — 2026-10-24T22:32:04Z
+
+Preceding baseline `74da887`, local main. User explicitly selected “Direction A”. This approves the Open Circle direction and authorizes the previously offered kit/integration, not full v2 approval or product build. Prepared digital logo kit at `docs/design/brand/open-circle/`, portable ZIP `docs/design/brand/cohue-open-circle-v1.zip`; integrated selected signature in `proposal-v2/index.html` board header, Theater label, phone headers, favicon and identity section. Updated v2 specification to record selection. B/C and earlier concepts preserved as history.
+
+Logo skill Phase 7 applied: selected standard contour retained; heavier small-size cut, thinner reversed symbol, fixed horizontal/reversed and stacked signatures, custom path-only wordmark; one-color black/white, blue/ink variants; transparent PNGs, favicon ICO/SVG/16–48 PNG, Apple/PWA/maskable icons and deployment snippet. `USAGE.md` defines clear space, minimum sizes, allowed colors/backgrounds, typography, motion/voice principles and limits. Presentation has six consumer-app illustrative contexts; no real contact/people claim, cohue.tech used. No Pantone/CMYK print approval, AI/EPS/PDF or trademark clearance asserted. `FILES.json` records hashes. Skill-generated masters/exports are identity artifacts, not a production app manifest installation.
+
+Actual checks in `open-circle/CHECKS.md` and `AUDIT.txt`: all seven masters path-only; no SVG audit WARN/FAIL (99–100 heuristic scores with INFO); web PNG sizes/manifest references/board links validated, ZIP integrity passed; browser inspected size ladder, standard/small/reversed treatments, brand contexts and selected identity integration. Actual active-tab board widths 320/390/768/1024/1440 showed no document overflow and images loaded; viewport reset. Saved `previews/identity-in-design.png`. Existing v2 contrast colors unchanged. Both handoffs and git whitespace checked.
+
+Ownership/contracts/architecture unchanged; no agents, root dependencies, app source, backend/API/provider work, database/migrations or deployment. No product tests/build/typecheck warranted or claimed. Technical/dispatcher/account/real-device consent/media/performance gates remain. Immediate next action: user reviews full v2 with selected identity; explicit full system approval and separate product implementation authorization still required before build.
+
+- 2026-10-24T22:32:04Z: user selected Open Circle (A); prepared portable digital kit and usage guide, integrated it in isolated v2, recorded exact checks/limits and synchronized handoffs.
