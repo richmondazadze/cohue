@@ -1,6 +1,27 @@
-# Shared contracts version 0.1 proposal
+# Shared contracts version 0.1 approved baseline
 
-Status: reviewable design, not implemented Zod schemas, API routes or database migrations. Lead owns this contract; backend and frontend consume one future `src/contracts` package inside the monolith. User review is required before implementation. IDs are opaque UUID strings; timestamps RFC3339 UTC; language BCP-47; durations integer minutes; intervals half-open [start,end), start < end. Keep original timezone for editing/display. Payloads have explicit bounds and reject unknown command fields.
+Status: D1–D12 architectural resolutions approved by the user on 24 October 2026, subject to deployed durable-dispatcher validation. This is a documentation baseline, not implemented Zod schemas, API routes or database migrations. Feature implementation remains on hold until separately authorized. Lead owns shared contracts; backend and frontend consume one future `src/contracts` package inside the monolith. Frontend Engineer exclusively owns the design system, visual identity, typography, colors, responsive interface, animation architecture and frontend experience; they must present the complete design system in thread chat for explicit user approval before full frontend development. IDs are opaque UUID strings; timestamps RFC3339 UTC; language BCP-47; durations integer minutes; intervals half-open [start,end), start < end. Keep original timezone for editing/display. Payloads have explicit bounds and reject unknown command fields.
+
+## Approved decisions D1–D12
+
+Approved by the user on 24 October 2026 as the implementation baseline, subject to deployed validation of the durable job dispatcher. Approval settles the architectural recommendations; it does not authorize feature implementation, specialist activation, or full frontend development. The earlier readiness report is the historical audit; this decision record supersedes its “needs review” labels for D1–D12.
+
+| Decision | Approved baseline |
+| --- | --- |
+| D1 | Custom typed TypeScript state machine; Mastra remains an evaluated fallback, not the selected product orchestrator; no dual orchestration stack. |
+| D2 | DECLINED belongs to invitation status/event; affected missions enter REPLANNING while valid commitments can remain. |
+| D3 | Explicit opaque-token redemption establishes an invitation-scoped session. Bearer possession authorizes only that invitation and is not proof of real-world identity; GET never consumes the token. |
+| D4 | Carry acceptance across revisions only when material role/schedule/responsibility/group terms remain unchanged and hard constraints still hold; otherwise obtain renewed consent. |
+| D5 | Explicit UTC intervals with source timezone, required common overlap, distinct-person coverage, explicit team-size bounds and creator participation, stable lexicographic ranking. Numeric mission constraints are confirmed inputs rather than invented defaults. |
+| D6 | Confirmed taxonomy and synonym retrieval for semantic discovery; direct, complementary and reciprocal-cycle outputs; initial maximum cycle length 3 with bounded search. |
+| D7 | Bounded request-triggered ticks plus a real scheduled dispatcher, or a verified Vultr worker if necessary. Deployment must demonstrate unattended progress and restart recovery with browsers closed before durability is claimed. |
+| D8 | In-app participant inbox and creator-shared link/QR; persisted invitation-ready state. No claim of external delivery or autonomous outreach. |
+| D9 | Surface post-activation changes for explicit creator/member review; do not automatically dissolve, replan or overbook teams. Cross-mission capacity handling must preserve these constraints rather than assume unlimited availability. |
+| D10 | Remove raw audio after transcription; synthesized audio TTL 24h; opt-out removes public/discovery projections. Implement explicit deletion behavior before public use. |
+| D11 | 30 labeled synthetic profiles, including a 20-person matcher regression subset; isolate showcase from live data. |
+| D12 | Core text consent first, then validated English/Spanish/French text and audio for final Definition of Done; tiering does not waive multilingual requirements. |
+
+Remaining gates: explicit authorization to start feature implementation; user approval of the complete design system presented by the Frontend Engineer in thread chat before full frontend development; and deployed dispatcher validation. Provider/DB/account readiness and competition verification are technical/external checks, not reopened D1–D12 architecture decisions. No further D1–D12 user decision is currently required. Implementation details consistent with this baseline are owned by engineering; material changes must be raised for review.
 
 ## Core records and invariants
 
@@ -8,7 +29,7 @@ Status: reviewable design, not implemented Zod schemas, API routes or database m
 | --- | --- |
 | Participant | id, profileVersion, displayName, language, needs, interests, availability[], visibility {publicGraph,discoverable}, participationOptIn, createdAt. Session ownership remains server-only. Availability is explicit UTC intervals plus source timezone; never silently infer that missing availability means free. |
 | Capability | id, participantId, normalizedSkillId, category, level?, evidence?, normalizationVersion, confirmedByUser. User confirms semantic normalization; model confidence is not skill evidence. |
-| Mission | id, creatorId, objective, state, version, constraintsVersion, executionMode LIVE or SHOWCASE, constraints {minGroupSize,maxGroupSize,minOverlapMinutes,window,preferences}, createdAt. Proposed: creator counts toward team size only if selected as a participating member. |
+| Mission | id, creatorId, objective, state, version, constraintsVersion, executionMode LIVE or SHOWCASE, constraints {minGroupSize,maxGroupSize,minOverlapMinutes,window,preferences}, createdAt. Creator counts toward team size only if selected as a participating member. |
 | Requirement | id, missionId, normalizedSkillId/category, priority REQUIRED or OPTIONAL, minimumCoverage (distinct persons), outcome?, version. Resources have separate kind RESOURCE; public search results do not satisfy required HUMAN skills. |
 | Candidate | participantId, profileVersion, coveredRequirementIds, evidenceRefs, deterministic scoreComponents, exclusionReasons. Omit private attributes from public DTOs. |
 | Proposal | id, missionId, revision, constraintsVersion, members[{participantId,profileVersion,role,coverage,commitmentTermsHash}], commonWindow, feasibility {status,coverage,violations,searchStats}, algorithmVersion, rationale, createdAt. Immutable snapshot; edits create new revision. |
@@ -16,13 +37,13 @@ Status: reviewable design, not implemented Zod schemas, API routes or database m
 | Response | id, invitationId, participantId, action ACCEPT/DECLINE/COUNTER, reason?, availabilityProposal?, termsHash, idempotencyKey, createdAt. Authenticated invitee only. Counter never equals acceptance. |
 | Membership/task | membership unique (missionId,participantId), approvedRole, termsHash, joinedAt; task id, missionId, ownerMembershipId, description, status TODO/IN_PROGRESS/DONE, dueAt?, version. Only room members may mutate authorized task fields. |
 | Opportunity | id, missionId, sourceURL (http/https), title, retrievedAt, providerSearchId, relevanceEvidence, verificationStatus PUBLIC_UNVERIFIED. Never a membership or accepted partner. |
-| Audio | id, ownerId, purpose, language, status, expiry, private short-lived reference, canonicalTextHash. Proposal: discard raw upload after transcription; synthesized audio TTL 24h; retention policy pending review. |
+| Audio | id, ownerId, purpose, language, status, expiry, private short-lived reference, canonicalTextHash. Discard raw upload after transcription; synthesized audio TTL 24h; implement explicit deletion behavior before public use (D10). |
 
 Logical agents have typed request/output contracts: Director takes confirmed objective/constraints and returns requirements/unknowns; Scout takes gaps and visibility scope and returns internal candidates/public evidence; Strategist takes versioned requirements/candidates and returns feasible proposals or missing coverage/search-limit reason; Coordinator takes selected proposal/current responses and returns created invitations, waiting status, repair command or activation result. Each tool has a server-derived principal, missionId, runId, correlationId, deadline and remaining budget. Tools cannot accept caller-provided authority scopes. `recordConsent` is an authenticated command handler; the agent may observe/request it but cannot manufacture a participant response.
 
 ## Lifecycle normalization
 
-Mission states: DRAFT, PLANNING, DISCOVERING, PROPOSED, AWAITING_APPROVAL, REPLANNING, REPROPOSED, ACTIVATED, PAUSED_FOR_HUMAN, FAILED, CANCELLED, EXPIRED. PRD `DECLINED` is proposed as an invitation state/event rather than a mission state: one decline need not discard other accepted commitments. This is a clarification requiring review, not a silent PRD rewrite.
+Mission states: DRAFT, PLANNING, DISCOVERING, PROPOSED, AWAITING_APPROVAL, REPLANNING, REPROPOSED, ACTIVATED, PAUSED_FOR_HUMAN, FAILED, CANCELLED, EXPIRED. Under approved D2, PRD `DECLINED` is an invitation state/event rather than a mission state: one decline need not discard other accepted commitments.
 
 - DRAFT -> PLANNING: creator starts confirmed requirements; enqueue Director transactionally.
 - PLANNING -> DISCOVERING: valid requirement set; Scout/Strategist bounded steps.
@@ -33,13 +54,13 @@ Mission states: DRAFT, PLANNING, DISCOVERING, PROPOSED, AWAITING_APPROVAL, REPLA
 - AWAITING_APPROVAL -> ACTIVATED: atomic revalidation succeeds; create memberships, tasks and activation event once.
 - Active planning states -> PAUSED_FOR_HUMAN: missing input, exhausted bounded search or unrecoverable ambiguity; explicit authorized correction resumes at recorded checkpoint. No solution is not a provider crash.
 - Nonterminal states -> CANCELLED/EXPIRED under authorized cancellation/expiry policy; exhausted recoverable-error budget -> FAILED with reason and retry checkpoint.
-- ACTIVATED does not automatically reopen to replan. Proposed initial policy: schedule changes are surfaced for explicit creator/member review; post-activation withdrawal semantics need decision.
+- ACTIVATED does not automatically reopen to replan. Approved D9: schedule changes and withdrawal requests are surfaced for explicit creator/member review; do not automatically dissolve, replan or overbook teams.
 
 Accepted consent carries across revisions only if participant, role, schedule, responsibilities, canonical terms and relevant disclosed group conditions remain unchanged and hard constraints still hold. Otherwise revoke/supersede invitation and request renewed consent. Never keep approval simply because participantId matches.
 
 ## HTTP boundaries
 
-All PRD endpoints remain planned. Browser session uses secure HttpOnly SameSite cookie, TLS in deployment, same-origin/CSRF checks for mutations and rate limits. Proposed first-use token exchange establishes a narrow invitation session after explicit redemption; GET does not consume tokens, to tolerate link previews. This is capability-based access to one invite, not proof of real-world identity. Invitation URLs must not enter analytics, referrers or event logs; use no-store and no-referrer. Stronger identity or same-session participant binding is a review decision.
+All PRD endpoints remain planned. Browser session uses secure HttpOnly SameSite cookie, TLS in deployment, same-origin/CSRF checks for mutations and rate limits. Approved D3 first-use token exchange establishes a narrow invitation session after explicit redemption; GET does not consume tokens, to tolerate link previews. This is capability-based access to one invite, not proof of real-world identity. Invitation URLs must not enter analytics, referrers or event logs; use no-store and no-referrer. Stronger real-world identity verification is outside this approved baseline and would require a material contract change.
 
 Commands use `Idempotency-Key` for create/start/respond/activate and `expectedVersion` where state is modified. Server scopes keys to principal + operation; store payload digest and result transactionally. Same key/same payload returns prior result; changed payload is 409. Missing permission is 403 (or opaque 404 for private resources), expired/revoked invite 410, invalid input 422, stale revision 409, rate limit 429. Error body: `{error:{code,message,retryable,fieldErrors?},correlationId}`; success `{data,correlationId}`. No provider stack traces or secrets.
 
@@ -49,18 +70,18 @@ Commands use `Idempotency-Key` for create/start/respond/activate and `expectedVe
 | PATCH /api/participants/:id | expectedVersion, editable profile fields | updated scoped participant; invalidate affected proposals/jobs |
 | POST /api/missions | objective, language, initial constraints | 201 owned draft with version |
 | POST /api/missions/:id/parse | text, language, expectedVersion | reviewable structured extraction and unknowns; never launches automatically |
-| PATCH /api/missions/:id | expectedVersion, confirmed requirements/constraints | proposed addition needed for required creator corrections; draft update or new constraints revision |
+| PATCH /api/missions/:id | expectedVersion, confirmed requirements/constraints | planned addition for required creator corrections; draft update or new constraints revision |
 | POST /api/missions/:id/start | expectedVersion | 202 {missionId,runId,state,version}; enqueued work, not a completion claim |
 | GET /api/missions/:id/proposals | current snapshot | ranked feasible proposals and uncovered requirements for authorized creator |
-| POST /api/missions/:id/proposals/:proposalId/select | expectedVersion, revision | proposed explicit selection operation; server revalidates then creates invitations |
+| POST /api/missions/:id/proposals/:proposalId/select | expectedVersion, revision | planned explicit selection operation; server revalidates then creates invitations |
 | GET /api/missions/:id/events | after sequence or Last-Event-ID | authorized SSE or JSON event page; same redacted event contract |
 | GET /api/invitations/:token | opaque token | minimal invitation preview; no mutation or broad mission access |
-| POST /api/invitations/:token/redeem | explicit redemption | proposed narrow session exchange, hashed token verification and expiry check |
+| POST /api/invitations/:token/redeem | explicit redemption | approved narrow session exchange, hashed token verification and expiry check |
 | POST /api/invitations/:token/respond | action, termsHash, responseVersion, counter? | persisted response and new mission version; no caller-supplied participantId authority |
 | POST /api/missions/:id/activate | expectedVersion, proposalRevision | current creator/authorized runner command; transactional checks; 409 if approvals/coverage stale |
 | GET /api/missions/:id/room | membership scope | approved members/tasks/resources/brief; invited users see only own invitation before activation |
-| PATCH /api/missions/:id/tasks/:taskId | expectedVersion, status | proposed addition for required shared mission updates |
-| POST /api/missions/:id/retry or cancel | expectedVersion, checkpoint/reason | proposed recovery/cancellation controls for operator/creator; audited |
+| PATCH /api/missions/:id/tasks/:taskId | expectedVersion, status | planned addition for required shared mission updates |
+| POST /api/missions/:id/retry or cancel | expectedVersion, checkpoint/reason | planned recovery/cancellation controls for operator/creator; audited |
 | POST /api/voice/transcribe | bounded audio upload, purpose, language | transcript only; no consent or launch inferred from speech |
 | POST /api/voice/synthesize | authorized invitation/brief id, language | audio reference for approved canonical text; server resolves text |
 | GET /api/providers/health | authorized operator or coarse public readiness | redacted configured/degraded/unavailable status; not raw vendor errors |
@@ -83,6 +104,6 @@ Atomic boundaries: (1) mission + initial event, (2) state/version + next job + e
 
 Job: id, kind, missionId, checkpoint, inputVersion, status, leaseOwner, leaseExpiresAt, attempts, nextAttemptAt, dedupeKey, budgetRemaining. Claim under `FOR UPDATE SKIP LOCKED`, short transaction and fencing/version check on commit. External calls occur outside DB transaction; validated outputs commit only if versions still match. Leases expire for recovery, stale worker cannot commit. Idempotent effects give at-least-once execution; do not claim exactly-once external provider calls. Reuse cached validated provider output with input/version hash; cap retries and reserve budget before issuing calls.
 
-Wake-up decision is mandatory before build: request-triggered bounded ticks plus a real scheduled dispatcher or verified Vultr worker. Polling may safely request a tick for demo progress but cannot guarantee unattended recovery. A database row alone does not schedule execution. Prove background resumption with browsers closed. Expiry sweeper uses same dispatcher; no `setTimeout` survival assumption.
+Approved D7 dispatch strategy: request-triggered bounded ticks plus a real scheduled dispatcher, or a verified Vultr worker when necessary. The concrete dispatcher must pass deployment validation once that work is authorized; this approval does not assert that a dispatcher is implemented or validated. Polling may safely request a tick for demo progress but cannot guarantee unattended recovery. A database row alone does not schedule execution. Prove unattended progress, restart recovery, expired-lease recovery and stale-worker fencing in deployment with all browsers closed; preserve ordered events and prevent duplicate domain effects. Record actual deployment evidence before claiming durable execution. Expiry sweeper uses same dispatcher; no `setTimeout` survival assumption.
 
-Matching proposal: normalize multilingual skills into confirmed taxonomy, retrieve permitted candidates, then exhaustive bounded subsets/branch-and-bound at demo size. Enforce required distinct-person coverage, common overlap >= minOverlap, min/max distinct members, opt-in and snapshot validity. Rank feasible groups lexicographically by optional coverage, mutual needs benefit, interest relevance, preserved valid commitments, then smaller group and stable ID tie-break; weights and levels need review. A bounded search that stops early returns SEARCH_LIMIT_REACHED, never NO_SOLUTION or an optimum claim. Preserve selected accepted valid commitments as fixed candidates for repair; if infeasible, pause and request an explicit terms change. Reciprocal direct matches/cycles remain required engine outputs, proposed max cycle length 3 for bounded search; cycle membership also requires individual consent. Semantic discovery uses Gemini taxonomy normalization and confirmed skill synonym mappings for initial 30-person data; embeddings/vector search is a proposed later scale choice, not a silently required database extension.
+Approved matching baseline (D5–D6): normalize multilingual skills into confirmed taxonomy, retrieve permitted candidates, then exhaustive bounded subsets/branch-and-bound at demo size. Enforce required distinct-person coverage, common overlap >= minOverlap, min/max distinct members, opt-in and snapshot validity. Rank feasible groups lexicographically by optional coverage, mutual needs benefit, interest relevance, preserved valid commitments, then smaller group and stable ID tie-break. No new weighted ranking is implied; required skill levels and numeric constraints are explicit reviewed mission inputs. A bounded search that stops early returns SEARCH_LIMIT_REACHED, never NO_SOLUTION or an optimum claim. Preserve selected accepted valid commitments as fixed candidates for repair; if infeasible, pause and request an explicit terms change. Reciprocal direct matches/cycles remain required engine outputs, approved initial max cycle length 3 for bounded search; cycle membership also requires individual consent. Semantic discovery uses Gemini taxonomy normalization and confirmed skill synonym mappings for initial 30-person data; embeddings/vector search remains a later scale choice, not a silently required database extension.
