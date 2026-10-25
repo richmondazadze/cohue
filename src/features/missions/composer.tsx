@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -24,6 +23,7 @@ import {
   newIntervalDraft,
   type IntervalDraft,
 } from "@/features/shared/availability";
+import { QuickIdentity } from "@/features/participants/quick-identity";
 import { CoordinatorChat, type CoordinatorDraft } from "@/features/missions/coordinator";
 import { LANGUAGES, skillHint, skillLabel, type TaxonomySkill } from "@/features/shared/skills";
 
@@ -278,7 +278,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
     <div className="composer-workspace grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-8">
       <div className="flex min-w-0 flex-col gap-8">
         {!memory.participantId ? (
-          <Notice tone="pending" title={inShowcase ? "Choose the synthetic organizer" : "Create your profile first"}>
+          <Notice tone="pending" title={inShowcase ? "Choose the synthetic organizer" : "Who's organizing?"}>
             {inShowcase ? <>
               This installed showcase uses a synthetic organizer. It runs real matching and commands; no real person is enrolled or approves anything.
               <Button className="mt-3" size="sm" pending={preparingShowcase} pendingLabel="Checking synthetic profile…" onClick={async () => {
@@ -288,11 +288,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
                 try { await prepareShowcaseProfile(session.data); } catch (e) { setSessionError(e); }
                 finally { setPreparingShowcase(false); }
               }}>Use synthetic organizer profile</Button>
-            </> : <>
-              Missions are started from a participant profile on this device, even if you only organize.{" "}
-              <Link href="/join" target="_blank" className="underline">Join in a new tab</Link>
-              , then return here; this page notices your new profile and keeps your brief.
-            </>}
+            </> : <QuickIdentity language={draft.language} />}
           </Notice>
         ) : null}
         <Panel className="p-5 md:p-6">
