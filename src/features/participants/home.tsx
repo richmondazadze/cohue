@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState, type RefObject } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -237,7 +238,7 @@ function Home({
               <>
                 <div className="summary-person">
                   <span className="profile-initial" aria-hidden="true">
-                    {participant.data.displayName.slice(0, 1).toUpperCase()}
+                    {participant.data.avatarId ? (<Image src={`/avatars/${participant.data.avatarId}.png`} width={44} height={44} alt="" className="rounded-full"/>) : participant.data.displayName.slice(0, 1).toUpperCase()}
                   </span>
                   <div>
                     <h2>{participant.data.displayName}</h2>
@@ -245,7 +246,8 @@ function Home({
                   </div>
                 </div>
                 <dl className="m-0">
-                  <KeyValue label="Language">
+                  <KeyValue label="Username">{participant.data.username ? `@${participant.data.username}` : "Not chosen yet"}</KeyValue>
+                <KeyValue label="Language">
                     {languageName(participant.data.language)}
                   </KeyValue>
                   <KeyValue label="Skills offered">

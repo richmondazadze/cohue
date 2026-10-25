@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import {
   EXECUTION_POLICY,
   INITIAL_TAXONOMY,
-  type ProfileInputSchema,
+  ProfileInputSchema,
   type Scope,
 } from "@/contracts";
 import type { z } from "zod";
@@ -38,9 +38,20 @@ function validateProfile(profile: ProfileInput): void {
   if (Object.keys(errors).length) fail("INVALID_INPUT", "Profile references unknown skills.", errors);
 }
 
-export async function createParticipant(tx: Tx, session: SessionRecord, profile: ProfileInput) {
+// A transaction-scoped lock serializes a scoped username claim; every create/update uses this path.
+async function claimUsername(tx: Tx, session: SessionRecord, username: string | null, id: string) {
+  if (!username) return;
+  const [mode, showcase] = scopeColumns(session.scope);
+  await tx.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [`username:${mode}:${showcase}:${username}`]);
+  const taken = await query<{id:string}>("SELECT id FROM participants WHERE scope_mode=$1 AND showcase_id=$2 AND lower(profile->>'username')=$3 AND deleted_at IS NULL AND id<>$4 LIMIT 1", [mode,showcase,username,id],tx);
+  if (taken.length) fail("INVALID_INPUT", "Choose another username.", {username:["That username is already taken. Try a different one."]});
+}
+
+export async function createParticipant(tx: Tx, session: SessionRecord, rawProfile: z.input<typeof ProfileInputSchema>) {
+  const profile = ProfileInputSchema.parse(rawProfile);
   validateProfile(profile);
   const id = randomUUID();
+  await claimUsername(tx, session, profile.username, id);
   const [mode, showcase] = scopeColumns(session.scope);
   const [row] = await query<ParticipantRow>(
     `INSERT INTO participants(id, owner_principal_id, scope_mode, showcase_id, profile, profile_version, discoverable, public_graph, participation_opt_in, created_at)
@@ -84,6 +95,7 @@ export async function updateParticipant(
   validateProfile(profile);
   const row = await loadOwnedParticipant(id, session, tx, true);
   if (row.profile_version !== expectedVersion) fail("STALE_VERSION", "Profile changed since you loaded it.");
+  await claimUsername(tx, session, profile.username, id);
   const [updated] = await query<ParticipantRow>(
     `UPDATE participants SET profile=$2, profile_version=profile_version+1, discoverable=$3, public_graph=$4, participation_opt_in=$5
      WHERE id=$1 RETURNING *`,
@@ -188,6 +200,8 @@ export async function network(scope: Scope, limit: number) {
         id: r.id,
         kind: "participant" as const,
         label: r.profile.displayName,
+        username: r.profile.username ?? null,
+        avatarId: r.profile.avatarId ?? null,
         status: "SUGGESTED" as const,
         evidenceRefs: [],
       })),

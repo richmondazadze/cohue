@@ -55,10 +55,10 @@ export function InvitationGate({ token }: { token: string }) {
   }
   const p = preview.data;
   return (
-    <Panel data-tilt className="flex flex-col gap-5 p-5 md:p-8">
+    <Panel className="invitation-gate flex flex-col gap-5 p-5 md:p-8">
       <div>
         <p className="eyebrow">Invitation</p>
-        <h1 className="type-experience mt-2">Someone would like you to join a mission.</h1>
+        <h1 className="type-experience mt-2">A new possibility.<br/><em>Your choice.</em></h1>
         <p className="mt-3 max-w-[56ch] text-muted">
           Open it to read the full terms: the objective, your proposed role, responsibilities, schedule and who else is invited. Opening it does not accept anything.
         </p>

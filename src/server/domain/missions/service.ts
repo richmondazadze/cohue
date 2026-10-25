@@ -168,6 +168,7 @@ export async function buildSnapshot(mission: MissionRow, client: Tx, asOf?: AsOf
     client,
   );
   const names = new Map(people.map((p) => [p.id, p.profile.displayName]));
+  const identities = new Map(people.map(p=>[p.id,{username:p.profile.username??null,avatarId:p.profile.avatarId??null}]));
   const activated = mission.state === "ACTIVATED";
   const nodes: z.input<typeof MissionSnapshotSchema>["graph"]["nodes"] = [
     { id: mission.id, kind: "mission", label: dto.objective.slice(0, 120), status: activated ? "ACTIVATED" : "PENDING", evidenceRefs: [] },
@@ -194,7 +195,7 @@ export async function buildSnapshot(mission: MissionRow, client: Tx, asOf?: AsOf
   };
   for (const m of focus?.members ?? []) {
     const status = personStatus(m.participantId);
-    nodes.push({ id: m.participantId, kind: "participant", label: (names.get(m.participantId) ?? m.role).slice(0, 120), status, evidenceRefs: [] });
+    nodes.push({ id: m.participantId, kind: "participant", ...identities.get(m.participantId), label: (names.get(m.participantId) ?? m.role).slice(0, 120), status, evidenceRefs: [] });
     for (const reqId of m.coveredRequirementIds)
       edges.push({ id: uuidFrom(`cov:${focus!.id}:${m.participantId}:${reqId}`), source: m.participantId, target: reqId, kind: "COVERAGE", status: status === "UNCOVERED" ? "SUGGESTED" : status, proposalRevision: focus!.revision, eventId: null });
     edges.push({
@@ -478,7 +479,8 @@ export async function buildRoom(mission: MissionRow, client?: Tx) {
   const memberships = (await query<{ doc: unknown }>("SELECT doc FROM mission_memberships WHERE mission_id=$1 ORDER BY participant_id", [mission.id], client)).map((r) => r.doc);
   const tasks = (await query<{ doc: Record<string, unknown>; status: string; version: number }>("SELECT doc, status, version FROM mission_tasks WHERE mission_id=$1 ORDER BY id", [mission.id], client)).map((r) => ({ ...r.doc, status: r.status, version: r.version }));
   const reviews = (await query<{ doc: Record<string, unknown>; status: string; version: number }>("SELECT doc, status, version FROM review_requests WHERE mission_id=$1", [mission.id], client)).map((r) => ({ ...r.doc, status: r.status, version: r.version }));
-  return RoomSchema.parse({ mission: await missionDto(mission, client), memberships, tasks, opportunities: await loadOpportunities(mission.id, client), briefs: await missionBriefs(mission, { generate: false, client }), reviews });
+  const identities = await query<{id:string;displayName:string;username:string|null;avatarId:string|null}>(`SELECT p.id,p.profile->>'displayName' AS "displayName",p.profile->>'username' AS username,p.profile->>'avatarId' AS "avatarId" FROM participants p JOIN mission_memberships m ON m.participant_id=p.id WHERE m.mission_id=$1 AND p.deleted_at IS NULL`,[mission.id],client);
+  return RoomSchema.parse({ identities, mission: await missionDto(mission, client), memberships, tasks, opportunities: await loadOpportunities(mission.id, client), briefs: await missionBriefs(mission, { generate: false, client }), reviews });
 }
 
 // MEMBER: creator principal, owner of a member profile, or an invitation session of a member.

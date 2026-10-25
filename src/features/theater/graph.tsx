@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import "@xyflow/react/dist/base.css";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -22,7 +23,7 @@ import { nodeStatusCopy } from "./network-list";
 
 type Graph = MissionSnapshot["graph"];
 type GNode = Graph["nodes"][number];
-type NodeData = { label: string; status: GNode["status"]; kind: GNode["kind"] };
+type NodeData = { label: string; status: GNode["status"]; kind: GNode["kind"]; username?:string|null; avatarId?:GNode["avatarId"] };
 
 const SIZE: Record<GNode["kind"], { w: number; h: number }> = {
   mission: { w: 200, h: 72 },
@@ -117,10 +118,10 @@ const ParticipantNode = memo(function ParticipantNode({ data, selected }: NodePr
           selected && "ring-2 ring-action ring-offset-2",
         )}
       >
-        {initialsOf(data.label)}
+        {data.avatarId ? (<Image src={`/avatars/${data.avatarId}.png`} width={40} height={40} alt="" className="rounded-full"/>) : initialsOf(data.label)}
       </span>
       <span className="min-w-0">
-        <span className="block truncate text-sm font-medium">{data.label}</span>
+        <span className="block truncate text-sm font-medium">{data.label}{data.username ? ` · @${data.username}` : ""}</span>
         <span className={cx("block text-xs", s.tone === "approved" ? "text-approved" : s.tone === "pending" ? "text-pending" : s.tone === "declined" ? "text-declined" : "text-muted")}>
           {s.icon ?? (s.tone === "approved" ? "✓" : s.tone === "pending" ? "◷" : s.tone === "declined" ? "−" : "")} {s.label}
         </span>
@@ -194,7 +195,7 @@ function Canvas({ graph, compact }: { graph: Graph; compact: boolean }) {
           id: n.id,
           type: n.kind,
           position: manualPositions[n.id] ?? positions.get(n.id) as { x: number; y: number },
-          data: { label: n.label, status: n.status, kind: n.kind },
+          data: { label: n.label, status: n.status, kind: n.kind, username:n.username, avatarId:n.avatarId },
           ariaLabel: `${n.kind} ${n.label}: ${nodeStatusCopy[n.status].label}`,
           draggable: true,
           className: reduced ? undefined : "cohue-node-enter",

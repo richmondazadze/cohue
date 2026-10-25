@@ -1,4 +1,5 @@
 "use client";
+import { PlaybackMeter } from "@/components/voice/playback-meter";
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ApiOutput, Invitation } from "@/contracts";
@@ -126,6 +127,7 @@ export function Listen({
 }) {
   const synth = useCommand("synthesize");
   const [src, setSrc] = useState<string | null>(null);
+  const [playing, setPlaying] = useState(false);
   const [failure, setFailure] = useState<unknown>(null);
   const audio = useRef<HTMLAudioElement>(null);
   const mediaRequest = useRef<AbortController | null>(null);
@@ -224,20 +226,26 @@ export function Listen({
       </Button>
       {src ? (
         // User-initiated: plays after the explicit Listen click; controls expose pause/seek/elapsed.
+        <>
+        <PlaybackMeter audio={audio} playing={playing}/>
         <audio
           ref={audio}
           src={src}
           controls
           autoPlay={active}
           className="w-full max-w-xs"
+          onPause={() => setPlaying(false)}
+          onEnded={() => setPlaying(false)}
+          onError={() => { setPlaying(false); setFailure(new Error("Audio could not play. The text remains available.")); }}
           onPlay={() => {
             if (expiresAt.current <= Date.now()) {
               audio.current?.pause();
               setSrc(null);
               setFailure(new Error("This audio expired. Request a fresh version or use the text."));
-            } else onActivate(id);
+            } else { setPlaying(true); onActivate(id); }
           }}
         />
+        </>
       ) : null}
       {failure ? (
         <ErrorNotice

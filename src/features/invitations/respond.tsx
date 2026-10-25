@@ -98,7 +98,7 @@ function ResponseView({ detail }: { detail: Detail }) {
   const localized = detail.localized;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="invitation-decision flex flex-col gap-6">
       <Panel className="p-5 md:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <p className="eyebrow">Your invitation</p>
@@ -121,7 +121,7 @@ function ResponseView({ detail }: { detail: Detail }) {
           </KeyValue>
           <KeyValue label="Answer by">{formatTimestamp(inv.expiresAt)}</KeyValue>
         </dl>
-        <section className="mt-6" aria-labelledby="resp-h">
+        <section className="invitation-responsibilities mt-6" aria-labelledby="resp-h">
           <h2 id="resp-h" className="type-panel">Responsibilities</h2>
           <ul className="mt-2 max-w-[60ch] list-disc pl-5">
             {t.responsibilities.map((r, i) => (
@@ -131,7 +131,7 @@ function ResponseView({ detail }: { detail: Detail }) {
             ))}
           </ul>
         </section>
-        <section className="mt-6" aria-labelledby="group-h">
+        <section className="invitation-group mt-6" aria-labelledby="group-h">
           <h2 id="group-h" className="type-panel">Who else is invited</h2>
           <p className="type-meta text-muted">Disclosed as part of these terms. Each person decides independently.</p>
           <ul className="mt-2 flex list-none flex-col gap-1 p-0">
@@ -284,7 +284,7 @@ function DeclineSheet({
 }) {
   const [reason, setReason] = useState("");
   return (
-    <Sheet
+    <Sheet className="participant-sheet" subtle
       open={open}
       onOpenChange={onOpenChange}
       title="Decline this invitation"
@@ -337,7 +337,7 @@ function CounterSheet({
   const parsed = slots.map((s) => ({ key: s.key, r: intervalFromDraft(s) }));
   const valid = parsed.every((p) => p.r.ok);
   return (
-    <Sheet
+    <Sheet className="participant-sheet" subtle
       open={open}
       onOpenChange={onOpenChange}
       title="Suggest a different time"

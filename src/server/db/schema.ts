@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
@@ -52,6 +53,7 @@ export const participants = pgTable(
   (t) => [
     index("participants_scope").on(t.scopeMode, t.showcaseId),
     index("participants_owner").on(t.ownerPrincipalId),
+    uniqueIndex("participants_scoped_username").on(t.scopeMode,t.showcaseId,sql`lower(${t.profile}->>'username')`).where(sql`${t.deletedAt} IS NULL AND ${t.profile}->>'username' IS NOT NULL`),
   ],
 );
 

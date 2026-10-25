@@ -55,7 +55,11 @@ export const CapabilitySchema = CapabilityInputSchema.extend({
   id: IdSchema,
   participantId: IdSchema,
 });
+export const UsernameSchema = z.string().trim().toLowerCase().regex(/^[a-z][a-z0-9_]{2,23}$/, "Use 3–24 letters, numbers or underscores, starting with a letter.");
+export const AvatarIdSchema = z.enum(["3d_1", "3d_2", "3d_3", "3d_4", "3d_5"]);
 export const ProfileInputSchema = z.strictObject({
+  username: UsernameSchema.nullable().default(null),
+  avatarId: AvatarIdSchema.nullable().default(null),
   displayName: LabelSchema,
   language: LanguageSchema,
   needs: z.array(SkillIdSchema).max(20),

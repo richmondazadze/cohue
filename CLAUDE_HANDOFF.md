@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T14:10:59.544Z (America/Chicago display dates apply).
+Last update: 2026-10-25T14:18:46.069Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1118,3 +1118,16 @@ npm run check PASS for shell/voice/composer code (foundation/lint/types/tests/bu
 25 October2026, preceding baselinedc2cbde. Full objective remains active and incomplete. Network view now pairs a committed agent/tool event chain with the canvas/list. Only events up to snapshotSequence render; historical replay passes bounded upTo events and explicit historical wording. No thoughts, success or consent invented. Theater scope label corrected to Live versus Synthetic showcase. Reduced3D cue transforms to small translation/fade. Talent nodes now have bordered reading surfaces and can be dragged to local positions; this layout action does not call mutation endpoints or edit relationships. Existing zoom/fit and list remain.
 
 npm run check PASS, audit zero vulnerabilities. New contract-fixture agent-board browser test PASS: mission creation/discovery, committed event projection, graph nodes and dragging without proposal selection. Existing core-loop suite PASS at390/1280 plus API-unavailable case:4/4 total. Local production server8796 used. No real DB/provider/deployed acceptance claim. Shared-shell screenshot review and full remaining route refinement/identity persistence/voice playback still pending per implementation plan. No push/deploy or other-chat messages. Both handoffs appended via serialized script.
+
+
+## Milestone from docs/status/frontend/FULL_REDESIGN_IDENTITY_ROOM_SLICE.md
+
+# Full redesign — identity, invitation and Room slice
+
+25 October2026. Preceding baselinea671a9c. User explicitly authorized narrow shared identity contracts/backend persistence during this turn. Added normalized3–24-character username and allowlisted3D avatarId to profile contracts, backward-compatible null defaults. New profiles choose username/avatar in About you; JSON profile persistence uses current create command. Transaction advisory locks serialize scoped username claims; migration0003 backfills nulls and adds partial scoped unique index for nondeleted profiles; Drizzle schema records it. Room authorized identity projection and graph identity metadata use persisted username/avatar; profile/team/graph render them. createParticipant validates raw input internally so older direct test callers remain compatible. No invented unique identity for legacy profiles.
+
+Invitation gate/decision, responsibility/group sections, Room header/kickoff and404/error recovery received specific reading surfaces and hierarchy. Invitation/translation sheets opt into existing subtle sheet treatment. Reviewed audio player now displays actual analyser-driven intensity and paused/playing state, with reduced-motion parity; text/native audio controls remain. No automatic consent or speech generation introduced.
+
+Validation: final npm run check PASS (114 tests passed,22 skipped,types/lint/build); audit zero vulnerabilities;17 production-build fixture browser regressions PASS on isolated final results (/tmp/cohue-identity-verified.log), covering participant steps at390/1440, voice, mission loop390/1280, translation and Room review continuity. Earlier overlapping test runs wrote conflicting output; isolated final rerun is authoritative. Database connection probe failed after bounded timeout; migration was NOT applied and DB uniqueness/concurrency acceptance remains unverified. No deployment/push. Both handoffs synchronized.
+
+Full goal remains active: invitation identity projection, existing-profile identity editor, actual migration/DB tests, coordinator-speaking visuals, remaining screen-by-screen visual audit and requirement-complete browser evidence still outstanding. See full-redesign/IMPLEMENTATION_PLAN.md and IDENTITY_INTEGRATION.md. Do not mistake this slice for full acceptance. No other chats contacted.

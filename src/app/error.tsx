@@ -6,9 +6,9 @@ import { PageFrame } from "@/components/shell/app-shell";
 export default function GlobalError({ reset }: { error: Error; reset: () => void }) {
   return (
     <PageFrame width="reading">
-      <p className="eyebrow">Something went wrong</p>
+      <div className="workspace-recovery"><p className="eyebrow">Let’s find your way back</p>
       <h1 className="type-experience mt-2">This view could not be shown.</h1>
-      <p className="mt-3 text-muted">Nothing was confirmed on your behalf. Try again, or go back home.</p>
+      <p className="mt-3 text-muted">We could not load this page. Try again, or return home. If you were saving or responding, check its latest status before trying again.</p>
       <div className="mt-6 flex gap-3">
         <Button variant="primary" onClick={reset}>
           Try again
@@ -16,6 +16,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
         <ButtonLink href="/" variant="tertiary">
           COHUE home
         </ButtonLink>
+      </div>
       </div>
     </PageFrame>
   );

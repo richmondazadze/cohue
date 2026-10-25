@@ -1,5 +1,7 @@
 import { z } from "zod";
 import {
+  AvatarIdSchema,
+  UsernameSchema,
   GroupProposalSchema,
   InvitationSchema,
   MissionMembershipSchema,
@@ -19,7 +21,10 @@ import {
   TimestampSchema,
   VersionSchema,
 } from "./primitives";
+export const ParticipantIdentitySchema = z.strictObject({id:IdSchema,displayName:LabelSchema,username:UsernameSchema.nullable(),avatarId:AvatarIdSchema.nullable()});
 export const GraphNodeSchema = z.strictObject({
+  username: UsernameSchema.nullable().optional(),
+  avatarId: AvatarIdSchema.nullable().optional(),
   id: IdSchema,
   kind: z.enum(["participant", "mission", "requirement", "opportunity"]),
   label: LabelSchema,
@@ -147,6 +152,7 @@ export const RoomSchema = z
   .strictObject({
     mission: MissionSchema,
     memberships: z.array(MissionMembershipSchema).min(1).max(8),
+    identities: z.array(ParticipantIdentitySchema).max(8).optional(),
     tasks: z.array(MissionTaskSchema).max(100),
     opportunities: z.array(ExternalOpportunitySchema).max(30),
     briefs: z.array(LocalizedTextSchema).max(20),

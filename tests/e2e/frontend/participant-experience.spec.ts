@@ -90,6 +90,7 @@ for (const width of [390, 1440]) {
       "Enter the name others will see.",
     );
     await page.getByLabel("Display name", { exact: true }).fill("Ari UI test");
+    await page.getByLabel("Username", {exact:true}).fill("ari_ui_test");
     await screenshot(page, `join-about-${width}`);
     await page.getByRole("button", { name: "Continue", exact: true }).click();
     await page.getByRole("textbox", { name: "Find a skill" }).fill("design");
@@ -292,6 +293,7 @@ test("AI draft remains review-only and errors retain written input", async ({
   await expect(page.getByLabel("Display name", { exact: true })).toHaveValue(
     "Draft name",
   );
+  await page.getByLabel("Username", {exact:true}).fill("draft_user");
   fail = true;
   await page.getByRole("button", { name: "Draft my profile" }).click();
   await expect(
@@ -395,6 +397,7 @@ test("drafting and saving expose pending states; save failure retains review", a
   await expect(page.getByLabel("Display name", { exact: true })).toHaveValue(
     "Reviewed synthetic profile",
   );
+  await page.getByLabel("Username", {exact:true}).fill("pending_user");
   for (let i = 0; i < 3; i++)
     await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Save profile", exact: true }).click();

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -38,6 +39,8 @@ import {
 type Offered = { level: number | null; evidence: string };
 type Draft = {
   displayName: string;
+  username: string;
+  avatarId: "3d_1" | "3d_2" | "3d_3" | "3d_4" | "3d_5";
   language: string;
   offered: Record<string, Offered>;
   confirmSkills: boolean;
@@ -64,6 +67,7 @@ const STEP_COPY = [
 
 function validate(d: Draft) {
   const errors: Record<string, string> = {};
+  if (!/^[a-z][a-z0-9_]{2,23}$/.test(d.username.trim().toLowerCase())) errors.username = "Choose 3–24 letters, numbers or underscores, starting with a letter.";
   if (!d.displayName.trim())
     errors.displayName = "Enter the name others will see.";
   else if (d.displayName.trim().length > 120)
@@ -83,6 +87,8 @@ function toInput(
 ): ApiInput<"createParticipant"> {
   return {
     displayName: d.displayName.trim(),
+    username: d.username.trim().toLowerCase(),
+    avatarId: d.avatarId,
     language: d.language,
     needs: d.needs,
     interests: d.interests,
@@ -179,6 +185,8 @@ function OnboardingForm({ skills }: { skills: TaxonomySkill[] }) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [draft, setDraft] = useState<Draft>(() => ({
     displayName: "",
+    username: "",
+    avatarId: "3d_1",
     language:
       ["en", "es", "fr"].find((l) => navigator.language?.startsWith(l)) ?? "en",
     offered: {},
@@ -251,7 +259,7 @@ function OnboardingForm({ skills }: { skills: TaxonomySkill[] }) {
   const stepErrors = (i: number) =>
     Object.keys(errors).filter((k) =>
       i === 0
-        ? k === "displayName"
+        ? k === "displayName" || k === "username"
         : i === 1
           ? k === "confirmSkills"
           : i === 2
@@ -434,7 +442,9 @@ function OnboardingForm({ skills }: { skills: TaxonomySkill[] }) {
                       </Notice>
                     ) : null}
                   </div>
-                  <Field
+                  <fieldset className="avatar-picker"><legend className="type-panel">Choose your avatar</legend><p className="type-meta text-muted">A familiar face across your profile and missions.</p><div role="group" aria-label="Choose your avatar">{(["3d_1","3d_2","3d_3","3d_4","3d_5"] as const).map((id,i)=><button key={id} type="button" aria-pressed={draft.avatarId===id} aria-label={`Avatar ${i+1}`} onClick={()=>set({avatarId:id})}><Image src={`/avatars/${id}.png`} width={64} height={64} alt=""/></button>)}</div></fieldset>
+<Field label="Username" helper="3–24 letters, numbers or underscores. Unique within your live or showcase workspace." error={err("username")}>{f=><TextInput id={f.id} aria-describedby={f.describedBy} invalid={f.invalid} value={draft.username} autoComplete="username" maxLength={24} onChange={e=>set({username:e.target.value.toLowerCase()})}/>}</Field>
+<Field
                     label="Display name"
                     helper="Shown to mission creators and teammates only when you are proposed or invited."
                     error={err("displayName")}
@@ -869,6 +879,7 @@ function ReviewList({
           : "rounded-panel border border-line-panel bg-surface px-5",
       )}
     >
+      <KeyValue label="Username">{input.username ? `@${input.username}` : "Not chosen"}</KeyValue>
       <KeyValue label="Name">
         {input.displayName || <span className="text-muted">Not entered</span>}
       </KeyValue>

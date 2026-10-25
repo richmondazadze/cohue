@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ApiOutput } from "@/contracts";
@@ -75,7 +76,7 @@ function RoomView({ room }: { room: Room }) {
       <ul className="m-0 list-none divide-y divide-line-subtle rounded-field border border-line-panel bg-surface p-0">
         {room.memberships.map((m) => (
           <li key={m.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
-            <span className="font-medium">{m.approvedRole}</span>
+            <span className="flex items-center gap-3">{room.identities?.find(p=>p.id===m.participantId)?.avatarId ? (<Image width={36} height={36} className="rounded-full" alt="" src={`/avatars/${room.identities.find(p=>p.id===m.participantId)!.avatarId}.png`}/>) : null}<span><strong className="block font-medium">{room.identities?.find(p=>p.id===m.participantId)?.displayName ?? m.approvedRole}</strong><span className="block text-xs text-muted">{m.approvedRole}{room.identities?.find(p=>p.id===m.participantId)?.username ? ` · @${room.identities.find(p=>p.id===m.participantId)!.username}` : ""}</span></span></span>
             <span className="type-meta text-muted">✓ Joined {formatTimestamp(m.joinedAt)}</span>
           </li>
         ))}
@@ -131,8 +132,8 @@ function RoomView({ room }: { room: Room }) {
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <header data-tilt className="rounded-panel border-2 border-activated bg-surface p-5 outline-2 outline-offset-2 outline-activated md:p-6">
+    <div className="mission-room-workspace flex flex-col gap-6">
+      <header className="mission-room-header rounded-panel border border-line-panel bg-surface p-5 md:p-6">
         <p className="eyebrow">Mission Room</p>
         <h1 className="type-experience mt-2 break-words">{room.mission.objective}</h1>
         <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -184,7 +185,7 @@ function KickoffPlan({ missionId }: { missionId: string }) {
     retry: queryRetry,
   });
   return (
-    <section aria-labelledby="kickoff-h" className="mb-8 rounded-field border border-line-panel bg-subtle p-4 md:p-5">
+    <section aria-labelledby="kickoff-h" className="kickoff-plan mb-8 rounded-field border border-line-panel bg-subtle p-4 md:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 id="kickoff-h" className="type-panel flex items-center gap-2">
           <span aria-hidden className="grid size-6 place-items-center rounded-full bg-action text-xs font-semibold text-white">C</span>
