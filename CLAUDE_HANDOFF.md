@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T12:13:16.954Z (America/Chicago display dates apply).
+Last update: 2026-10-25T12:33:03.371Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -982,3 +982,18 @@ Supersedes the "Meta UNVERIFIED" line in VOICE_KICKOFF_META.md.
 - Not re-verified after 04b20e4: kickoff plan on production (last verified on Gemini at 351ea0e) and Meta-drafted kickoff plans.
 
 For Codex: the composer now depends on two LLM providers plus ElevenLabs for optional voice. If latency matters for the demo, watch Gemini health; Meta covers it. Unit 93/93, lint, types pass at 04b20e4; hosted CI not checked for b0dcb31/04b20e4.
+
+
+## Milestone from docs/status/frontend/LANDING_OVERHAUL_REFERENCE.md
+
+# Landing overhaul — first reference replica
+
+25 October 2026, preceding baseline 0232b6f. User explicitly lifts earlier visual constraints for a new UI overhaul and asks first to scout, copy a landing template's supplied code/prompt and replicate it exactly. User prohibits contacting other chats; none contacted. Scope this milestone: standalone landing reference replica only, then wait for next direction.
+
+Scouted user-opened MotionSites free landing catalog, Aura featured/recent catalog and full previews, Efferd block catalog and Refero web-app directory. Selected MATTER Kinetic 3D Experience by Aksonvady Phomhome: https://www.aura.build/templates/matter-immersive (Use for Free), original https://matter-immersive.aura.build/. Aura Aniwall candidate was Pro-only, not copied. Used Aura's provided Copy recreation prompt/Copy code controls, no subscription/trial/generation credit/purchase or gated-source access.
+
+Saved exact 92,069-character original export plus 5,001-character prompt and source SHA/provenance in docs/status/frontend/landing-overhaul/reference/. Standalone public/landing-lab/matter/index.html reproduces original typography, wording, palette, live Three.js/glass geometry, scroll chapters, gallery/drawer, typography corridor, physics lab and finale. Two narrow nonvisual corrections in preview only: source menu toggle passed undefined as forced class state (never opened); synchronize aria-hidden/expanded/inert. Untouched export preserved. No COHUE rebranding/business claims invented; no existing app route/identity/assets/contracts/config/dependency changes, no push/deploy.
+
+Actual local CUA at http://127.0.0.1:8795/matter/: live WebGL hero rendered; corrected menu open/close, gallery and object-detail drawer, physics and typography chapter content observed.390px document width390/canvas390; desktop/mobile screenshots in owned artifacts. Script syntax/import-map/hash checks recorded; foundation/pairedhandoffs/diff checked. No full app build/test suite warranted or run for this isolated static reference; not integrated product acceptance. Original touch targets/accessibility, remote CDNs/fonts/gallery assets and motion/performance limitations documented in landing-overhaul/README.md; no60fps or physical-device certification. Original email/footer text remains template reference content.
+
+Static preview server started only on127.0.0.1:8795, serving public/landing-lab; no DB/worker/provider secrets, no shared.next/dev server. Existing product home/flows untouched. User can review complete local replica before instructing COHUE adaptation. Do not expand into other screens or message chats without user instruction. Bothhandoffs serialized with this milestone.

@@ -1,0 +1,30 @@
+{
+  "template": "MATTER Kinetic 3D Experience",
+  "creator": "Aksonvady Phomhome",
+  "catalog": "https://www.aura.build/templates/matter-immersive",
+  "preview": "https://matter-immersive.aura.build/",
+  "export": "Aura provided Copy code control; Use for Free shown on template page",
+  "scope": "Exact isolated reference replica; not yet COHUE rebranding or production home replacement",
+  "sha256": "6a4becc3f389ca30cd10eea6c94825000ebc5f94ce7a894fbe6e046256b8167d",
+  "bytes": 92102,
+  "modified": false,
+  "externalDependencies": [
+    "Three.js 0.170.0 via jsDelivr",
+    "Tailwind CDN",
+    "Google Fonts Archivo + Instrument Serif",
+    "Creator supplied Supabase gallery assets"
+  ],
+  "limits": [
+    "No payment/subscription activated",
+    "External assets kept at original URLs",
+    "Free template reuse observed; no broader ownership/trademark claim",
+    "Accessibility/performance are inherited template characteristics, not production certification"
+  ],
+  "replicaPath": "public/landing-lab/matter/index.html",
+  "replicaSha256": "1f12c9b4093329847cd65f5afffccbd6effb60435a84830fa52d0036b0b71ffa",
+  "sourceExportPath": "docs/status/frontend/landing-overhaul/reference/matter-export.html",
+  "replicaDeltas": [
+    "Repair inherited classList.toggle(force=undefined) menu bug",
+    "Synchronize menu aria-hidden, aria-expanded and inert state; no visual design edits"
+  ]
+}
