@@ -104,8 +104,8 @@ export async function updateParticipant(
 
 async function notifyAffectedMissions(tx: Tx, participantId: string, profileVersion: number, correlationId: string) {
   const missions = await query<MissionRow>(
-    `SELECT DISTINCT m.* FROM missions m JOIN invitations i ON i.mission_id=m.id
-     WHERE i.participant_id=$1 AND m.state NOT IN ('CANCELLED','EXPIRED','FAILED') FOR UPDATE OF m`,
+    `SELECT * FROM missions WHERE id IN (SELECT mission_id FROM invitations WHERE participant_id=$1)
+       AND state NOT IN ('CANCELLED','EXPIRED','FAILED') ORDER BY id FOR UPDATE`,
     [participantId],
     tx,
   );

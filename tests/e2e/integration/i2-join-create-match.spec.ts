@@ -6,6 +6,7 @@ import {
   join,
   missionInput,
   requireBackend,
+  retire,
   waitForState,
   type Person,
 } from "./support/journey";
@@ -21,22 +22,8 @@ test.beforeAll(async () => {
 });
 test.beforeEach(() => test.skip(unavailable !== null, unavailable ?? ""));
 test.afterAll(async () => {
-  for (const person of people) {
-    // Deletion revokes discovery so later runs on the same database do not match stale test people.
-    await person.device
-      .call("getParticipant", { params: { id: person.participantId } })
-      .then((r) =>
-        r.ok
-          ? person.device.call("deleteParticipant", {
-              params: { id: person.participantId },
-              input: { expectedVersion: r.data.profileVersion },
-              idempotencyKey: newIdempotencyKey(),
-            })
-          : undefined,
-      )
-      .catch(() => undefined);
-    await person.device.close();
-  }
+  await retire(people);
+  for (const person of people) await person.device.close();
 });
 
 test("join -> create -> start persists a feasible deterministic proposal", async () => {

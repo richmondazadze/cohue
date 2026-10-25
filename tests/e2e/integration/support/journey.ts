@@ -7,6 +7,7 @@ import type {
   MissionSnapshot,
 } from "@/contracts";
 import { Device } from "./device";
+import { newIdempotencyKey } from "./contract-client";
 
 // Shared journey steps for I2/I3. Runs against a real backend only; there is no fixture fallback.
 export const baseURL =
@@ -191,4 +192,21 @@ export async function openOnSecondDevice(
   });
   expect(detail.invitation.termsHash).toBe(invitation.termsHash);
   return { phone, invitation: detail.invitation };
+}
+
+// Soft-delete this run's profiles so later runs on the same database never match them.
+export async function retire(people: Person[]): Promise<void> {
+  for (const person of people) {
+    const current = await person.device
+      .call("getParticipant", { params: { id: person.participantId } })
+      .catch(() => null);
+    if (current?.ok)
+      await person.device
+        .call("deleteParticipant", {
+          params: { id: person.participantId },
+          input: { expectedVersion: current.data.profileVersion },
+          idempotencyKey: newIdempotencyKey(),
+        })
+        .catch(() => undefined);
+  }
 }

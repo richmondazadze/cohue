@@ -11,7 +11,9 @@ import {
   pendingInvitation,
   progressTimeoutMs,
   requireBackend,
+  retire,
   waitForState,
+  type Person,
 } from "./support/journey";
 
 // I3: second-device consent, decline -> genuine repair -> reconsent -> transactional activation -> room/task.
@@ -19,12 +21,14 @@ test.describe.configure({ mode: "serial", timeout: 600_000 });
 
 let unavailable: string | null = null;
 const devices: Device[] = [];
+const people: Person[] = [];
 test.beforeAll(async () => {
   unavailable = await backendStatus();
   if (unavailable && requireBackend) throw new Error(unavailable);
 });
 test.beforeEach(() => test.skip(unavailable !== null, unavailable ?? ""));
 test.afterAll(async () => {
+  await retire(people);
   for (const device of devices) await device.close();
 });
 
@@ -33,7 +37,7 @@ test("decline triggers repair, changed group needs reconsent, activation opens t
   const designer = await join("designer", "design", 3, "es");
   const builderA = await join("builder-a", "hardware", 4, "fr");
   const builderB = await join("builder-b", "hardware", 3, "en");
-  const people = [creator, designer, builderA, builderB];
+  people.push(creator, designer, builderA, builderB);
   devices.push(...people.map((p) => p.device));
   const byId = new Map(people.map((p) => [p.participantId, p]));
 
