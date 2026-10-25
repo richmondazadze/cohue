@@ -109,15 +109,15 @@ test("coordinator conversation and voice transcription fail honestly and keep ty
 });
 
 test("showcase mode is opt-in and visibly marked on every page", async ({ page }) => {
-  await page.goto(`${base}/`);
+  await page.goto(`${base}/app`);
   await page.getByRole("button", { name: /Explore the synthetic showcase/ }).click();
   await expect(page).toHaveURL(/\/missions\/new$/);
-  await expect(page.getByText("Showcase · synthetic")).toBeVisible();
-  await expect(page.getByText(/Synthetic showcase\./).first()).toBeVisible();
+  await expect(page.getByText("Synthetic showcase", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Synthetic showcase · Profiles and missions/)).toBeVisible();
   await shot(page, "showcase-composer-1280");
   await page.goto(`${base}/join`);
-  await expect(page.getByText("Showcase · synthetic")).toBeVisible();
+  await expect(page.getByText("Synthetic showcase", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Return to live mode" }).click();
-  await expect(page.getByText("Live", { exact: true })).toBeVisible({ timeout: 10_000 });
-  await expect(page.getByText("Showcase · synthetic")).toHaveCount(0);
+  await expect(page.getByText("Live workspace", { exact: true })).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByText("Synthetic showcase", { exact: true })).toHaveCount(0);
 });
