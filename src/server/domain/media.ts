@@ -36,9 +36,31 @@ type LocalizationRow = { id: string; version: number; doc: LocalizedText };
 
 // Machine translation is REVIEW_REQUIRED; it never changes the canonical terms or the consent hash.
 export async function localizeInvitation(row: InvitationRow, missionLanguage: string): Promise<LocalizedText[]> {
-  if (base(row.language) === base(missionLanguage) || !geminiConfigured()) return [];
   const canonical = canonicalInvitationText(row);
   const hash = sha(canonical);
+  // The binding original is listed first (same language, APPROVED) so clients can bind playback to its hash.
+  const original = LocalizedTextSchema.parse({
+    id: uuidFromHash(`${row.id}:${hash}`),
+    sourceId: row.id,
+    sourceVersion: row.proposal_revision,
+    version: 1,
+    canonicalTextHash: hash,
+    language: missionLanguage,
+    originalLanguage: missionLanguage,
+    text: canonical,
+    status: "APPROVED",
+    generatedAt: iso(row.created_at),
+  });
+  if (base(row.language) === base(missionLanguage) || !geminiConfigured()) return [original];
+  return [original, ...(await translate(row, missionLanguage, canonical, hash))];
+}
+
+const uuidFromHash = (seed: string) => {
+  const h = createHash("sha256").update(seed).digest("hex");
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-${"89ab"[parseInt(h[16], 16) % 4]}${h.slice(17, 20)}-${h.slice(20, 32)}`;
+};
+
+async function translate(row: InvitationRow, missionLanguage: string, canonical: string, hash: string): Promise<LocalizedText[]> {
   const existing = await query<LocalizationRow>(
     "SELECT id, version, doc FROM localizations WHERE source_id=$1 AND doc->>'canonicalTextHash'=$2 AND doc->>'language'=$3",
     [row.id, hash, row.language],
