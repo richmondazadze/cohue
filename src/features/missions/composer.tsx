@@ -1,9 +1,11 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CreateMissionSchema, type ApiInput } from "@/contracts";
 import { Button } from "@/components/ui/button";
+import { RecordControl } from "@/components/voice/record-control";
 import { Checkbox, Field, Select, TextArea, TextInput } from "@/components/ui/field";
 import { ErrorNotice, Notice } from "@/components/ui/notice";
 import { KeyValue, Panel, Skeleton } from "@/components/ui/surface";
@@ -274,6 +276,15 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12">
       <div className="flex min-w-0 flex-col gap-8">
+        {!memory.participantId ? (
+          <Notice tone="pending" title="Create your profile first">
+            Missions are started from a participant profile on this device, even if you only organize.{" "}
+            <Link href="/join" target="_blank" className="underline">
+              Join in a new tab
+            </Link>
+            , then return here; this page notices your new profile and keeps your brief.
+          </Notice>
+        ) : null}
         <Panel className="p-5 md:p-6">
           <Field
             label="Describe the mission in your own words"
@@ -303,6 +314,14 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
               Draft structured brief
             </Button>
             <span className="type-meta text-muted">Or fill in the fields below directly.</span>
+          </div>
+          <div className="mt-3">
+            <RecordControl
+              purpose="MISSION"
+              language={draft.language}
+              label="Describe it by voice"
+              onTranscript={(t) => set({ intention: [draft.intention.trim(), t].filter(Boolean).join("\n").slice(0, 2000) })}
+            />
           </div>
           {extract.isError ? (
             <ErrorNotice className="mt-4" error={extract.error} title="Could not draft from text. Your text is kept; fill the fields below." />

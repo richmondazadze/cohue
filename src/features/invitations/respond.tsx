@@ -8,13 +8,13 @@ import { ErrorNotice, Notice } from "@/components/ui/notice";
 import { KeyValue, Panel, Skeleton } from "@/components/ui/surface";
 import { InvitationStatusBadge } from "@/components/ui/status";
 import { Sheet } from "@/components/ui/dialog";
-import { cx } from "@/components/ui/cx";
 import { useCommand } from "@/client/command";
 import { isApiError } from "@/client/http";
 import { keys, useInvitationDetail } from "@/client/queries";
 import { formatInterval, formatTimestamp, localTimezone } from "@/client/time";
 import { useHydrated, useNow } from "@/client/hydrated";
-import { languageName } from "@/features/shared/skills";
+import { Translations } from "./translations";
+import { RecordControl } from "@/components/voice/record-control";
 import {
   IntervalRow,
   draftFromInterval,
@@ -69,7 +69,6 @@ function ResponseView({ detail }: { detail: Detail }) {
   const [seen, setSeen] = useState<{ hash: string; terms: CommitmentTerms }>(() => ({ hash: inv.termsHash, terms: inv.terms }));
   const [receipt, setReceipt] = useState<Result | null>(null);
   const [sheet, setSheet] = useState<null | "decline" | "counter">(null);
-  const [showLang, setShowLang] = useState<string>("original");
   const respond = useCommand("respondInvitation");
   const changed = seen.hash !== inv.termsHash;
   const now = useNow();
@@ -97,7 +96,6 @@ function ResponseView({ detail }: { detail: Detail }) {
     );
 
   const localized = detail.localized;
-  const shown = localized.find((l) => l.id === showLang);
 
   return (
     <div className="flex flex-col gap-6">
@@ -111,43 +109,7 @@ function ResponseView({ detail }: { detail: Detail }) {
         </h1>
         <p className="mt-3 text-muted">Expected output: {t.expectedOutput}</p>
 
-        {localized.length ? (
-          <div className="mt-5 flex flex-wrap items-center gap-2" role="group" aria-label="Language">
-            <span className="type-meta text-muted">Show:</span>
-            <button
-              type="button"
-              aria-pressed={showLang === "original"}
-              onClick={() => setShowLang("original")}
-              className={cx("min-h-11 rounded-full border px-3 text-sm", showLang === "original" ? "border-action bg-selected text-action" : "border-line-control")}
-            >
-              Original terms
-            </button>
-            {localized.map((l) => (
-              <button
-                key={l.id}
-                type="button"
-                lang={l.language}
-                aria-pressed={showLang === l.id}
-                onClick={() => setShowLang(l.id)}
-                className={cx("min-h-11 rounded-full border px-3 text-sm", showLang === l.id ? "border-action bg-selected text-action" : "border-line-control")}
-              >
-                {languageName(l.language)}
-              </button>
-            ))}
-          </div>
-        ) : null}
-        {shown ? (
-          <article lang={shown.language} className="mt-4 rounded-field border border-line-panel bg-subtle p-4">
-            <p className="eyebrow mb-2">
-              {languageName(shown.language)} translation ·{" "}
-              {shown.status === "APPROVED" ? "reviewed" : shown.status === "REVIEW_REQUIRED" ? "not yet reviewed" : shown.status.toLowerCase()}
-            </p>
-            <p className="max-w-[60ch] whitespace-pre-wrap">{shown.text}</p>
-            <p className="type-meta mt-2 text-muted">
-              Translations help you read; the original terms below are what you agree to. If they differ, suggest a change instead of accepting.
-            </p>
-          </article>
-        ) : null}
+        <Translations items={localized} invitation={inv} />
 
         <dl className="m-0 mt-6">
           <KeyValue label="Your role">{t.role}</KeyValue>
@@ -235,6 +197,7 @@ function ResponseView({ detail }: { detail: Detail }) {
       {respond.isError && !sheet ? <ErrorNotice error={respond.error} /> : null}
 
       <DeclineSheet
+        language={inv.language}
         open={sheet === "decline"}
         onOpenChange={(v) => setSheet(v ? "decline" : null)}
         pending={respond.isPending}
@@ -242,6 +205,7 @@ function ResponseView({ detail }: { detail: Detail }) {
         onSubmit={(reason) => send({ action: "DECLINE", ...(reason ? { reason } : {}) })}
       />
       <CounterSheet
+        language={inv.language}
         open={sheet === "counter"}
         onOpenChange={(v) => setSheet(v ? "counter" : null)}
         schedule={t.schedule}
@@ -309,7 +273,9 @@ function DeclineSheet({
   onSubmit,
   pending,
   error,
+  language,
 }: {
+  language: string;
   open: boolean;
   onOpenChange: (v: boolean) => void;
   onSubmit: (reason: string) => void;
@@ -335,6 +301,14 @@ function DeclineSheet({
       <Field label="Reason" optional>
         {(f) => <TextArea id={f.id} value={reason} maxLength={2000} onChange={(e) => setReason(e.target.value)} />}
       </Field>
+      <div className="mt-3">
+        <RecordControl
+          purpose="INVITATION_RESPONSE"
+          language={language}
+          label="Say it instead"
+          onTranscript={(t) => setReason((r) => [r.trim(), t].filter(Boolean).join(" ").slice(0, 2000))}
+        />
+      </div>
       {error ? <ErrorNotice className="mt-4" error={error} /> : null}
     </Sheet>
   );
@@ -347,7 +321,9 @@ function CounterSheet({
   schedule,
   pending,
   error,
+  language,
 }: {
+  language: string;
   open: boolean;
   onOpenChange: (v: boolean) => void;
   onSubmit: (availability: { start: string; end: string; timezone: string }[], reason: string) => void;
@@ -406,6 +382,12 @@ function CounterSheet({
         <Field label="Note to the organizer" optional>
           {(f) => <TextArea id={f.id} value={reason} maxLength={2000} onChange={(e) => setReason(e.target.value)} />}
         </Field>
+        <RecordControl
+          purpose="INVITATION_RESPONSE"
+          language={language}
+          label="Say it instead"
+          onTranscript={(t) => setReason((r) => [r.trim(), t].filter(Boolean).join(" ").slice(0, 2000))}
+        />
         {error ? <ErrorNotice error={error} /> : null}
       </div>
     </Sheet>

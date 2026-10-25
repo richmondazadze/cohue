@@ -2,7 +2,12 @@
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { Panel } from "@/components/ui/surface";
-import { useDeviceMemory } from "@/client/queries";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { ErrorNotice } from "@/components/ui/notice";
+import { useCommand } from "@/client/command";
+import { keys, useDeviceMemory, useSession } from "@/client/queries";
 import { formatTimestamp } from "@/client/time";
 
 const STEPS = [
@@ -56,6 +61,7 @@ export function Entry() {
           Live mode. Real people, real availability, real decisions. Nobody is
           added to a team without saying yes.
         </p>
+        <ShowcaseEntry />
       </section>
 
       <section
@@ -95,5 +101,45 @@ export function Entry() {
         <div className="pb-16" />
       )}
     </main>
+  );
+}
+
+export const SHOWCASE_ID = "00000000-0000-4000-8000-000000000384";
+
+/** Clearly separated, opt-in synthetic scope. It runs the same real commands against synthetic people. */
+function ShowcaseEntry() {
+  const router = useRouter();
+  const client = useQueryClient();
+  const session = useSession();
+  const create = useCommand("createSession");
+  const inShowcase = session.data?.scope.executionMode === "SHOWCASE";
+  return (
+    <div className="mx-auto mt-8 flex max-w-[560px] flex-col items-center gap-2 rounded-panel border border-dashed border-pending bg-pending-bg/60 px-5 py-4">
+      <p className="text-sm text-pending">
+        <strong>Synthetic showcase.</strong> 30 synthetic people, clearly labelled. Real matching and commands, no real people or commitments.
+      </p>
+      <Button
+        size="sm"
+        pending={create.isPending}
+        pendingLabel="Opening showcase…"
+        onClick={() =>
+          inShowcase
+            ? router.push("/missions/new")
+            : create.mutate(
+                { input: { executionMode: "SHOWCASE", showcaseId: SHOWCASE_ID } },
+                {
+                  onSuccess: (s) => {
+                    client.clear();
+                    client.setQueryData(keys.session, s);
+                    router.push("/missions/new");
+                  },
+                },
+              )
+        }
+      >
+        {inShowcase ? "Continue in the showcase" : "Explore the synthetic showcase"}
+      </Button>
+      {create.isError ? <ErrorNotice error={create.error} title="Showcase unavailable" /> : null}
+    </div>
   );
 }

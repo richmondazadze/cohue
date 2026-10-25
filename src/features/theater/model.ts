@@ -156,7 +156,7 @@ export function pauseExplanation(
     case "MISSING_INPUT":
       return {
         title: "More information is needed",
-        body: pause && pause.type === "PAUSED_FOR_HUMAN" ? `Checkpoint: ${pause.payload.checkpoint}` : "Provide the missing input to continue.",
+        body: "Provide the missing input, then resume from the saved checkpoint.",
       };
     default:
       return null;

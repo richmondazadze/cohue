@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ApiInput } from "@/contracts";
 import { Button } from "@/components/ui/button";
-import { Checkbox, Field, Select, TextInput } from "@/components/ui/field";
+import { Checkbox, Field, Select, TextArea, TextInput } from "@/components/ui/field";
+import { RecordControl } from "@/components/voice/record-control";
 import { ErrorNotice, Notice } from "@/components/ui/notice";
 import { KeyValue, Panel, Skeleton } from "@/components/ui/surface";
 import { cx } from "@/components/ui/cx";
@@ -15,6 +16,7 @@ import { formatInterval } from "@/client/time";
 import { useHydrated } from "@/client/hydrated";
 import {
   IntervalRow,
+  draftFromInterval,
   intervalFromDraft,
   newIntervalDraft,
   type IntervalDraft,
@@ -159,6 +161,42 @@ function OnboardingForm({ skills }: { skills: TaxonomySkill[] }) {
     participationOptIn: false,
   }));
   const create = useCommand("createParticipant");
+  const parse = useCommand("parseProfile");
+  const [about, setAbout] = useState("");
+  const [unknowns, setUnknowns] = useState<string[] | null>(null);
+  const known = new Set(skills.map((x) => x.id));
+  const runParse = async () => {
+    setSessionError(null);
+    try {
+      await ensureLiveSession(client);
+    } catch (e) {
+      setSessionError(e);
+      return;
+    }
+    parse.mutate(
+      { input: { text: about.trim(), language: draft.language } },
+      {
+        onSuccess: (x) => {
+          setUnknowns(x.unknowns);
+          setDraft((d) => ({
+            ...d,
+            displayName: d.displayName || x.profile.displayName || "",
+            language: x.profile.language && ["en", "es", "fr"].includes(x.profile.language) ? x.profile.language : d.language,
+            needs: x.profile.needs?.filter((n) => known.has(n)) ?? d.needs,
+            interests: x.profile.interests?.filter((n) => known.has(n)) ?? d.interests,
+            availability: x.profile.availability?.length ? x.profile.availability.map(draftFromInterval) : d.availability,
+            // Suggested skills still require the explicit confirmation checkbox.
+            offered: Object.fromEntries(
+              x.capabilities
+                .filter((c) => known.has(c.normalizedSkillId))
+                .map((c) => [c.normalizedSkillId, { level: c.level, evidence: c.evidence ?? "" }]),
+            ),
+            confirmSkills: false,
+          }));
+        },
+      },
+    );
+  };
   const errors = validate(draft);
   const set = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
 
@@ -243,6 +281,49 @@ function OnboardingForm({ skills }: { skills: TaxonomySkill[] }) {
 
         {step === 0 ? (
           <div className="flex flex-col gap-5">
+            <div className="rounded-panel border border-line-panel bg-surface p-4">
+              <Field
+                label="Describe yourself in your own words"
+                optional
+                helper="COHUE drafts the steps below for you to review. Nothing is saved until you confirm on the last step."
+              >
+                {(f) => (
+                  <TextArea
+                    id={f.id}
+                    aria-describedby={f.describedBy}
+                    rows={3}
+                    maxLength={2000}
+                    value={about}
+                    placeholder="I'm a hardware tinkerer, free most weekday evenings, keen to learn design…"
+                    onChange={(e) => setAbout(e.target.value)}
+                  />
+                )}
+              </Field>
+              <div className="mt-3 flex flex-wrap items-start gap-3">
+                <Button size="sm" onClick={runParse} disabled={!about.trim()} pending={parse.isPending} pendingLabel="Drafting profile…">
+                  Draft my profile
+                </Button>
+                <RecordControl
+                  purpose="PROFILE"
+                  language={draft.language}
+                  onTranscript={(t) => setAbout((a) => [a.trim(), t].filter(Boolean).join("\n").slice(0, 2000))}
+                />
+              </div>
+              {parse.isError ? (
+                <ErrorNotice className="mt-3" error={parse.error} title="Could not draft from text. Your text is kept; fill the steps directly." />
+              ) : null}
+              {parse.isSuccess ? (
+                <Notice tone="pending" className="mt-3" title="Draft filled in. Review every step; suggested skills need your confirmation.">
+                  {unknowns?.length ? (
+                    <ul className="mt-1 list-disc pl-5">
+                      {unknowns.map((u) => (
+                        <li key={u}>{u}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </Notice>
+              ) : null}
+            </div>
             <Field
               label="Display name"
               helper="Shown to mission creators and teammates only when you are proposed or invited."

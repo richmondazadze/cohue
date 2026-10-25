@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { motion } from "motion/react";
-import type { AgentEvent, MissionSnapshot } from "@/contracts";
+import { motion, useReducedMotion } from "motion/react";
+import { IdSchema, type AgentEvent, type MissionSnapshot } from "@/contracts";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Field, TextArea } from "@/components/ui/field";
 import { ErrorNotice, Notice } from "@/components/ui/notice";
@@ -40,6 +41,7 @@ import {
   type CoverageRow,
 } from "./model";
 import { Avatar, ProposalCard } from "./proposals";
+import { CueEntrance, CueProvider, DUR, EASE, Emphasis, cuesOf, liveEvents, useCue } from "./motion";
 
 export function MissionTheater({ missionId }: { missionId: string }) {
   const snapshot = useSnapshot(missionId);
@@ -89,6 +91,8 @@ export function MissionTheater({ missionId }: { missionId: string }) {
     <TheaterView
       snapshot={snapshot.data as MissionSnapshot}
       events={events.events}
+      baseline={events.baseline}
+      transport={events.transport}
       syncError={events.error ?? (snapshot.isError ? snapshot.error : null)}
       lastSyncedAt={events.lastSyncedAt ?? snapshot.dataUpdatedAt}
     />
@@ -98,14 +102,21 @@ export function MissionTheater({ missionId }: { missionId: string }) {
 function TheaterView({
   snapshot,
   events,
+  baseline,
+  transport,
   syncError,
   lastSyncedAt,
 }: {
   snapshot: MissionSnapshot;
   events: AgentEvent[];
+  baseline: number | null;
+  transport: "sse" | "polling" | "idle";
   syncError: unknown;
   lastSyncedAt: number | null;
 }) {
+  const live = useMemo(() => liveEvents(events, baseline), [events, baseline]);
+  const cues = useMemo(() => cuesOf(live), [live]);
+  const lastLive = live[live.length - 1];
   const mission = snapshot.mission;
   const state = mission.state;
   const wide = useMediaQuery("(min-width: 1024px)");
@@ -118,18 +129,20 @@ function TheaterView({
   const wantsProposals = ["PROPOSED", "REPROPOSED", "PAUSED_FOR_HUMAN", "AWAITING_APPROVAL", "REPLANNING"].includes(state);
   const proposals = useProposals(mission.id, wantsProposals);
   const activated = state === "ACTIVATED";
-  const activationEvent = [...events].reverse().find((e) => e.type === "MISSION_ACTIVATED");
+  // Activation: a single 480ms emphasis, only when MISSION_ACTIVATED arrives live; a reload renders the end state.
+  const activationCue = cues.activation ?? null;
+  const reduced = useReducedMotion();
 
   const header = (
     <motion.header
-      key={activationEvent?.id ?? "header"}
-      initial={activationEvent ? { boxShadow: "0 0 0 0px rgba(33,103,71,0)" } : false}
+      key={activationCue?.id ?? "header"}
+      initial={activationCue && !reduced ? { boxShadow: "0 0 0 0px rgba(33,103,71,0)" } : false}
       animate={
         activated
           ? { boxShadow: "0 0 0 2px #E6F2E9, 0 0 0 4px #216747" }
           : { boxShadow: "0 0 0 0px rgba(0,0,0,0)" }
       }
-      transition={{ duration: 0.48, ease: [0.2, 0.8, 0.2, 1] }}
+      transition={{ duration: reduced ? 0 : DUR.activation, ease: EASE }}
       className="flex flex-col gap-3 rounded-t-panel border-b border-line-subtle bg-surface px-5 py-5 md:flex-row md:items-start md:justify-between md:px-6"
     >
       <div className="min-w-0">
@@ -144,8 +157,12 @@ function TheaterView({
       <div className="flex shrink-0 flex-col items-start gap-2 md:items-end">
         <MissionStateBadge state={state} />
         <p className="type-meta text-muted tabular" aria-live="polite">
-          {syncError ? "Reconnecting · " : ""}Verified {lastSyncedAt ? formatClock(new Date(lastSyncedAt).toISOString()) : "—"}
+          {syncError ? "Reconnecting · " : transport === "sse" ? "Live · " : transport === "polling" ? "Checking every 2 s · " : ""}
+          Verified {lastSyncedAt ? formatClock(new Date(lastSyncedAt).toISOString()) : "—"}
         </p>
+        <Link href={`/missions/${mission.id}/replay`} className="type-meta text-muted">
+          Impact &amp; replay →
+        </Link>
       </div>
     </motion.header>
   );
@@ -178,15 +195,20 @@ function TheaterView({
       events={events}
       names={names}
       proposalsQuery={proposals}
+      liveFrom={baseline}
       proposal={proposal}
     />
   );
-  const activity = <ActivityList events={events} names={names} />;
+  const activity = <ActivityList events={events} names={names} liveFrom={baseline} />;
   const network = <NetworkView snapshot={snapshot} />;
 
   return (
+    <CueProvider value={cues}>
     <Panel as="div" className="overflow-hidden">
       {header}
+      <p className="sr-only" role="status" aria-live="polite">
+        {lastLive ? describeEvent(lastLive, names) : ""}
+      </p>
       {syncError ? (
         <Notice tone="pending" className="mx-5 mt-4 md:mx-6" role="status" title={describeError(syncError).title}>
           Showing the last verified state. Actions that change the mission stay safe to retry; nothing is queued while offline.
@@ -233,10 +255,17 @@ function TheaterView({
       )}
       {footer}
     </Panel>
+    </CueProvider>
   );
 }
 
 function RequirementRail({ rows, names }: { rows: CoverageRow[]; names: Map<string, string> }) {
+  const formation = useCue("mission-formation");
+  const repair = useCue("decline-repair");
+  const formedId =
+    formation && "requirementId" in formation.payload ? (formation.payload.requirementId as string) : null;
+  const uncovered =
+    repair && repair.type === "REPLAN_STARTED" ? new Set(repair.payload.uncoveredRequirementIds) : new Set<string>();
   if (!rows.length) return <p className="text-sm text-muted">No requirements recorded.</p>;
   return (
     <div>
@@ -245,7 +274,13 @@ function RequirementRail({ rows, names }: { rows: CoverageRow[]; names: Map<stri
         {rows.map((r) => {
           const met = r.covered >= r.needed;
           return (
-            <li key={r.id} className="border-b border-line-subtle py-3 text-sm last:border-b-0">
+            <CueEntrance
+              as="li"
+              key={r.id}
+              cueKey={formedId === r.id ? formation!.id : uncovered.has(r.id) ? repair!.id : null}
+              duration={DUR.sheet}
+              className="border-b border-line-subtle py-3 text-sm last:border-b-0"
+            >
               <p className="font-medium">
                 {r.label}
                 {r.kind === "RESOURCE" ? <span className="text-muted"> · resource</span> : null}
@@ -257,7 +292,7 @@ function RequirementRail({ rows, names }: { rows: CoverageRow[]; names: Map<stri
               {r.by.length ? (
                 <p className="type-meta text-muted">{r.by.map((id) => nameFor(names, id)).join(", ")}</p>
               ) : null}
-            </li>
+            </CueEntrance>
           );
         })}
       </ul>
@@ -266,7 +301,15 @@ function RequirementRail({ rows, names }: { rows: CoverageRow[]; names: Map<stri
   );
 }
 
-function ActivityList({ events, names }: { events: AgentEvent[]; names: Map<string, string> }) {
+function ActivityList({
+  events,
+  names,
+  liveFrom,
+}: {
+  events: AgentEvent[];
+  names: Map<string, string>;
+  liveFrom: number | null;
+}) {
   const recent = [...events].reverse().slice(0, 60);
   if (!recent.length)
     return <p className="text-sm text-muted">No committed events yet. Activity appears here as the server records it.</p>;
@@ -276,7 +319,11 @@ function ActivityList({ events, names }: { events: AgentEvent[]; names: Map<stri
         const mark = agentMark(e.agent);
         const failed = e.status === "FAILED" || /FAILED$/.test(e.type);
         return (
-          <li key={e.id} className="border-t border-line-subtle py-3 text-sm first:border-t-0 animate-[cohue-enter_180ms_var(--ease-standard)]">
+          <li key={e.id} className="border-t border-line-subtle text-sm first:border-t-0">
+            <Emphasis
+              cueKey={liveFrom !== null && e.sequence > liveFrom ? e.id : null}
+              className="-mx-2 rounded-compact px-2 py-3"
+            >
             <div className="flex items-center gap-2">
               <time className="type-meta text-muted tabular" dateTime={e.occurredAt}>
                 {formatClock(e.occurredAt)}
@@ -293,6 +340,7 @@ function ActivityList({ events, names }: { events: AgentEvent[]; names: Map<stri
               <span className="type-meta text-muted">#{e.sequence}</span>
             </div>
             <p className={cx("mt-1", failed && "text-declined")}>{describeEvent(e, names)}</p>
+            </Emphasis>
           </li>
         );
       })}
@@ -306,19 +354,24 @@ function CenterPanel({
   names,
   proposalsQuery,
   proposal,
+  liveFrom,
 }: {
   snapshot: MissionSnapshot;
   events: AgentEvent[];
   names: Map<string, string>;
   proposalsQuery: ReturnType<typeof useProposals>;
   proposal: ReturnType<typeof currentProposal>;
+  liveFrom: number | null;
 }) {
   const client = useQueryClient();
+  const router = useRouter();
   const mission = snapshot.mission;
   const state = mission.state;
   const start = useCommand("startMission");
   const select = useCommand("selectProposal");
   const activate = useCommand("activateMission");
+  const resume = useCommand("resumeMission");
+  const repairCue = useCue("decline-repair");
   const [issued, setIssued] = useState<Map<string, string>>(new Map());
   const [cancelOpen, setCancelOpen] = useState(false);
   const refresh = () => client.invalidateQueries({ queryKey: ["mission", mission.id] });
@@ -377,9 +430,11 @@ function CenterPanel({
         return r ? r.normalizedSkillId : "a requirement";
       });
       blocks.push(
-        <Notice key="replan" tone="pending" title="A response left a gap">
-          Missing now: {labels.join(", ")}. People who already approved unchanged terms stay approved only if the server carries their consent forward.
-        </Notice>,
+        <CueEntrance key="replan" cueKey={repairCue?.id ?? null} duration={DUR.graph}>
+          <Notice tone="pending" title="A response left a gap">
+            Missing now: {labels.join(", ")}. People who already approved unchanged terms stay approved only if the server carries their consent forward.
+          </Notice>
+        </CueEntrance>,
       );
     }
   }
@@ -390,6 +445,34 @@ function CenterPanel({
         <Notice key="pause" tone="pending" role="status" title={pause.title}>
           {pause.body}
         </Notice>,
+      );
+    const paused = [...events].reverse().find((e) => e.type === "PAUSED_FOR_HUMAN");
+    const checkpointId =
+      paused?.type === "PAUSED_FOR_HUMAN" && IdSchema.safeParse(paused.payload.checkpoint).success
+        ? paused.payload.checkpoint
+        : null;
+    if (state === "PAUSED_FOR_HUMAN" && checkpointId)
+      blocks.push(
+        <div key="resume" className="flex flex-col gap-2">
+          <div>
+            <Button
+              pending={resume.isPending}
+              pendingLabel="Resuming…"
+              onClick={() =>
+                resume.mutate(
+                  { params: { id: mission.id }, input: { expectedVersion: mission.version, checkpointId } },
+                  { onSuccess: () => void refresh(), onError: onStale },
+                )
+              }
+            >
+              Resume from checkpoint
+            </Button>
+          </div>
+          <p className="type-meta text-muted">
+            Resuming rechecks current profiles and constraints from the saved checkpoint. It cannot approve anything on anyone&apos;s behalf.
+          </p>
+          {resume.isError ? <ErrorNotice error={resume.error} /> : null}
+        </div>,
       );
     else if (state === "FAILED")
       blocks.push(
@@ -496,7 +579,12 @@ function CenterPanel({
                     <p className="text-sm text-muted">{m.role}</p>
                   </div>
                   {status ? (
-                    <InvitationStatusBadge status={status} />
+                    <CueEntrance
+                      as="span"
+                      cueKey={liveFrom !== null && m.track && m.track.sequence > liveFrom ? `${m.track.invitationId}-${m.track.sequence}` : null}
+                    >
+                      <InvitationStatusBadge status={status} />
+                    </CueEntrance>
                   ) : m.track && !m.current ? (
                     <StatusBadge tone="neutral">Earlier revision: {m.track.status.toLowerCase()}</StatusBadge>
                   ) : (
@@ -512,7 +600,14 @@ function CenterPanel({
                 ) : null}
                 {invitationId && (status === "PENDING" || (!status && !m.track)) && state !== "ACTIVATED" ? (
                   <div className="mt-3">
-                    <ShareLink invitationId={invitationId} personLabel={name} />
+                    <ShareLink
+                      invitationId={invitationId}
+                      personLabel={name}
+                      onOpenHere={(url) => router.push(new URL(url).pathname)}
+                    />
+                    <p className="type-meta mt-1 text-muted">
+                      Opening it here lets you read their terms and review a machine translation; only they can answer.
+                    </p>
                   </div>
                 ) : null}
               </li>

@@ -37,7 +37,6 @@ import {
   LanguageSchema,
   PageQuerySchema,
   ScopeSchema,
-  SequenceSchema,
   TextSchema,
   TimestampSchema,
   VersionSchema,
@@ -568,7 +567,14 @@ export const apiContracts = {
     "GET",
     "/api/missions/:id/replay",
     "OWNER",
-    z.strictObject({ atSequence: SequenceSchema }),
+    // GET input arrives as a query string, so the sequence is coerced like EventQuerySchema.after.
+    z.strictObject({
+      atSequence: z.coerce
+        .number()
+        .int()
+        .nonnegative()
+        .max(Number.MAX_SAFE_INTEGER),
+    }),
     MissionSnapshotSchema,
     200,
   ),

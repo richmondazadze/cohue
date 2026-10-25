@@ -285,4 +285,12 @@ test("decline triggers repair, changed group needs reconsent, activation opens t
     expect(types).toContain(type);
   expect(types.filter((t) => t === "MISSION_ACTIVATED")).toHaveLength(1);
   expect(final.snapshotSequence).toBeGreaterThanOrEqual(events.nextSequence);
+
+  // Read-only replay just before activation shows the historical state, not the current one.
+  const activatedAt = events.events.find((e) => e.type === "MISSION_ACTIVATED")!.sequence;
+  const before = await creator.device.ok("replay", { params: { id: created.id }, input: { atSequence: activatedAt - 1 } });
+  expect(before.mission.state).toBe("AWAITING_APPROVAL");
+  expect(before.snapshotSequence).toBe(activatedAt - 1);
+  const after = await creator.device.ok("replay", { params: { id: created.id }, input: { atSequence: activatedAt } });
+  expect(after.mission.state).toBe("ACTIVATED");
 });

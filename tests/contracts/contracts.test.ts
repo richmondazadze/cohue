@@ -567,3 +567,14 @@ describe("invitation share-link disclosure (contract 1.1.0)", () => {
       ).toBe(false);
   });
 });
+
+describe("replay query coercion", () => {
+  it("accepts the query-string sequence a GET request carries", () => {
+    expect(apiContracts.replay.input.parse({ atSequence: "7" })).toEqual({
+      atSequence: 7,
+    });
+    expect(
+      apiContracts.replay.input.safeParse({ atSequence: "-1" }).success,
+    ).toBe(false);
+  });
+});

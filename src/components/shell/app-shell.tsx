@@ -3,7 +3,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { cx } from "@/components/ui/cx";
-import { useDeviceMemory } from "@/client/queries";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { keys, useDeviceMemory, useSession } from "@/client/queries";
+import { useCommand } from "@/client/command";
 
 const NAV = [
   { href: "/missions/new", label: "Start a mission" },
@@ -28,6 +31,8 @@ export function Logo({ className }: { className?: string }) {
 export function AppHeader() {
   const pathname = usePathname();
   const memory = useDeviceMemory();
+  const session = useSession();
+  const showcase = session.data?.scope.executionMode === "SHOWCASE";
   return (
     <header className="sticky top-0 z-20 border-b border-line-subtle bg-canvas/95 backdrop-blur-none">
       <div className="gutter mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-x-6 gap-y-2 py-3 md:py-4">
@@ -61,13 +66,9 @@ export function AppHeader() {
             );
           })}
         </nav>
-        <span
-          className="type-meta rounded-compact border border-line-control px-2 py-1 font-medium text-muted"
-          title="Live mode: real people and real commitments"
-        >
-          Live
-        </span>
+        <ModeBadge showcase={showcase} />
       </div>
+      {showcase ? <ShowcaseBanner /> : null}
     </header>
   );
 }
@@ -95,5 +96,58 @@ export function PageFrame({
     >
       {children}
     </main>
+  );
+}
+
+function ModeBadge({ showcase }: { showcase: boolean }) {
+  return showcase ? (
+    <span
+      className="type-meta rounded-compact border border-pending bg-pending-bg px-2 py-1 font-medium text-pending"
+      title="Synthetic showcase: no real people or commitments"
+    >
+      Showcase · synthetic
+    </span>
+  ) : (
+    <span
+      className="type-meta rounded-compact border border-line-control px-2 py-1 font-medium text-muted"
+      title="Live mode: real people and real commitments"
+    >
+      Live
+    </span>
+  );
+}
+
+/** Persistent on every page while the session is in showcase scope. */
+function ShowcaseBanner() {
+  const client = useQueryClient();
+  const router = useRouter();
+  const live = useCommand("createSession");
+  return (
+    <div role="note" className="border-t border-pending bg-pending-bg text-pending">
+      <div className="gutter mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-2 py-2 text-sm">
+        <span>
+          <strong>Synthetic showcase.</strong> Everyone here is a synthetic profile; no real person is contacted or committed.
+        </span>
+        <button
+          type="button"
+          className="min-h-11 underline underline-offset-4"
+          disabled={live.isPending}
+          onClick={() =>
+            live.mutate(
+              { input: { executionMode: "LIVE", showcaseId: null } },
+              {
+                onSuccess: (session) => {
+                  client.clear();
+                  client.setQueryData(keys.session, session);
+                  router.push("/");
+                },
+              },
+            )
+          }
+        >
+          {live.isPending ? "Returning to live…" : "Return to live mode"}
+        </button>
+      </div>
+    </div>
   );
 }

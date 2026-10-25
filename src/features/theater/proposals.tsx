@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/ui/status";
 import { formatInterval, minutesBetween } from "@/client/time";
 import { skillLabel } from "@/features/shared/skills";
 import { initialsOf, nameFor } from "./model";
+import { CueEntrance, useCue } from "./motion";
 
 export function Avatar({ name, tone = "neutral" }: { name: string; tone?: "neutral" | "approved" | "pending" | "declined" }) {
   const ring =
@@ -44,6 +45,15 @@ export function ProposalCard({
   canSelect: boolean;
   selectedRevision: number | null;
 }) {
+  // Discovery (candidates found) or a completed repair staggers member entrance once, ≤120ms total.
+  const discovery = useCue("discovery");
+  const repair = useCue("decline-repair");
+  const entranceKey =
+    repair?.type === "REPLAN_COMPLETED" && repair.payload.proposalId === proposal.id
+      ? repair.id
+      : discovery
+        ? discovery.id
+        : null;
   const reqById = new Map(snapshot.mission.requirements.map((r) => [r.id, r]));
   const s = proposal.score;
   const isSelected = selectedRevision === proposal.revision;
@@ -71,10 +81,16 @@ export function ProposalCard({
         )}
       </header>
       <ul className="m-0 list-none divide-y divide-line-subtle p-0">
-        {proposal.members.map((m) => {
+        {proposal.members.map((m, i) => {
           const name = nameFor(names, m.participantId);
           return (
-            <li key={m.participantId} className="flex items-start gap-3 px-5 py-3">
+            <CueEntrance
+              as="li"
+              key={m.participantId}
+              index={i}
+              cueKey={entranceKey ? `${entranceKey}-${m.participantId}` : null}
+              className="flex items-start gap-3 px-5 py-3"
+            >
               <Avatar name={name} />
               <div className="min-w-0">
                 <p className="font-medium">{name}</p>
@@ -88,7 +104,7 @@ export function ProposalCard({
                     .join(", ")}
                 </p>
               </div>
-            </li>
+            </CueEntrance>
           );
         })}
       </ul>
