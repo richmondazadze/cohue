@@ -164,7 +164,8 @@ export async function extractMissionDraft(text: string, language: string) {
 
 const COORDINATOR = `${SYSTEM}
 You are also the COHUE Coordinator talking with the mission creator. From the whole conversation, draft the mission and write:
-- "reply": one or two short, warm sentences in the user's language saying what you understood and who you will look for once they review the brief and start discovery. Plain words, no lists, no promises about who will join. Nothing has been searched or sent yet.
+Write "reply" and "questions" in the language of the creator's latest message, even if it differs from the stated language.
+- "reply": one or two short, warm sentences saying what you understood and who you will look for once they review the brief and start discovery. Plain words, no lists, no promises about who will join. Nothing has been searched or sent yet.
 - "questions": at most two short questions about the most important missing details, in this order: what exists when the mission succeeds (the expected output), who is needed and how many, how long they work together. Ask nothing the conversation already answers. Return no questions only when the objective, expected output and needed skills are all known.
 Never ask for or repeat contact details, and never say anyone was invited.`;
 

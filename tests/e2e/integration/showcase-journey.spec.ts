@@ -68,6 +68,14 @@ test("showcase operator forms, activates and briefs a multilingual synthetic tea
     const languages = room.briefs.map((b) => `${b.language}:${b.status}`);
     console.log(JSON.stringify({ missionId: mission.id, briefs: languages }));
     if (process.env.COHUE_EXPECT_PROVIDERS === "1") expect(room.briefs.length).toBeGreaterThan(1);
+    if (process.env.COHUE_EXPECT_PROVIDERS === "1") {
+      // The Coordinator's kickoff plan is readable by the room's audience, per role, in the requested language.
+      const plan = await operator.ok("kickoffPlan", { params: { id: mission.id }, input: { language: "es" } });
+      const roles = new Set(room.memberships.map((m) => m.approvedRole));
+      expect(plan.language).toBe("es");
+      expect(plan.steps.every((s) => roles.has(s.role))).toBe(true);
+      console.log("kickoff plan", JSON.stringify(plan));
+    }
   } finally {
     // Release synthetic capacity so the showcase stays usable.
     const current = await operator.call("snapshot", { params: { id: mission.id } });

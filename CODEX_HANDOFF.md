@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T11:28:15.824Z (America/Chicago display dates apply).
+Last update: 2026-10-25T11:48:27.255Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -951,3 +951,18 @@ Tests: 93 unit tests, lint, types, production build; mocked UI suite 6/6 includi
 ## Still open
 
 Human two-phone run on production (now including live alerts), organizer review of real es/fr Room translations, phone Listen/task change/voice input, physical accessibility/performance checks. Known UX notes: repair heading can appear before the new team card; one tap target under 24 px on /missions/new. User said not to worry about the video and Devpost submission in this thread.
+
+
+## Milestone from docs/status/lead/VOICE_KICKOFF_META.md
+
+# Coordinator voice, kickoff plan and Meta Muse Spark (25 Oct 2026, ~06:55 CDT)
+
+Commits 351ea0e and the follow-up language fix, on main and cohue.tech. Contract 1.1.0 additive, now 42 operations (coordinateMission, speakCoordinator, kickoffPlan added today).
+
+- Coordinator voice: replies render as text first; with "Speak replies aloud" on, the client requests speakCoordinator, which voices only the Coordinator's own words for this session (HMAC over principal + text with a SESSION_SECRET-derived key; tampered text or another principal returns FORBIDDEN, unit-tested). ElevenLabs eleven_multilingual_v2; device speech is the fallback. Production: speech 200, audio/mpeg ~128 KB (~3.5 s TTS). Replies and questions now follow the language of the creator's latest message.
+- Meta Model API (https://api.meta.ai/v1, Chat Completions, json_schema response_format, model META_MODEL default muse-spark-1.3, key META_MODEL_API_KEY): Strategist second opinion on each Coordinator draft (shown as a dashed "St" bubble with the model name), and fallback drafter for coordinateMission and kickoffPlan when Gemini fails. Not yet configured in Vercel at this checkpoint, so production runs Gemini-only; nothing changes when the key is absent. Real Meta calls are UNVERIFIED until the key is added.
+- kickoffPlan (GET /api/missions/:id/kickoff, MEMBER, same audience as room()): advisory first-hour steps per approved role plus a check-in line, in en/es/fr (switch in the Room), Gemini with Meta fallback, cached per mission version and language in process memory. Production (showcase journey spec with COHUE_EXPECT_PROVIDERS=1) returned a Spanish plan for all three roles; the synthetic mission was cancelled by the spec.
+
+Observed: Gemini 3.1 flash-lite had intermittent 20 s timeouts from this Mac around 06:45 CDT (several turns 1.5–12 s, one abort), which is the motivation for the Meta fallback.
+
+Tests: 93 unit (coordinator turn, signature binding), mocked UI 6/6 (core loop now asserts the kickoff plan and language switch), build. Mock backend serves kickoffPlan.
