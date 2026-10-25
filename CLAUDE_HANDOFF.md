@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T05:26:16.489Z (America/Chicago display dates apply).
+Last update: 2026-10-25T05:32:56.948Z (America/Chicago display dates apply).
 Current milestone: USER STOPPED all work for credit conservation. Read docs/status/lead/STOP_STAGE_HANDOFF.md first. Local release implementation/tests saved; production migration0002 applied through Tiger SQL editor, runtime grant statement executed but runtime probe pending. New web/worker release NOT deployed; EVENT_RETENTION_READY NOT enabled. Vultr worker remains INACTIVE on old8385a34, production web remains available. Local test/dev/worker processes stopped. Resume only on new user instruction; no final readiness claim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -709,3 +709,12 @@ Retention: EVENT_RETENTION_READY=1 added to Vercel production (redeployed as coh
 Production smoke: showcase.spec against https://cohue.tech created a labeled SHOWCASE mission and the real pipeline ran to completion, but ended PAUSED_FOR_HUMAN (NO_SOLUTION) because production showcase availability was seeded on 24 Oct and anchored to 25 Oct 20:00Z, while the spec's window is now 26 Oct. Not a code regression; the synthetic showcase must be re-anchored (seed or equivalent SQL through the Tiger editor, since this machine cannot reach the database ports) before any showcase demo.
 
 Not yet done: new deployed D7 quiet proof and SHOWCASE privacy/sweeper proof on c70b745 (on-host harness scripts/worker/prove-d7.ts with COHUE_D7_ACCEPTANCE=1 COHUE_D7_ON_HOST=1, run through the console; typing there drops shifted characters, so commands must avoid them), showcase re-anchor, BRIEF localization gap, deployed two-phone multilingual journey, accessibility/device checks, video/Devpost.
+
+
+## Milestone from docs/status/lead/D7_RERUN_C70B745.md
+
+D7 on-host rerun attempt for c70b745, 25 Oct 2026 05:29 UTC, through the authenticated Vultr root console using scripts/worker/on-host-acceptance.sh (48279f5, sha256 14447af0…, verified on host).
+
+Observed (labeled SHOWCASE mission 0530512e-60d2-4d84-a2be-e69c7f0baf7d, worker release c70b745, Node v24.22.1, no HTTP): queued with worker held; worker leased DIRECTOR (fence 1) while the harness held the mission row lock; harness ran `kill -KILL <MainPID>` at 05:29:07.865; mission nevertheless reached PROPOSED unattended (16 ordered events, all three jobs SUCCEEDED). The assertion "recovered fence = 2" FAILED: DIRECTOR completed with fence 1, its events committed at 05:29:07.990–08.132, i.e. after the kill. Cause: the unit's MainPID is the `npm run worker` wrapper; SIGKILL to it left the node/tsx child alive, which finished the leased step as soon as the harness released its lock, before systemd cleaned up the cgroup. The proof therefore did not exercise lease expiry/fencing; it is NOT a pass and not evidence against the product's fencing (local runner.db test still covers stale-fence rejection).
+
+Fix committed: cd32236 kills the whole tree (`systemctl kill --signal=KILL` plus `pkill -KILL -u cohue -f scripts/worker/run.ts`). Not yet rerun: updating the worker to cd32236 (identical application code) was blocked by the session's safety classifier pending explicit user approval of that specific production action. Worker currently active on c70b745 with EVENT_RETENTION_READY=1; web on the latest main (auto-deploy). Synthetic mission 0530512e remains PROPOSED with no holds; harmless, labeled.
