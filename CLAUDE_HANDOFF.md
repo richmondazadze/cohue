@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T06:00:06.242Z (America/Chicago display dates apply).
+Last update: 2026-10-25T06:04:06.318Z (America/Chicago display dates apply).
 Current milestone: USER STOPPED all work for credit conservation. Read docs/status/lead/STOP_STAGE_HANDOFF.md first. Local release implementation/tests saved; production migration0002 applied through Tiger SQL editor, runtime grant statement executed but runtime probe pending. New web/worker release NOT deployed; EVENT_RETENTION_READY NOT enabled. Vultr worker remains INACTIVE on old8385a34, production web remains available. Local test/dev/worker processes stopped. Resume only on new user instruction; no final readiness claim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -749,3 +749,14 @@ Release 266a24083e283138f348fb3d77d04f9b7d23a224 (shared team brief) is on both 
 Web: Vercel production cohue-5uh4wn39z (created 00:54:40 CDT from main), aliased to cohue.tech, HTTP 200. Worker: authenticated Vultr console; codeload archive sha256 8ab66cb38f932f52efa9578c92fb15a6dbc614db71aeca46e99217fbae435b40 (matches local), npm ci 506 packages, .release-commit 266a240…, previous release kept at /opt/cohue-cd32236 (also /opt/cohue-c70b745, /opt/cohue-8385a34); unit unchanged; EVENT_RETENTION_READY=1 retained in worker.env; service active ("worker b8f62939 started" 05:59:27 UTC). Both runtimes now share the brief-aware retention rules, so brief translations persist.
 
 Not re-proven on this release: deployed D7 (last pass cd32236; the runner, jobs and sweeper ordering are unchanged except localization/audio orphan rules) and a production brief journey (needs real LIVE people or a re-anchored showcase). Next: re-anchor showcase availability, deployed two-phone multilingual journey (item 4), device/accessibility checks (item 5), video/Devpost (item 6).
+
+
+## Milestone from docs/status/lead/SHOWCASE_DEPLOYED_JOURNEY.md
+
+Deployed showcase journey, 25 Oct 2026 ~01:05 CDT, on release 266a240 (web and worker).
+
+Re-anchor: through the Tiger SQL editor (admin session), shifted availability of the 30 installed synthetic SHOWCASE profiles (scope 00000000-0000-4000-8000-000000000384 only, deleted_at IS NULL) by +24 h, so they are available 26 Oct 20:00–22:00Z (3–5 PM CDT Monday) — inside the composer's default window (tomorrow 09:00–21:00) when demoing on Sunday. 30 rows updated; no LIVE rows touched. This is equivalent to `npm run seed:showcase` without resetting synthetic missions (this machine cannot reach the database ports). Note: scripts/worker/prove-d7.ts hard-codes the old 25 Oct window and needs its window updated before any future D7 rerun.
+
+New spec tests/e2e/integration/showcase-journey.spec.ts against https://cohue.tech with COHUE_EXPECT_PROVIDERS=1: passed in 11 s. Operator session → mission (design + hardware, size 3, creator participates) → real matcher PROPOSED → select → share links redeemed on separate contexts and labeled operator ACCEPTs for the synthetic invitees → approvals complete → activation → Mission Room brief: en APPROVED original plus real Gemini es and fr drafts (REVIEW_REQUIRED). Mission f290db75-a8cc-4934-b965-5342e5ef194e then cancelled to release synthetic capacity. showcase.spec also passes on production again (FEASIBLE, LIVE isolation).
+
+Not covered: real people on physical phones, voice input on devices, screen readers, the browser UI on production (API-level run). Item 4 needs the user or helpers with two phones.

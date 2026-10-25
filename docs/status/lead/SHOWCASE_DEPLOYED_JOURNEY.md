@@ -1,0 +1,7 @@
+Deployed showcase journey, 25 Oct 2026 ~01:05 CDT, on release 266a240 (web and worker).
+
+Re-anchor: through the Tiger SQL editor (admin session), shifted availability of the 30 installed synthetic SHOWCASE profiles (scope 00000000-0000-4000-8000-000000000384 only, deleted_at IS NULL) by +24 h, so they are available 26 Oct 20:00–22:00Z (3–5 PM CDT Monday) — inside the composer's default window (tomorrow 09:00–21:00) when demoing on Sunday. 30 rows updated; no LIVE rows touched. This is equivalent to `npm run seed:showcase` without resetting synthetic missions (this machine cannot reach the database ports). Note: scripts/worker/prove-d7.ts hard-codes the old 25 Oct window and needs its window updated before any future D7 rerun.
+
+New spec tests/e2e/integration/showcase-journey.spec.ts against https://cohue.tech with COHUE_EXPECT_PROVIDERS=1: passed in 11 s. Operator session → mission (design + hardware, size 3, creator participates) → real matcher PROPOSED → select → share links redeemed on separate contexts and labeled operator ACCEPTs for the synthetic invitees → approvals complete → activation → Mission Room brief: en APPROVED original plus real Gemini es and fr drafts (REVIEW_REQUIRED). Mission f290db75-a8cc-4934-b965-5342e5ef194e then cancelled to release synthetic capacity. showcase.spec also passes on production again (FEASIBLE, LIVE isolation).
+
+Not covered: real people on physical phones, voice input on devices, screen readers, the browser UI on production (API-level run). Item 4 needs the user or helpers with two phones.
