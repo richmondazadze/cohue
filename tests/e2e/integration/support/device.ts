@@ -20,6 +20,11 @@ export class Device {
     return new Device(label, await request.newContext({ baseURL }));
   }
 
+  // Shares cookies with a browser context, so API setup and UI steps act as the same person.
+  static fromContext(label: string, context: APIRequestContext): Device {
+    return new Device(label, context);
+  }
+
   async call<K extends ApiOperation>(
     operation: K,
     options: CallOptions<K> = {},

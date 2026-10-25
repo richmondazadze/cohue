@@ -305,17 +305,27 @@ export async function selectProposal(tx: Tx, session: SessionRecord, id: string,
   );
   let next = await bumpMission(tx, mission, { state: "AWAITING_APPROVAL", selected_proposal_id: proposalId });
   const created: InvitationRow[] = [];
-  const carried = new Set<string>();
+  // Revoke superseded invitations first so committed events read in causal order; identical accepted terms keep their hold.
+  const carried = new Set(
+    prior
+      .filter((p) => p.status === "ACCEPTED" && proposal.members.some((m) => m.participantId === p.participant_id && m.termsHash === p.terms_hash))
+      .map((p) => p.id),
+  );
+  for (const p of prior) {
+    await tx.query("UPDATE invitations SET status='REVOKED', token_hash=NULL WHERE id=$1", [p.id]);
+    if (!carried.has(p.id)) await tx.query("UPDATE reservations SET state='RELEASED' WHERE invitation_id=$1 AND state='ACCEPTED_HOLD'", [p.id]);
+    await tx.query("UPDATE sessions SET revoked_at=now() WHERE kind='INVITATION' AND invitation_id=$1", [p.id]);
+    await appendEvent(tx, next, "INVITATION_REVOKED", { invitationId: p.id, participantId: p.participant_id, invitationStatus: "REVOKED" }, { correlationId, proposalRevision: p.proposal_revision });
+  }
   for (const m of [...proposal.members].sort((a, b) => (a.participantId < b.participantId ? -1 : 1))) {
     const before = priorByPerson.get(m.participantId);
-    const carry = before && before.status === "ACCEPTED" && before.terms_hash === m.termsHash;
+    const carry = before !== undefined && carried.has(before.id);
     const isCreator = m.participantId === mission.creator_id;
     const invitationId = randomUUID();
     let lineage = null;
     if (carry) {
       const [resp] = await query<{ id: string }>("SELECT id FROM participant_responses WHERE invitation_id=$1 ORDER BY created_at DESC LIMIT 1", [before.id], tx);
       lineage = { sourceInvitationId: before.id, sourceResponseId: resp.id, sourceProposalRevision: before.proposal_revision, carriedToProposalRevision: proposal.revision, termsHash: m.termsHash, revalidatedAt: iso(new Date()) };
-      carried.add(before.id);
     }
     const status = carry || isCreator ? "ACCEPTED" : "PENDING";
     const [row] = await query<InvitationRow>(
@@ -336,12 +346,6 @@ export async function selectProposal(tx: Tx, session: SessionRecord, id: string,
       await appendEvent(tx, next, "INVITATION_SENT", { invitationId, participantId: m.participantId, invitationStatus: "PENDING" }, { correlationId, proposalRevision: proposal.revision });
     }
     created.push(row);
-  }
-  for (const p of prior) {
-    await tx.query("UPDATE invitations SET status='REVOKED', token_hash=NULL WHERE id=$1", [p.id]);
-    if (!carried.has(p.id)) await tx.query("UPDATE reservations SET state='RELEASED' WHERE invitation_id=$1 AND state='ACCEPTED_HOLD'", [p.id]);
-    await tx.query("UPDATE sessions SET revoked_at=now() WHERE kind='INVITATION' AND invitation_id=$1", [p.id]);
-    await appendEvent(tx, next, "INVITATION_REVOKED", { invitationId: p.id, participantId: p.participant_id, invitationStatus: "REVOKED" }, { correlationId, proposalRevision: p.proposal_revision });
   }
   next = { ...next };
   return { mission: await missionDto(next, tx), proposal, invitations: created.map(invitationDto) };

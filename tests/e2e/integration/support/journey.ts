@@ -48,8 +48,9 @@ export async function join(
   skill: string,
   level: number,
   language = "en",
+  options: { device?: Device; availability?: { start: string; end: string; timezone: string }[] } = {},
 ): Promise<Person> {
-  const device = await Device.open(label, baseURL);
+  const device = options.device ?? (await Device.open(label, baseURL));
   await device.ok("createSession", { input: LIVE });
   const taxonomy = await device.ok("taxonomy");
   const entry = taxonomy.skills.find((s) => s.id === skill);
@@ -60,7 +61,7 @@ export async function join(
       language,
       needs: [],
       interests: ["accessibility"],
-      availability: [teamWindow()],
+      availability: options.availability ?? [teamWindow()],
       capabilities: [
         {
           normalizedSkillId: skill,
