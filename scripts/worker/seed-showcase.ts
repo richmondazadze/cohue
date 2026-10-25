@@ -1,7 +1,9 @@
-// Seeds (or resets) the installed synthetic showcase: 30 labeled fixture profiles in SHOWCASE scope only.
+// Seeds (or resets) the installed synthetic showcase: 30 labeled fixture profiles plus a 170-profile
+// synthetic crowd (showcase-crowd.sql), in SHOWCASE scope only.
 // Run: npm run seed:showcase. Never touches LIVE rows. Availability is re-anchored to tomorrow 15:00 Chicago
 // so the composer's default window overlaps it; profiles stay clearly synthetic.
 import pg from "pg";
+import { readFileSync } from "node:fs";
 import { participants, fixtureId } from "../../src/fixtures/scenarios";
 
 try {
@@ -42,8 +44,10 @@ try {
     for (const c of profile.capabilities)
       await client.query("INSERT INTO capabilities(id, participant_id, skill_id, level, doc) VALUES (gen_random_uuid(),$1,$2,$3,$4)", [id, c.normalizedSkillId, c.level, JSON.stringify(c)]);
   }
+  // 170 more labelled synthetic profiles so the showcase demonstrates matching at scale.
+  await client.query(readFileSync(new URL("./showcase-crowd.sql", import.meta.url), "utf8"));
   await client.query("COMMIT");
-  console.log(`showcase ${SHOWCASE}: ${participants.length} synthetic profiles seeded, availability anchored at ${new Date(anchor).toISOString()}`);
+  console.log(`showcase ${SHOWCASE}: ${participants.length} fixture + 170 crowd synthetic profiles seeded, availability anchored at ${new Date(anchor).toISOString()}`);
 } catch (error) {
   await client.query("ROLLBACK");
   throw error;
