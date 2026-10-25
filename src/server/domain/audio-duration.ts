@@ -2,6 +2,7 @@ import "server-only";
 import { parseBuffer } from "music-metadata";
 import { MEDIA_LIMITS } from "@/contracts";
 import { fail } from "../http/errors";
+import { webmDurationMs } from "./webm-duration";
 
 // Read only the bounded in-memory upload. Client-provided duration is never authoritative.
 // Fail closed when a malformed/container-only upload has no measurable audio duration.
@@ -12,6 +13,11 @@ export async function validateAudioDuration(bytes: Uint8Array, mimeType: string)
     duration = metadata.format.duration;
   } catch {
     fail("INVALID_INPUT", "The recording could not be read; record again or type instead.", { audio: ["Invalid audio"] });
+  }
+  // Live-recorded WebM has no header duration; measure it from the block timeline instead.
+  if ((duration === undefined || !Number.isFinite(duration) || duration <= 0) && mimeType === "audio/webm") {
+    const measured = webmDurationMs(bytes);
+    if (measured !== undefined && measured > 0) duration = measured / 1000;
   }
   if (duration === undefined || !Number.isFinite(duration) || duration <= 0)
     fail("INVALID_INPUT", "The recording duration could not be verified; record again or type instead.", { audio: ["Unknown duration"] });
