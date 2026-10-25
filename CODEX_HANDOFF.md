@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T05:32:56.948Z (America/Chicago display dates apply).
+Last update: 2026-10-25T05:41:41.764Z (America/Chicago display dates apply).
 Current milestone: USER STOPPED all work for credit conservation. Read docs/status/lead/STOP_STAGE_HANDOFF.md first. Local release implementation/tests saved; production migration0002 applied through Tiger SQL editor, runtime grant statement executed but runtime probe pending. New web/worker release NOT deployed; EVENT_RETENTION_READY NOT enabled. Vultr worker remains INACTIVE on old8385a34, production web remains available. Local test/dev/worker processes stopped. Resume only on new user instruction; no final readiness claim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -718,3 +718,12 @@ D7 on-host rerun attempt for c70b745, 25 Oct 2026 05:29 UTC, through the authent
 Observed (labeled SHOWCASE mission 0530512e-60d2-4d84-a2be-e69c7f0baf7d, worker release c70b745, Node v24.22.1, no HTTP): queued with worker held; worker leased DIRECTOR (fence 1) while the harness held the mission row lock; harness ran `kill -KILL <MainPID>` at 05:29:07.865; mission nevertheless reached PROPOSED unattended (16 ordered events, all three jobs SUCCEEDED). The assertion "recovered fence = 2" FAILED: DIRECTOR completed with fence 1, its events committed at 05:29:07.990–08.132, i.e. after the kill. Cause: the unit's MainPID is the `npm run worker` wrapper; SIGKILL to it left the node/tsx child alive, which finished the leased step as soon as the harness released its lock, before systemd cleaned up the cgroup. The proof therefore did not exercise lease expiry/fencing; it is NOT a pass and not evidence against the product's fencing (local runner.db test still covers stale-fence rejection).
 
 Fix committed: cd32236 kills the whole tree (`systemctl kill --signal=KILL` plus `pkill -KILL -u cohue -f scripts/worker/run.ts`). Not yet rerun: updating the worker to cd32236 (identical application code) was blocked by the session's safety classifier pending explicit user approval of that specific production action. Worker currently active on c70b745 with EVENT_RETENTION_READY=1; web on the latest main (auto-deploy). Synthetic mission 0530512e remains PROPOSED with no holds; harmless, labeled.
+
+
+## Milestone from docs/status/lead/D7_PRIVACY_PASSED_CD32236.md
+
+Item 2 complete, 25 Oct 2026 ~00:41 CDT, with the user's explicit approval ("I approve the next step") of updating cohue-worker to cd32236 and running the D7 and privacy proofs.
+
+Worker now runs cd32236a122998ad099368354280be8a6987c6cf (application code identical to c70b745; adds the console wrapper and the fixed D7 kill), previous trees retained at /opt/cohue-c70b745 and /opt/cohue-8385a34. Web auto-deploys main. Deployed D7 PASSED on this release: whole-unit SIGKILL mid-lease, systemd restart, natural lease expiry, re-lease at fence 2, unattended progress to PROPOSED, stale fence-1 commit rejected, strictly ordered events 1..23, single activation under concurrent attempts, unique memberships/invitations/tasks. SHOWCASE privacy/retention proof PASSED with retention enabled. Full evidence in docs/operations/D7_EVIDENCE.md (final section).
+
+Remaining after item 2: re-anchor the 30-profile synthetic showcase availability before any showcase demo; BRIEF localization gap (room briefs empty, synthesize rejects BRIEF) — mandatory per PRD; deployed two-phone multilingual journey with real providers; physical phone/screen reader/reduced motion/graph performance; video, Devpost, deadline confirmation.
