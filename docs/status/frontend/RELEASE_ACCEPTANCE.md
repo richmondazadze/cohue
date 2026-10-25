@@ -8,7 +8,7 @@
 | Access / scope cleanup | Scoped memory tests retained; denied cached rendering, fatal event/epoch purge regression passes | Deployed cross-mode/navigation/revocation/SSE gap/backfill/reload checks |
 | Recording / media | Multipart signal/metadata limits tested; unmount upload cancellation and playback/source fencing implemented | Actual audio samples and playback; no microphone permission granted/accepted |
 | English / Spanish / French | Labels/status/source filtering implemented; approved translated audio gate | Actual three-language recording/transcription/review/extraction/translation approval/playback |
-| Responsive320/390/768/1024/1440 | Prior reports are historical; approved design preserved | Current final deployed screenshots/overflow/wrapped Spanish/French/focus/touch sweep |
+| Responsive320/390/768/1024/1440 | Read-only pre-integrated production15samples; join1024overflow and24pxcheckbox found; owned fixes pass lint/types/unit (RESPONSIVE_RELEASE_FIX.md) | Verify corrected freshbuild/finaldeployment, remaining private screens and wrapped Spanish/French/focus/touch sweep |
 | Keyboard / reduced motion | Existing Radix/semantic list/reduced-motion behavior retained | Actual current-browser focus/escape/list parity; physical VoiceOver/TalkBack unavailable until tested |
 | Core two-session loop | Earlier integrated browser evidence in historical reports | Final deployed SHOWCASE create/select/decline/repair/reconsent/activate/room/task/replay with backend worker |
 | Graph30nodes/60edges | Stable-layout code present; existing timing/meaning tests | Actual profiled workload/device/frame evidence; no60fps claim |

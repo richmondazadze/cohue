@@ -1,0 +1,11 @@
+# Frontend responsive release correction — 24 October 2026
+
+Preceding baseline b197412. After backend ended its quiet window, performed read-only CUA on https://cohue.tech (pre-integrated deployment, exact deployed commit not independently verified). No production mutations, microphone prompts or participant decisions performed. These observations are baseline defects, not final integrated release proof.
+
+Actual sweep: entry `/`, onboarding `/join`, composer `/missions/new` at320/390/768/1024/1440, height900. Fonts loaded in all15samples. Home5/5 and composer5/5 had document scrollWidth equal innerWidth; onboarding4/5did, but1024returned1036px. DOM inspection traced12.48px overflow to summary KeyValue DD/UL with automatic minimum width. All measured displayed input/select/textarea/nav targets≥44px; composer Radix checkbox root24px was the exception at all widths (visual label click area does not replace adequate direct keyboard/touch control target).
+
+Owned fixes: `src/components/ui/surface.tsx` KeyValue allows row wrapping and constrains value/label width with break-words/min-w0. `src/components/ui/field.tsx` Checkbox root44px around unchanged24px visual square; negative margins preserve existing visual alignment/spacing, group-state styles retain check indicator; label wraps with min-w0. Semantic Radix role, label/id, keyboard, focus and disabled state retained. No approved token/color/font/logo change.
+
+Actual local verification: targeted ESLint zero warnings, `npx tsc --noEmit` pass, `npx vitest run tests/frontend`38/38pass. No shared build/typegen/push/deploy. Lead approved fixes and owns rebuild. Current local3100 serves previousproductionbuild; browser correction verification is explicitly pending fresh build and final deployment. Earlier CUA localhost3100 connection refusal preceded lead startup; no local server started by frontend.
+
+Immediate next action: lead rebuild/restart integrated source, run frontend E2E including translation-review.spec.ts, then frontend verifies44px checked/unchecked/toggle/focus and1024summary correction plus remaining viewport/mobile/media/core-journey gates. RELEASE_ACCEPTANCE remains in progress. No real-device/screenreader/30node60edge/frame-rate/provider/D7 evidence claimed by frontend here.

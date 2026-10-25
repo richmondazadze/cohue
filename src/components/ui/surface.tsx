@@ -46,9 +46,9 @@ export function KeyValue({
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-1 border-b border-line-subtle py-3 last:border-b-0 sm:flex-row sm:justify-between sm:gap-6">
-      <dt className="eyebrow shrink-0">{label}</dt>
-      <dd className="m-0 text-ink sm:text-right">{children}</dd>
+    <div className="flex flex-col gap-1 border-b border-line-subtle py-3 last:border-b-0 sm:flex-row sm:flex-wrap sm:justify-between sm:gap-x-6">
+      <dt className="eyebrow max-w-full shrink-0 break-words">{label}</dt>
+      <dd className="m-0 min-w-0 max-w-full break-words text-ink sm:text-right">{children}</dd>
     </div>
   );
 }

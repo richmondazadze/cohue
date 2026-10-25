@@ -147,13 +147,13 @@ export function Checkbox({
         disabled={disabled}
         onCheckedChange={(v) => onCheckedChange(v === true)}
         aria-describedby={description ? `${id}-desc` : undefined}
-        className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-compact border border-line-control bg-surface data-[state=checked]:border-action data-[state=checked]:bg-action disabled:opacity-60"
+        className="group -m-2.5 grid size-11 shrink-0 place-items-center rounded-button disabled:cursor-not-allowed"
       >
-        <CheckboxPrimitive.Indicator className="text-sm leading-none text-white">
-          ✓
-        </CheckboxPrimitive.Indicator>
+        <span aria-hidden="true" className="grid size-6 place-items-center rounded-compact border border-line-control bg-surface group-data-[state=checked]:border-action group-data-[state=checked]:bg-action">
+          <CheckboxPrimitive.Indicator className="text-sm leading-none text-white">✓</CheckboxPrimitive.Indicator>
+        </span>
       </CheckboxPrimitive.Root>
-      <div className="flex min-h-11 flex-col justify-start">
+      <div className="flex min-h-11 min-w-0 flex-col justify-start">
         <label htmlFor={id} className="cursor-pointer leading-6">
           {label}
         </label>

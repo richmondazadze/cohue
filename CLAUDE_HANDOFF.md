@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T02:44:23.921Z (America/Chicago display dates apply).
+Last update: 2026-10-25T02:45:05.929Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -512,3 +512,18 @@ Final compatible worker source update after lead review/web deployment; fresh fi
 Retention risk: existing sweeper handles expired media/receipts/sessions and deleted profile fields, but comprehensive historical canonical-text/localization/event/receipt scrubbing and30day restricted-audit pruning need further implementation/actual evidence; this is a mandatory privacy gap, not a pass. Current-source guards prevent deleted invitee content reads through media/localizations; broader historical projections still need explicit privacy review. Backup policy observed TigerData3day PITR; restore must reapply tombstones/revocations before exposing access. Vultr has no paid backup; source/runtime reconstruction uses reviewed Git and secret manager. Account credits previously observed expire2026-11-24; running instance continues billing afterward until user destroys it. See HOST_SETUP for secure update/restart; never copy admin env wholesale.
 
 Immediate next action: lead integrates committed owned changes, runs serialized combined checks, deploys reviewed release and supplies final immutable worker commit. Backend then updates existing host and validates service/source identity without claiming old D7 trace ran new source; continue mandatory provider/privacy acceptance with frontend. Ownership stays backend server/API/DB/worker/operations; frontend visuals and lead root/contracts unchanged. Paired handoffs updated exclusively through append script. No push or web deploy by backend.
+
+
+## Milestone from docs/status/frontend/RESPONSIVE_RELEASE_FIX.md
+
+# Frontend responsive release correction — 24 October 2026
+
+Preceding baseline b197412. After backend ended its quiet window, performed read-only CUA on https://cohue.tech (pre-integrated deployment, exact deployed commit not independently verified). No production mutations, microphone prompts or participant decisions performed. These observations are baseline defects, not final integrated release proof.
+
+Actual sweep: entry `/`, onboarding `/join`, composer `/missions/new` at320/390/768/1024/1440, height900. Fonts loaded in all15samples. Home5/5 and composer5/5 had document scrollWidth equal innerWidth; onboarding4/5did, but1024returned1036px. DOM inspection traced12.48px overflow to summary KeyValue DD/UL with automatic minimum width. All measured displayed input/select/textarea/nav targets≥44px; composer Radix checkbox root24px was the exception at all widths (visual label click area does not replace adequate direct keyboard/touch control target).
+
+Owned fixes: `src/components/ui/surface.tsx` KeyValue allows row wrapping and constrains value/label width with break-words/min-w0. `src/components/ui/field.tsx` Checkbox root44px around unchanged24px visual square; negative margins preserve existing visual alignment/spacing, group-state styles retain check indicator; label wraps with min-w0. Semantic Radix role, label/id, keyboard, focus and disabled state retained. No approved token/color/font/logo change.
+
+Actual local verification: targeted ESLint zero warnings, `npx tsc --noEmit` pass, `npx vitest run tests/frontend`38/38pass. No shared build/typegen/push/deploy. Lead approved fixes and owns rebuild. Current local3100 serves previousproductionbuild; browser correction verification is explicitly pending fresh build and final deployment. Earlier CUA localhost3100 connection refusal preceded lead startup; no local server started by frontend.
+
+Immediate next action: lead rebuild/restart integrated source, run frontend E2E including translation-review.spec.ts, then frontend verifies44px checked/unchecked/toggle/focus and1024summary correction plus remaining viewport/mobile/media/core-journey gates. RELEASE_ACCEPTANCE remains in progress. No real-device/screenreader/30node60edge/frame-rate/provider/D7 evidence claimed by frontend here.
