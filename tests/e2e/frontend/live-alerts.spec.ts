@@ -9,6 +9,7 @@ test("creator hears about new teams while on another page", async ({ page }) => 
   const mock = new MockBackend();
   await mock.install(page);
   await page.goto(`${base}/missions/new`);
+  await mock.organize(page);
   await page.getByLabel("Objective").fill("Build a community repair café");
   await page.getByLabel("Expected output").fill("A first repair evening with volunteers");
   await page.getByLabel("Skill").selectOption("design");

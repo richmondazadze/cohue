@@ -8,6 +8,7 @@ test("creator reviews translation without redeeming a participant capability; fa
   const mock = new MockBackend();
   await mock.install(page);
   await page.goto(`${base}/missions/new`);
+  await mock.organize(page);
   await page.getByLabel("Objective").fill("Build a synthetic repair café");
   await page.getByLabel("Expected output").fill("A synthetic workshop");
   await page.getByLabel("Skill").selectOption("design");

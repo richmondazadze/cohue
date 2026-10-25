@@ -256,6 +256,13 @@ export class MockBackend {
     });
   }
 
+  /** The composer is locked until someone says who is organizing; tests start as a quick organizer. */
+  async organize(page: Page, username = "test_organizer") {
+    await page.locator("#quick-username").fill(username);
+    await page.getByRole("button", { name: "Continue as organizer" }).click();
+    await page.getByText("Who's organizing?").waitFor({ state: "detached" });
+  }
+
   /** Simulate the server's planner finishing discovery (a committed event, not a UI timer). */
   completeDiscovery() {
     this.bump("PROPOSED");

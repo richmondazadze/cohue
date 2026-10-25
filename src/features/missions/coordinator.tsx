@@ -15,6 +15,8 @@ type Turn = {
   questions?: string[];
   drafter?: "GEMINI" | "META";
   strategist?: { model: string; note: string } | null;
+  /** What this turn filled in the brief, shown as it lands. */
+  filled?: string[];
 };
 export type CoordinatorDraft = ApiData<"coordinateMission">["draft"];
 
@@ -22,6 +24,17 @@ const MAX_TURNS = 12;
 const SPEAK_KEY = "cohue.coordinator.speak";
 
 const MODEL_NAME = { GEMINI: "Gemini", META: "Meta Muse Spark" } as const;
+
+function filledFrom(d: CoordinatorDraft): string[] {
+  const out = ["Objective"];
+  if (d.expectedOutput) out.push("Expected output");
+  if (d.requirements.length) out.push(`${d.requirements.length} skill${d.requirements.length === 1 ? "" : "s"} needed`);
+  const c = d.constraintsDraft;
+  if (c.minGroupSize || c.maxGroupSize)
+    out.push(c.minGroupSize === c.maxGroupSize || !c.maxGroupSize ? `Group of ${c.minGroupSize ?? c.maxGroupSize}` : `Group of ${c.minGroupSize ?? 1}–${c.maxGroupSize}`);
+  if (c.minOverlapMinutes) out.push(`${c.minOverlapMinutes} min together`);
+  return out;
+}
 
 /**
  * A conversation with the Coordinator agent. Each turn re-drafts the whole brief from everything said so far
@@ -46,6 +59,16 @@ export function CoordinatorChat({
   const voiceEpoch = useRef(0);
   const voiceEnabled = useRef(false);
   const [voiceUnavailable, setVoiceUnavailable] = useState(false);
+  // Hands-free flow: what happens next waits until the Coordinator has finished speaking.
+  const afterSpeech = useRef<(() => void) | null>(null);
+  const runAfterSpeech = () => {
+    const next = afterSpeech.current;
+    afterSpeech.current = null;
+    next?.();
+  };
+  const [startSignal, setStartSignal] = useState(0);
+  const [advancing, setAdvancing] = useState(false);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stopSpeaking = () => {
     voiceEpoch.current += 1;
     audioRef.current?.pause();
@@ -56,12 +79,13 @@ export function CoordinatorChat({
   const speak = (audio: { mimeType: string; base64: string } | null, epoch: number) => {
     if (!voiceEnabled.current || epoch !== voiceEpoch.current) return;
     // Only playable audio can supply a truthful intensity signal. Provider failure keeps the full text.
-    if (!audio) { setVoiceUnavailable(true); return; }
+    if (!audio) { setVoiceUnavailable(true); runAfterSpeech(); return; }
     const element = new Audio(`data:${audio.mimeType};base64,${audio.base64}`);
     audioRef.current = element;
     element.onplay = () => { if (epoch === voiceEpoch.current) setSpeaking(true); };
-    element.onpause = element.onended = () => { if (epoch === voiceEpoch.current) setSpeaking(false); };
-    const unavailable = () => { if (epoch === voiceEpoch.current) { setSpeaking(false); setVoiceUnavailable(true); } };
+    element.onpause = () => { if (epoch === voiceEpoch.current) setSpeaking(false); };
+    element.onended = () => { if (epoch === voiceEpoch.current) { setSpeaking(false); runAfterSpeech(); } };
+    const unavailable = () => { if (epoch === voiceEpoch.current) { setSpeaking(false); setVoiceUnavailable(true); runAfterSpeech(); } };
     element.onerror = unavailable;
     void element.play().catch(unavailable);
   };
@@ -80,6 +104,7 @@ export function CoordinatorChat({
   useEffect(() => () => {
     voiceEpoch.current += 1;
     audioRef.current?.pause();
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
   }, []);
   useEffect(() => {
     log.current?.lastElementChild?.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
@@ -92,8 +117,15 @@ export function CoordinatorChat({
     try { localStorage.setItem(SPEAK_KEY, v ? "1" : "0"); } catch { /* ignore */ }
   };
 
-  const send = async () => {
-    const said = text.trim().slice(0, 2000);
+  const cancelAdvance = () => {
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    advanceTimer.current = null;
+    setAdvancing(false);
+  };
+
+  const send = async (spoken?: string) => {
+    const viaVoice = spoken !== undefined;
+    const said = (viaVoice ? [text.trim(), spoken.trim()].filter(Boolean).join(" ") : text.trim()).slice(0, 2000);
     if (!said || turnCmd.isPending || turns.length >= MAX_TURNS - 1) return;
     if (!(await ensureSession())) return;
     // The questions the Coordinator asked are part of what the creator is answering.
@@ -102,6 +134,8 @@ export function CoordinatorChat({
       text: [text, ...(questions ?? [])].join(" ").slice(0, 2000),
     }));
     stopSpeaking();
+    cancelAdvance();
+    afterSpeech.current = null;
     const epoch = voiceEpoch.current;
     setTurns([...turns, { role: "CREATOR", text: said }]);
     setText("");
@@ -111,9 +145,27 @@ export function CoordinatorChat({
         onSuccess: (x) => {
           setTurns((t) => [
             ...t,
-            { role: "COORDINATOR", text: x.reply, questions: x.questions, drafter: x.drafter, strategist: x.strategist },
+            { role: "COORDINATOR", text: x.reply, questions: x.questions, drafter: x.drafter, strategist: x.strategist, filled: filledFrom(x.draft) },
           ]);
           onDraft(x.draft);
+          // Autonomous next step: a complete brief flows on to review; open questions reopen the microphone
+          // for someone who is talking rather than typing. Either waits until the reply has been spoken.
+          const next = !x.questions.length
+            ? () => {
+                setAdvancing(true);
+                advanceTimer.current = setTimeout(() => {
+                  advanceTimer.current = null;
+                  setAdvancing(false);
+                  onReady();
+                }, 2200);
+              }
+            : viaVoice
+              ? () => setStartSignal((n) => n + 1)
+              : null;
+          if (next) {
+            if (voiceEnabled.current && epoch === voiceEpoch.current) afterSpeech.current = next;
+            else setTimeout(next, x.questions.length ? 700 : 0);
+          }
           if (voiceEnabled.current && epoch === voiceEpoch.current)
             // Text is already on screen; an audio failure never hides the reply.
             speakCmd.mutate(
@@ -123,7 +175,7 @@ export function CoordinatorChat({
                 onError: () => speak(null, epoch),
               },
             );
-          requestAnimationFrame(() => input.current?.focus());
+          if (!viaVoice) requestAnimationFrame(() => input.current?.focus());
         },
         onError: () => {
           // Keep what they said so a retry is one tap.
@@ -140,17 +192,13 @@ export function CoordinatorChat({
 
   return (
     <div className="coordinator-conversation flex flex-col gap-4">
-      <div className="flex items-start gap-3">
-        <span aria-hidden className="mt-1 grid size-9 shrink-0 place-items-center rounded-full bg-action text-sm font-semibold text-white">
-          C
-        </span>
-        <div>
-          <p className="font-semibold">Coordinator</p>
-          <p className="text-sm text-muted">
-            Tell me the idea in your own words, by voice or text. I&apos;ll ask what&apos;s missing and fill in the brief below. Nothing is saved or sent yet.
-          </p>
-        </div>
-      </div>
+      <header className="coordinator-head">
+        <p className="eyebrow">Coordinator</p>
+        <h2 className="type-panel mt-1">Tell me your idea.</h2>
+        <p className="mt-1 max-w-[60ch] text-sm text-muted">
+          Talk or type. I&apos;ll ask what&apos;s missing and fill in the brief for you. Nothing is saved or sent until you start discovery.
+        </p>
+      </header>
 
       {speakReplies && speakCmd.isPending ? <p role="status" className="coordinator-speaking">Preparing the Coordinator’s voice…</p> : null}
       {speaking ? <div className="coordinator-speaking" role="status"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m4 9 5 0 5-4v14l-5-4H4V9Zm13-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><PlaybackMeter audio={audioRef} playing={speaking} label="Coordinator is speaking" /><Button size="sm" onClick={stopSpeaking}>Stop voice</Button></div> : null}
@@ -171,6 +219,13 @@ export function CoordinatorChat({
                 {t.questions?.length ? (
                   <ul className="mt-2 flex list-none flex-col gap-1 p-0 font-medium">
                     {t.questions.map((q) => <li key={q}>→ {q}</li>)}
+                  </ul>
+                ) : null}
+                {t.filled?.length ? (
+                  <ul className="coordinator-filled" aria-label="Filled in the brief">
+                    {t.filled.map((f, k) => (
+                      <li key={f} style={{ "--fill-i": k } as React.CSSProperties}>✓ {f}</li>
+                    ))}
                   </ul>
                 ) : null}
                 {t.drafter ? <span className="type-meta mt-2 block text-muted">Coordinator · {MODEL_NAME[t.drafter]}</span> : null}
@@ -201,9 +256,12 @@ export function CoordinatorChat({
       ) : null}
 
       {ready ? (
-        <div className="flex flex-wrap items-center gap-3 rounded-field bg-approved-bg px-4 py-3 text-sm text-approved">
-          <span className="font-medium">✓ The brief below has what I need to search.</span>
-          <Button size="sm" variant="primary" onClick={onReady}>Review the brief</Button>
+        <div className="flex flex-wrap items-center gap-3 rounded-field bg-approved-bg px-4 py-3 text-sm text-approved" role="status">
+          <span className="font-medium">
+            {advancing ? "✓ Brief complete. Taking you to review…" : "✓ The brief below has what I need to search."}
+          </span>
+          <Button size="sm" variant="primary" onClick={() => { cancelAdvance(); onReady(); }}>Review the brief</Button>
+          {advancing ? <Button size="sm" variant="tertiary" onClick={cancelAdvance}>Stay here</Button> : null}
         </div>
       ) : null}
 
@@ -252,10 +310,10 @@ export function CoordinatorChat({
             purpose="MISSION"
             language={language}
             label={turns.length ? "Answer by voice" : "Describe it by voice"}
-            onTranscript={(t) => {
-              setText((cur) => [cur.trim(), t].filter(Boolean).join(" ").slice(0, 2000));
-              requestAnimationFrame(() => input.current?.focus());
-            }}
+            autoTranscribe
+            startSignal={startSignal}
+            // Spoken answers go straight to the Coordinator; the conversation shows exactly what was heard.
+            onTranscript={(t) => void send(t)}
           />
         </form>
       )}

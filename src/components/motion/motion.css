@@ -162,3 +162,61 @@
     opacity: 1;
   }
 }
+
+/* Composer: locked until the organizer has a username and avatar. */
+.composer-lockable {
+  transition: opacity 420ms var(--motion-ease), filter 420ms var(--motion-ease);
+}
+.composer-lockable.is-locked {
+  opacity: 0.42;
+  filter: grayscale(1);
+  user-select: none;
+}
+
+/* What the Coordinator filled this turn, listed in its reply. */
+.coordinator-filled {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.coordinator-filled li {
+  font-size: 11px;
+  line-height: 1;
+  padding: 6px 9px;
+  border-radius: 30px;
+  background: #e6f2e9;
+  color: #216747;
+}
+.fill-target {
+  border-radius: 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .coordinator-filled li {
+    animation: motion-blur-in 520ms var(--motion-ease) both;
+    animation-delay: calc(var(--fill-i, 0) * 160ms + 200ms);
+  }
+  /* Each field the Coordinator fills settles in with a brief highlight, one after another. Two names let
+     a new wave restart the animation on the same element. */
+  [data-fill="a"] {
+    animation: motion-fill-a 1400ms var(--motion-ease) backwards;
+    animation-delay: calc(var(--fill-i, 0) * 180ms);
+  }
+  [data-fill="b"] {
+    animation: motion-fill-b 1400ms var(--motion-ease) backwards;
+    animation-delay: calc(var(--fill-i, 0) * 180ms);
+  }
+}
+@keyframes motion-fill-a {
+  0% { opacity: 0.2; filter: blur(8px); transform: translateY(8px); box-shadow: 0 0 0 0 #315cce00; }
+  35% { opacity: 1; filter: none; transform: none; box-shadow: 0 0 0 3px #315cce38; background-color: #edf1fb; }
+  100% { box-shadow: 0 0 0 0 #315cce00; background-color: transparent; }
+}
+@keyframes motion-fill-b {
+  0% { opacity: 0.2; filter: blur(8px); transform: translateY(8px); box-shadow: 0 0 0 0 #315cce00; }
+  35% { opacity: 1; filter: none; transform: none; box-shadow: 0 0 0 3px #315cce38; background-color: #edf1fb; }
+  100% { box-shadow: 0 0 0 0 #315cce00; background-color: transparent; }
+}

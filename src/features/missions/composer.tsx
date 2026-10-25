@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CreateMissionSchema, type ApiInput } from "@/contracts";
 import { Button } from "@/components/ui/button";
@@ -151,8 +151,24 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
     }
   };
 
+  // Which fields the latest Coordinator turn filled, so each can visibly settle in, in order.
+  const [fill, setFill] = useState<{ wave: number; keys: string[] }>({ wave: 0, keys: [] });
+  const fillAttr = (key: string, offset = 0) => {
+    const i = fill.keys.indexOf(key);
+    return i < 0 || !fill.wave
+      ? {}
+      : { "data-fill": fill.wave % 2 ? "a" : "b", style: { "--fill-i": i + offset } as React.CSSProperties };
+  };
   // The Coordinator's draft fills the form; creator participation is never inferred from text.
-  const applyDraft = (x: CoordinatorDraft) =>
+  const applyDraft = (x: CoordinatorDraft) => {
+    const c = x.constraintsDraft;
+    const keys = [
+      "objective",
+      ...(x.expectedOutput ? ["expectedOutput"] : []),
+      ...(x.requirements.length ? ["requirements"] : []),
+      ...(c.minGroupSize || c.maxGroupSize || c.minOverlapMinutes ? ["group"] : []),
+    ];
+    setFill((f) => ({ wave: f.wave + 1, keys }));
     setDraft((d) => ({
       ...d,
       objective: x.objective,
@@ -166,6 +182,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
       window: x.constraintsDraft.window ? draftFromInterval(x.constraintsDraft.window) : d.window,
       preferences: x.constraintsDraft.preferences ?? d.preferences,
     }));
+  };
   const coordinatorSession = async () => {
     setSessionError(null);
     try {
@@ -185,6 +202,12 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
     setPhase("review");
     requestAnimationFrame(() => reviewRef.current?.focus());
   };
+
+  // The Coordinator advances on a timer, after the draft it just applied has rendered; always use the latest form.
+  const latestToReview = useRef(toReview);
+  useEffect(() => {
+    latestToReview.current = toReview;
+  });
 
   const launch = () =>
     withSession((currentSession) => {
@@ -291,30 +314,40 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
             </> : <QuickIdentity language={draft.language} />}
           </Notice>
         ) : null}
+        {/* Until someone says who is organizing, the conversation and brief are visible but locked. */}
+        <div
+          className={cx("composer-lockable flex min-w-0 flex-col gap-8", !memory.participantId && "is-locked")}
+          inert={!memory.participantId}
+          aria-disabled={!memory.participantId || undefined}
+        >
         <Panel className="p-5 md:p-6">
           <CoordinatorChat
             language={draft.language}
             ensureSession={coordinatorSession}
             onDraft={applyDraft}
-            onReady={toReview}
+            onReady={() => latestToReview.current()}
           />
           {sessionError ? <ErrorNotice className="mt-4" error={sessionError} title="Could not start a session" /> : null}
         </Panel>
 
         <section className="flex flex-col gap-5" aria-labelledby="brief-h">
           <h2 id="brief-h" className="type-section">Brief</h2>
+          <div {...fillAttr("objective")} className="fill-target">
           <Field label="Objective" error={err("objective")}>
             {(f) => (
               <TextArea id={f.id} aria-describedby={f.describedBy} invalid={f.invalid} rows={2} maxLength={2000}
                 value={draft.objective} onChange={(e) => set({ objective: e.target.value })} />
             )}
           </Field>
+          </div>
+          <div {...fillAttr("expectedOutput")} className="fill-target">
           <Field label="Expected output" helper="What exists when the mission succeeds?" error={err("expectedOutput")}>
             {(f) => (
               <TextArea id={f.id} aria-describedby={f.describedBy} invalid={f.invalid} rows={2} maxLength={2000}
                 value={draft.expectedOutput} onChange={(e) => set({ expectedOutput: e.target.value })} />
             )}
           </Field>
+          </div>
           <Field label="Mission language" className="max-w-xs">
             {(f) => (
               <Select id={f.id} value={draft.language} onChange={(e) => set({ language: e.target.value })}>
@@ -334,7 +367,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
           {err("requirements") ? <p className="type-meta font-medium text-declined">− {err("requirements")}</p> : null}
           <ol className="m-0 flex list-none flex-col gap-3 p-0">
             {draft.requirements.map((r, i) => (
-              <li key={r.key} className="rounded-field border border-line-panel bg-surface p-4">
+              <li key={r.key} className="fill-target rounded-field border border-line-panel bg-surface p-4" {...fillAttr("requirements", i)}>
                 <div className="mb-3 flex items-center justify-between gap-2">
                   <span className="type-compact">Requirement {i + 1}</span>
                   {draft.requirements.length > 1 ? (
@@ -408,7 +441,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
 
         <section className="flex flex-col gap-4" aria-labelledby="constraints-h">
           <h2 id="constraints-h" className="type-section">Time and group</h2>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="fill-target grid gap-3 sm:grid-cols-3" {...fillAttr("group", draft.requirements.length)}>
             <Field label="Smallest group" error={err("constraints.minGroupSize")}>
               {(f) => (
                 <Select id={f.id} aria-describedby={f.describedBy} invalid={f.invalid} value={draft.minGroupSize} onChange={(e) => set({ minGroupSize: Number(e.target.value) })}>
@@ -464,6 +497,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
             </ul>
           </Notice>
         ) : null}
+        </div>
       </div>
       <aside aria-label="Brief summary" className="hidden lg:block">
         <Panel className="sticky top-28 p-6">

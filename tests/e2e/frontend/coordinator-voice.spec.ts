@@ -26,6 +26,7 @@ test("Coordinator waveform measures actual playing audio and stops with its cont
     data: { mimeType: "audio/mpeg", base64: wav.toString("base64") }, correlationId: fixtureId(900),
   }) }));
   await page.goto(`${base}/missions/new`);
+  await mock.organize(page);
   await page.getByLabel("Describe the mission").fill("Make a repair café.");
   await page.getByRole("button", { name: "Talk to the Coordinator" }).click();
   const bars = page.locator(".coordinator-speaking .voice-intensity > span");
@@ -56,6 +57,7 @@ test("turning voice off fences a delayed voice response", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`${base}/missions/new`);
+  await mock.organize(page);
   await page.getByLabel("Describe the mission").fill("Let us start a repair café.");
   await page.getByRole("button", { name: "Talk to the Coordinator" }).click();
   await expect(page.getByText("Preparing the Coordinator’s voice…")).toBeVisible();

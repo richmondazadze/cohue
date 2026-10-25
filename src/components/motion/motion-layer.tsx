@@ -6,7 +6,7 @@ import "./motion.css";
 const MAX_UNITS = 64;
 // Containers taller than this are split, so cards, rows and list items assemble one after another.
 const SPLIT_PX = 220;
-const SKIP = "svg, canvas, video, [data-motion-skip], [role='tabpanel'][data-state]";
+const SKIP = "svg, canvas, video, .fill-target, [data-motion-skip], [role='tabpanel'][data-state]";
 
 /**
  * Reveals each page as it assembles row by row (blur + small offset ease-out, staggered), blocks further down as they

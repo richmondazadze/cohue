@@ -20,6 +20,8 @@ for (const width of [390, 1280]) {
     };
 
     await page.goto(`${base}/missions/new`);
+
+    await mock.organize(page);
     await page.getByLabel("Objective").fill("Build a community repair café");
     await page.getByLabel("Expected output").fill("A first repair evening with volunteers");
     await page.getByLabel("Skill").selectOption("design");

@@ -19,12 +19,16 @@ type RecordControlProps = {
   onTranscript: (text: string) => void;
   label?: string;
   beforeTranscribe?: () => Promise<void>;
+  /** Transcribe as soon as recording stops, without a separate confirm step (conversational use). */
+  autoTranscribe?: boolean;
+  /** Each increment starts a new recording when idle, so a conversation can continue hands-free. */
+  startSignal?: number;
 };
 export function RecordControl(props: RecordControlProps) {
   // Changing source/language retires uploads, recording state and callbacks together.
   return <RecordingSession key={`${props.purpose}:${props.language}`} {...props} />;
 }
-function RecordingSession({ purpose, language, onTranscript, label = "Record instead", beforeTranscribe }: RecordControlProps) {
+function RecordingSession({ purpose, language, onTranscript, label = "Record instead", beforeTranscribe, autoTranscribe = false, startSignal = 0 }: RecordControlProps) {
   const meter = useRef<HTMLSpanElement>(null);
   const bars = useRef<HTMLSpanElement>(null);
   const reduced = useReducedMotionPreference();
@@ -84,6 +88,26 @@ function RecordingSession({ purpose, language, onTranscript, label = "Record ins
       setUpload({ phase: "error", error });
     }
   };
+
+  const phase = rec.state.phase;
+  useEffect(() => {
+    if (!autoTranscribe || phase !== "recorded") return;
+    // Deferred one tick: the finished recording is handed straight to transcription.
+    const t = setTimeout(() => void send(), 0);
+    return () => clearTimeout(t);
+    // send reads the latest recording; it must run once per finished recording.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoTranscribe, phase]);
+  const lastSignal = useRef(startSignal);
+  useEffect(() => {
+    if (startSignal === lastSignal.current) return;
+    lastSignal.current = startSignal;
+    if (phase === "idle" || phase === "error") {
+      key.current = null;
+      void rec.start();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startSignal]);
 
   const secs = Math.floor(elapsed / 1000);
   const p = rec.state.phase;

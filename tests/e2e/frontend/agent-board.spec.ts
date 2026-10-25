@@ -4,6 +4,7 @@ const base = process.env.COHUE_FRONTEND_BASE_URL ?? "";
 test("network board projects committed worker events and supports local arrangement", async ({page}) => {
  const mock = new MockBackend(); await mock.install(page);
  await page.goto(`${base}/missions/new`);
+ await mock.organize(page);
  await page.getByLabel("Objective").fill("Synthetic connected skills board");
  await page.getByLabel("Expected output").fill("A reviewed group");
  await page.getByLabel("Skill",{exact:true}).selectOption("design");

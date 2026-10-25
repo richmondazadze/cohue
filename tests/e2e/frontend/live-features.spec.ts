@@ -84,6 +84,9 @@ test("theater receives committed events over SSE and replay is read-only", async
 
 test("coordinator conversation and voice transcription fail honestly and keep typed text", async ({ page }) => {
   await page.goto(`${base}/missions/new`);
+  await page.locator("#quick-username").fill(`it_org_${Date.now().toString(36)}`);
+  await page.getByRole("button", { name: "Continue as organizer" }).click();
+  await expect(page.getByText("Who's organizing?")).toHaveCount(0, { timeout: 15_000 });
   const said = "Let's run a repair café next Saturday with a designer and a hardware tinkerer.";
   const intention = page.getByLabel("Describe the mission");
   await intention.fill(said);
@@ -101,9 +104,9 @@ test("coordinator conversation and voice transcription fail honestly and keep ty
   await expect(page.getByText("● Recording")).toBeVisible({ timeout: 10_000 });
   await page.waitForTimeout(1500);
   await page.getByRole("button", { name: "Stop" }).click();
-  await page.getByRole("button", { name: "Transcribe to text" }).click();
+  // Stopping transcribes and sends on its own; a fake-device tone either transcribes or fails honestly.
   await expect(
-    page.getByText(/Transcript added as an editable draft|Transcription unavailable/).first(),
+    page.getByText(/Transcript added as an editable draft|Transcription unavailable|Coordinator is thinking|The Coordinator could not answer/).first(),
   ).toBeVisible({ timeout: 30_000 });
   await shot(page, "live-composer-voice-1280");
 });
