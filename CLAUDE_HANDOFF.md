@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T04:09:53.735Z (America/Chicago display dates apply).
+Last update: 2026-10-25T05:12:55.799Z (America/Chicago display dates apply).
 Current milestone: USER STOPPED all work for credit conservation. Read docs/status/lead/STOP_STAGE_HANDOFF.md first. Local release implementation/tests saved; production migration0002 applied through Tiger SQL editor, runtime grant statement executed but runtime probe pending. New web/worker release NOT deployed; EVENT_RETENTION_READY NOT enabled. Vultr worker remains INACTIVE on old8385a34, production web remains available. Local test/dev/worker processes stopped. Resume only on new user instruction; no final readiness claim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -685,3 +685,14 @@ Vercel still runs previously published compatibleoldproductcode, notlocalprivacy
 7. Physicalphone/screenreader/reducedmotion/privateviewport/graphprofilingacceptance remainsincompletewhereexplicitlyuntested. Demo/video/Devpostrequirements/deadlineverification/submissionwindowremainprotected; noautomaticpublicsubmissionauthorizationimplied. Neverclaimflawlessfromcodepresence.
 
 Stop state: partial rollout safely held, webavailable, workerINACTIVE, migrationappliedbutruntimeprobe/newdeploymentpending. Keep this distinction prominent on resume.
+
+
+## Milestone from docs/status/lead/RELEASE_RESUME_C70B745.md
+
+Release resume, 25 Oct 2026 ~00:10 CDT, by the Claude Code Chief Product Engineer on the user's instruction ("Accept the design changes and start with item 1").
+
+Done: accepted post-stop design changes committed as c70b745 (Switzer via Fontshare API, radii, GSAP motion; see DESIGN_V1_1_ACCEPTED.md). Local CI-equivalent run on disposable PostgreSQL (all 3 migrations, showcase seeded, independent worker, provider keys blank): `npm run check` 99 tests/0 skips, `npm run test:e2e` 15 passed. Hosted GitHub Actions run 40163638297 on branch release/v1-1 at c70b745: completed/success. Production DB (Tiger SQL editor, admin session, read-only catalog query): cohue_app has SELECT/INSERT/DELETE (and UPDATE) on privacy_audit, UPDATE missions, INSERT agent_events, EXECUTE on cohue_sync_event_sequence; cohue_migrations lists 0000/0001/0002; 0 missions with event_sequence behind MAX(sequence). A true runtime-role transaction probe was not possible: `SET LOCAL ROLE cohue_app` is denied to the console admin and this machine still cannot open TCP to the database ports; this is catalog evidence, not an executed runtime write. main pushed 8385a34..c70b745; Vercel production deployment cohue-aisjs2237 Ready; https://cohue.tech and /api/taxonomy return 200 and load Switzer from Fontshare.
+
+Worker: verified via authenticated Vultr web console (read-only): /opt/cohue/.release-commit 8385a347…, cohue-worker inactive, enabled at boot, Node v24.22.1. Update to c70b745 NOT performed: the automated attempt to type the update commands into the production console was blocked by the session's safety classifier pending explicit user approval. noVNC also drops shifted characters, so commands must avoid `_ > & | " '`. EVENT_RETENTION_READY remains 0 everywhere. Web (new) and stopped worker (old) are compatible while retention is off.
+
+Next: user approves or runs the worker update (download codeload archive of c70b745, extract to /opt/cohue-new, npm ci --ignore-scripts, write .release-commit via sed on a copied file, swap directories keeping /opt/cohue-8385a34, start service); then verify writers, set EVENT_RETENTION_READY=1 on Vercel and worker.env, redeploy/restart, and run the on-host D7 and SHOWCASE privacy proofs.
