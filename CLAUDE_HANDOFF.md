@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T06:56:32.506Z (America/Chicago display dates apply).
+Last update: 2026-10-25T06:58:36.619Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -833,3 +833,14 @@ Lead: reviewthepreparehook andsourcelocks, runserializedcombinedcheck/build/API/
 Human2minutecheck: organizeropens the existingLIVE MissionRoom, reviewsSpanish (andFrench) brief againstbindingoriginal andexplicitlyapproves translation; participantphone refreshes and tapsListen, recordsdevicemodel/browser/language/time andactualaudioheard; authorizedtaskowner demonstrates a taskstatuschange (records alreadyshow nonTODO tasks, but device/action attribution remains human evidence). Actualmicrophone→editabletranscript/reviewstill requiresconsenteddevicecapture if finalvoiceinputgate is claimed. Never approve realparticipants' commitments on their behalf. Frontend owns exactUI checklist/screenshots and its synthetic task/review journey.
 
 Finalproof limits: nofreshphysicalphone/screenreader/frameprofiling, recording/video/submission, or organizerdeadline confirmation by backend. No realparticipant outreach. Migrationledgerread restriction retained. Operationalcost remains existingapprovedhost only; no newspend/credentialrotation. Bothhandoffs updated via serializedappend; only ownedpaths committed. Immediate next: leadintegrates securitypatch, frontend completes boundedacceptance/humanstep guidance, user suppliesactualphoneListen/voice/video evidence and submissiondecision.
+
+
+## Milestone from docs/status/frontend/FINAL_ACCEPTANCE_CHECKPOINT.md
+
+# Frontend final production acceptance checkpoint
+
+25 October2026 America/Chicago; precedingbaseline8459331, backendd109836nowcoexists. Finalmatrixand2minutehumanphone/videoactions in docs/status/frontend/FINAL_ACCEPTANCE.md. ActualCUAcohue.tech01:48–01:56CDTwebb0db29e/worker266a240 beforependingsecuritypatch: invitationcreatorreview/edit/approval/draft390/1024/1440withmotionon/off/focusPASS; SpanishactualTTSprogressPASS; syntheticdecline→realrev2repair→renewedconsent→activation3members4tasks; owncoordinationtaskIN_PROGRESSversion2; Roomoriginal+Spanishreview/approval+BRIEFTTSactualprogressPASS. NoLIVEdecision. Ownmission4403db99-22ea-41d1-a41d-e452774eca25 cancellednormally; reservationsreleased. Nomic/physicaldevice/video/submissionclaimed.
+
+CriticalRoomdraftlossactualrepro→8459331stableRadixlayoutfix, authoredorientation/tabreviewE2Ependingexecution. Ownedlint38frontendtestsPASS; finalnpx tsc --noEmitPASSafterbackendfixedtransientnullability. Sourcehashes/pairedhandoffsanddiffcheckverificationatcommit. Safeownsyntheticscreenshotsfinalrepair/room/brief, notnewdeploymentproof. Composer5widthsnounder24visiblecontrolfound/noxoverflow; noimaginedfix. KnownimmediaterepairedcardSTALERACE not reproducedonsettledrev2selection201, remainslimitation.
+
+LeadcombinedactualPG/check/buildrunning; nofurtherproductwrites/sharedbuildbyfrontend. Nextfresh3100Roomexactdraft/motion/hideplayercheck; finaldeployidentity+humanphoneListen/task/voice/screenreader/performance/video/submission remainexplicit. Noindependentpush/deploy. STOPrevokedonlyforassignedfinalwork. Bothhandoffsserializedwiththischeckpoint.
