@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T00:10:14.359Z (America/Chicago display dates apply).
+Last update: 2026-10-25T00:30:34.427Z (America/Chicago display dates apply).
 Current milestone: lead continuation in Claude Code. Foundation I0 complete; contract 1.1.0 adds the invitation share-link operation; lead integration harness for I2/I3 is committed but has not run against a backend. No frontend or backend work has landed and no specialist conversation is known to be active, so I1 is unstarted. Deployed D7 remains UNVERIFIED.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -203,3 +203,14 @@ Domain: participants create/get/edit/delete (edits before activation trigger rep
 Evidence (local PostgreSQL 17.11, isolated cohue_test database, next dev on :3300 plus worker): `COHUE_INTEGRATION_BASE_URL=http://localhost:3300 COHUE_REQUIRE_INTEGRATION=1 npx playwright test tests/e2e/integration` -> I2 3 passed (feasible proposal persisted, exact replay, changed-payload conflict, creator-only theater, exhausted NO_SOLUTION) and I3 1 passed (select, share link, non-consuming preview, second-device redemption, accept, decline, genuine repair without the decliner, reconsent with changed hash, premature activation refused, activation replay, room, task STALE_VERSION, single MISSION_ACTIVATED). Lint and tsc clean for server files. I3 spec adjusted: the creator's own invitation is ACCEPTED at select.
 
 Not yet done or proven: matcher/concurrency unit and DB race tests, deletion purge sweeper, rate limiting, showcase seeding, providers (no keys), Tiger Data TLS (no URL), deployment and D7 (no Vercel access). Production build not yet run with these routes because frontend work is mid-flight in the same tree.
+
+
+## Milestone from docs/status/lead/I3-integrated.md
+
+I3 integrated checkpoint, 24 Oct 2026 evening CDT, lead continuation owning all three roles. Commits since ownership transfer: 22db9c8 backend core loop, 017a363 matcher/race tests, c3f5923 provider adapters, ee8658e sweeper/cron/fencing test, 1e70209 frontend F1–F3 (delegated build reviewed and committed by lead), c38b28e real-UI journey. Contract 1.1.0 unchanged.
+
+Combined evidence on this tree: `npm run check` passed (foundation hashes, handoffs, pins, zero-warning lint, typegen+tsc, Vitest incl. 13 frontend, 6 matcher, 31 contract tests; production build with all 38 API routes and 9 pages). `npm audit --audit-level=high` 0 vulnerabilities. `COHUE_REQUIRE_INTEGRATION=1 npm run test:e2e` on the production server (local PostgreSQL cohue_dev, jobs driven by post-response drain): 9 passed (entry smoke, 3 frontend mock-UI journeys, I2 x3, capacity race, I3 API journey). Against `next dev` on :3300 with isolated cohue_test plus `npm run worker`: tests/e2e/integration 6 passed including browser-journey.spec.ts, which drives the real UI on the real API: compose, select, share link, phone redeem/accept, phone decline, repaired proposal, reconsent, activation, room task save. `COHUE_TEST_DATABASE_URL=… npx vitest run tests/backend/runner.db.test.ts` passed: expired lease recovered by a second holder, stale holder's commit rejected by fence, events 1..n without gaps, 3 jobs succeeded (local evidence only, not D7).
+
+Defect fixed during integration: superseded-invitation revocation events were emitted after the reissued invitations, so the UI showed the new invitation as revoked; revocations now commit first. Frontend contract questions recorded in docs/status/frontend/F1-F3.md: own participant id is kept per device in localStorage; no checkpoint id is exposed for retry/resume; room/terms carry roles, not names; snapshot has no invitations list (UI folds INVITATION_* events, which is now causally ordered).
+
+Blockers unchanged: provider keys empty in .env.local, so Gemini/ElevenLabs/SerpApi paths return PROVIDER_UNAVAILABLE and are unproven; no Tiger Data URL; Vercel CLI is signed in but the user has not chosen a reachable database, and Hobby cron cannot run every minute, so deployed D7 is UNVERIFIED. Next: deployment once the database is chosen; SSE + remaining event motions in the theater; showcase seed script; multilingual proof once keys land.
