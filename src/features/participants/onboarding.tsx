@@ -231,8 +231,9 @@ function OnboardingForm({ skills }: { skills: TaxonomySkill[] }) {
     }
     setSessionError(null);
     setPreparing(true);
+    let currentSession;
     try {
-      await ensureLiveSession(client);
+      currentSession = await ensureLiveSession(client);
     } catch (e) {
       setSessionError(e);
       setPreparing(false);
@@ -244,7 +245,7 @@ function OnboardingForm({ skills }: { skills: TaxonomySkill[] }) {
       {
         onSuccess: (participant) => {
           client.setQueryData(keys.participant(participant.id), participant);
-          writeDeviceMemory((m) => ({ ...m, participantId: participant.id }));
+          writeDeviceMemory((m) => ({ ...m, participantId: participant.id }), currentSession);
           router.push("/me?joined=1");
         },
       },

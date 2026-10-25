@@ -12,7 +12,9 @@ import { KeyValue, Panel, Skeleton } from "@/components/ui/surface";
 import { StatusBadge } from "@/components/ui/status";
 import { cx } from "@/components/ui/cx";
 import { useCommand } from "@/client/command";
-import { ensureLiveSession, keys, useDeviceMemory, useTaxonomy } from "@/client/queries";
+import { ensureLiveSession, keys, useDeviceMemory, useTaxonomy, useSession } from "@/client/queries";
+import { prepareShowcaseProfile } from "@/client/showcase";
+import type { ApiData } from "@/client/http";
 import { rememberMission } from "@/client/local";
 import { formatInterval } from "@/client/time";
 import { useHydrated } from "@/client/hydrated";
@@ -111,6 +113,9 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
   const router = useRouter();
   const client = useQueryClient();
   const memory = useDeviceMemory();
+  const session = useSession();
+  const inShowcase = session.data?.kind === "SHOWCASE_OPERATOR";
+  const [preparingShowcase, setPreparingShowcase] = useState(false);
   const [phase, setPhase] = useState<"compose" | "review">("compose");
   const [showErrors, setShowErrors] = useState(false);
   const [sessionError, setSessionError] = useState<unknown>(null);
@@ -140,11 +145,11 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
   const { input, errors, valid } = buildInput(draft);
   const err = (k: string) => (showErrors ? errors[k] : undefined);
 
-  const withSession = async (fn: () => void) => {
+  const withSession = async (fn: (session: ApiData<"getSession">) => void) => {
     setSessionError(null);
     try {
-      await ensureLiveSession(client);
-      fn();
+      const currentSession = await ensureLiveSession(client);
+      fn(currentSession);
     } catch (e) {
       setSessionError(e);
     }
@@ -186,7 +191,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
   };
 
   const launch = () =>
-    withSession(() => {
+    withSession((currentSession) => {
       const start = (m: { id: string; version: number }) =>
         startMission.mutate(
           { params: { id: m.id }, input: { expectedVersion: m.version } },
@@ -197,7 +202,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
         { input: CreateMissionSchema.parse(input) },
         {
           onSuccess: (mission) => {
-            rememberMission(mission);
+            rememberMission(mission, currentSession);
             const ref = { id: mission.id, version: mission.version };
             setCreated(ref);
             client.removeQueries({ queryKey: keys.snapshot(mission.id) });
@@ -277,12 +282,21 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12">
       <div className="flex min-w-0 flex-col gap-8">
         {!memory.participantId ? (
-          <Notice tone="pending" title="Create your profile first">
-            Missions are started from a participant profile on this device, even if you only organize.{" "}
-            <Link href="/join" target="_blank" className="underline">
-              Join in a new tab
-            </Link>
-            , then return here; this page notices your new profile and keeps your brief.
+          <Notice tone="pending" title={inShowcase ? "Choose the synthetic organizer" : "Create your profile first"}>
+            {inShowcase ? <>
+              This installed showcase uses a synthetic organizer. It runs real matching and commands; no real person is enrolled or approves anything.
+              <Button className="mt-3" size="sm" pending={preparingShowcase} pendingLabel="Checking synthetic profile…" onClick={async () => {
+                if (!session.data) return;
+                setPreparingShowcase(true);
+                setSessionError(null);
+                try { await prepareShowcaseProfile(session.data); } catch (e) { setSessionError(e); }
+                finally { setPreparingShowcase(false); }
+              }}>Use synthetic organizer profile</Button>
+            </> : <>
+              Missions are started from a participant profile on this device, even if you only organize.{" "}
+              <Link href="/join" target="_blank" className="underline">Join in a new tab</Link>
+              , then return here; this page notices your new profile and keeps your brief.
+            </>}
           </Notice>
         ) : null}
         <Panel className="p-5 md:p-6">

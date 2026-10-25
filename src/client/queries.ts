@@ -384,6 +384,7 @@ export function useMissionEvents(
 
 let memoryCache: { raw: string; value: DeviceMemory } | null = null;
 export function useDeviceMemory(): DeviceMemory {
+  const session = useSession();
   return useSyncExternalStore(
     (cb) => {
       window.addEventListener("cohue-device-memory", cb);
@@ -394,7 +395,7 @@ export function useDeviceMemory(): DeviceMemory {
       };
     },
     () => {
-      const value = readDeviceMemory();
+      const value = readDeviceMemory(session.data);
       const raw = JSON.stringify(value);
       if (memoryCache?.raw !== raw) memoryCache = { raw, value };
       return memoryCache.value;

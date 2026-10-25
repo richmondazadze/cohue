@@ -1,0 +1,9 @@
+# Hosted backend provider smoke — 24 October 2026
+
+Target https://cohue.tech. Created a guest session with synthetic test data (HTTP201), without creating participant or mission product records. Actual hosted `POST /api/participants/parse` English returned HTTP200 in3.5seconds with requiresConfirmation:true. Actual hosted `POST /api/missions/parse` French returned HTTP200 in10seconds with requiresConfirmation:true. These exercised the deployed server's real configured Gemini integration through the registered HTTP/auth/receipt/response boundaries. Only synthetic profile/mission text was sent. Transient guest and extraction receipts exist; no fake opted-in humans or inferred consent were created. No secrets in this report.
+
+Provider health implementation deliberately returns DEGRADED for configured external providers because health only checks config, not an active provider probe; it cannot report READY based solely on keys. Database READY reflects SELECT1. Dispatcher UNVERIFIED requires both mode and secret; no D7 assertion is inferred.
+
+Normalized DISPATCHER_MODE using the same trimmed optional string policy as other environment settings, before validating its enum. Added two tests: `worker\n` becomes worker; unknown mode remains unconfigured. Both tests and owned ESLint passed. Lead corrected hosting values using exact stdin separately; new environment values require a fresh deployment snapshot. This small source normalization makes incidental whitespace consistent but is not evidence that the worker is running.
+
+Lead is handling deployed full workflow/showcase and durable worker hosting. D7 remains a separate deployed clients-closed recovery/fencing/unique-effects gate. This smoke proves deployed extraction only, not full multilingual speech acceptance or dispatcher durability.

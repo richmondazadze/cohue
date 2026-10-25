@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T02:12:34.726Z (America/Chicago display dates apply).
+Last update: 2026-10-25T02:22:08.260Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -403,3 +403,27 @@ Combined npm run check passed:63unit tests+1DBskip without test env, lint/types/
 Created/linked Vercel project cohue (prj_T4Ns4cSWAwPOrdnug31In0TKfQSv), connected GitHub richmondazadze/cohue. Node24 configured. Production provider/runtime secrets configured through stdin, no migration administrator credential installed. NEXT_PUBLIC_APP_URL=https://cohue.tech; GEMINI_MODEL=gemini-3.1-flash-lite. Runtime modeworker. Hobby plan prohibits every-minute Vercel cron; removed cron configuration in favor of user-selected Vultr worker. This is approved alternative infrastructure, not new orchestration architecture. API maxDuration60, npmci/npmrunbuild declared. User reports$100Vultrcredits; current sidebar is login screen, user sign-in requested. No instance purchased/worker deployed yet. Worker systemd template prepared, D7 UNVERIFIED.
 
 Added cohue.tech/www.cohue.tech to Vercel, saved registrar A records @/www→76.76.21.21 per Vercel instructions, both public DNS resolutions verified. Registrar nameservers/email/security unchanged. Screenshot proof ignored under artifacts. Web deployment follows this commit; no live deployment proof in this predeployment note. Real provider-backed end-to-end, deployed D7, full phone/accessibility and release recording/submission remain required. No claim all release gates complete.
+
+
+## Milestone from docs/status/backend/HOSTED_PROVIDER_SMOKE.md
+
+# Hosted backend provider smoke — 24 October 2026
+
+Target https://cohue.tech. Created a guest session with synthetic test data (HTTP201), without creating participant or mission product records. Actual hosted `POST /api/participants/parse` English returned HTTP200 in3.5seconds with requiresConfirmation:true. Actual hosted `POST /api/missions/parse` French returned HTTP200 in10seconds with requiresConfirmation:true. These exercised the deployed server's real configured Gemini integration through the registered HTTP/auth/receipt/response boundaries. Only synthetic profile/mission text was sent. Transient guest and extraction receipts exist; no fake opted-in humans or inferred consent were created. No secrets in this report.
+
+Provider health implementation deliberately returns DEGRADED for configured external providers because health only checks config, not an active provider probe; it cannot report READY based solely on keys. Database READY reflects SELECT1. Dispatcher UNVERIFIED requires both mode and secret; no D7 assertion is inferred.
+
+Normalized DISPATCHER_MODE using the same trimmed optional string policy as other environment settings, before validating its enum. Added two tests: `worker\n` becomes worker; unknown mode remains unconfigured. Both tests and owned ESLint passed. Lead corrected hosting values using exact stdin separately; new environment values require a fresh deployment snapshot. This small source normalization makes incidental whitespace consistent but is not evidence that the worker is running.
+
+Lead is handling deployed full workflow/showcase and durable worker hosting. D7 remains a separate deployed clients-closed recovery/fencing/unique-effects gate. This smoke proves deployed extraction only, not full multilingual speech acceptance or dispatcher durability.
+
+
+## Milestone from docs/status/lead/WEB_RELEASE_FOLLOWUP.md
+
+# Web release follow-up — 24 October 2026
+
+Web https://cohue.tech is deployed, TLS verified and connected to real Tiger Data. Both apex/www DNS configured. Production SHOWCASE API test passed4.1seconds through actual matcher with labeled synthetic profiles, isolated from LIVE. Hosted extraction evidence in backend/HOSTED_PROVIDER_SMOKE.md. Hosted CI run40153577751 passed onNode24.21.0 with64unit+14e2e tests and actual disposable PostgreSQL, zero skips.
+
+Follow-up fixes scope device convenience storage by executionMode/showcase/principal; legacy ambiguous storage not imported. Showcase entry validates actual installed synthetic organizer via authorized API, no fabricated profile or inferred consent. Dispatcher mode trims whitespace. Latest combined check70passed+1DBskip, lint/types/build/frozen design passed; actual DB checks recorded separately.
+
+Vultr authenticated. Prepared vc2-1c-1gb Atlanta Ubuntu24.04LTS, $5/month hourly, no paid addons; no instance deployed yet. Action-time approval requested for recurring cost, dedicated SSH public key and secure runtime-secret installation. Worker/D7 remain unverified until actual host exists and unattended/restart/lease/fencing/ordering/unique-effects proof captured. Do not mistake live web or request-triggered acceleration for durable execution.

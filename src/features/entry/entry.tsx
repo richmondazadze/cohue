@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
+import { prepareShowcaseProfile, SHOWCASE_ID } from "@/client/showcase";
 import { ButtonLink } from "@/components/ui/button";
 import { Panel } from "@/components/ui/surface";
 import { useRouter } from "next/navigation";
@@ -107,7 +109,7 @@ export function Entry() {
   );
 }
 
-export const SHOWCASE_ID = "00000000-0000-4000-8000-000000000384";
+export { SHOWCASE_ID } from "@/client/showcase";
 
 /** Clearly separated, opt-in synthetic scope. It runs the same real commands against synthetic people. */
 function ShowcaseEntry() {
@@ -115,6 +117,8 @@ function ShowcaseEntry() {
   const client = useQueryClient();
   const session = useSession();
   const create = useCommand("createSession");
+  const [preparing, setPreparing] = useState(false);
+  const [setupError, setSetupError] = useState<unknown>(null);
   const inShowcase = session.data?.scope.executionMode === "SHOWCASE";
   return (
     <div className="mx-auto mt-8 flex max-w-[560px] flex-col items-center gap-2 rounded-panel border border-dashed border-pending bg-pending-bg/60 px-5 py-4">
@@ -123,26 +127,24 @@ function ShowcaseEntry() {
       </p>
       <Button
         size="sm"
-        pending={create.isPending}
+        pending={create.isPending || preparing}
         pendingLabel="Opening showcase…"
-        onClick={() =>
-          inShowcase
-            ? router.push("/missions/new")
-            : create.mutate(
-                { input: { executionMode: "SHOWCASE", showcaseId: SHOWCASE_ID } },
-                {
-                  onSuccess: (s) => {
-                    client.clear();
-                    client.setQueryData(keys.session, s);
-                    router.push("/missions/new");
-                  },
-                },
-              )
-        }
+        onClick={async () => {
+          setSetupError(null);
+          setPreparing(true);
+          try {
+            const current = inShowcase && session.data ? session.data : await create.mutateAsync({ input: { executionMode: "SHOWCASE", showcaseId: SHOWCASE_ID } });
+            client.clear();
+            client.setQueryData(keys.session, current);
+            await prepareShowcaseProfile(current);
+            router.push("/missions/new");
+          } catch (error) { setSetupError(error); }
+          finally { setPreparing(false); }
+        }}
       >
         {inShowcase ? "Continue in the showcase" : "Explore the synthetic showcase"}
       </Button>
-      {create.isError ? <ErrorNotice error={create.error} title="Showcase unavailable" /> : null}
+      {setupError ? <ErrorNotice error={setupError} title="Showcase unavailable" /> : null}
     </div>
   );
 }

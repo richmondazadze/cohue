@@ -10,7 +10,7 @@ import { InvitationStatusBadge } from "@/components/ui/status";
 import { Sheet } from "@/components/ui/dialog";
 import { useCommand } from "@/client/command";
 import { isApiError } from "@/client/http";
-import { useDeviceMemory, useInbox, useParticipant } from "@/client/queries";
+import { useDeviceMemory, useInbox, useParticipant, useSession } from "@/client/queries";
 import { forgetParticipant } from "@/client/local";
 import { formatInterval, formatTimestamp } from "@/client/time";
 import { useHydrated } from "@/client/hydrated";
@@ -40,6 +40,7 @@ export function ParticipantHome() {
 }
 
 function Home({ participantId, justJoined }: { participantId: string; justJoined: boolean }) {
+  const session = useSession();
   const participant = useParticipant(participantId);
   const inbox = useInbox(participantId);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -87,7 +88,7 @@ function Home({ participantId, justJoined }: { participantId: string; justJoined
                 onRetry={lost ? undefined : () => void participant.refetch()}
               />
               {lost ? (
-                <Button size="sm" variant="tertiary" onClick={() => forgetParticipant()}>
+                <Button size="sm" variant="tertiary" onClick={() => forgetParticipant(session.data)}>
                   Forget it on this device
                 </Button>
               ) : null}
@@ -175,6 +176,7 @@ function DeleteSheet({
   const client = useQueryClient();
   const router = useRouter();
   const del = useCommand("deleteParticipant");
+  const session = useSession();
   return (
     <Sheet
       open={open}
@@ -193,7 +195,7 @@ function DeleteSheet({
                 { params: { id: participantId }, input: { expectedVersion: version } },
                 {
                   onSuccess: () => {
-                    forgetParticipant();
+                    forgetParticipant(session.data);
                     client.clear();
                     onOpenChange(false);
                     router.push("/");

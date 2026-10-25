@@ -1,6 +1,6 @@
 # COHUE deployment and operations
 
-Status: prepared, not yet deployed. Deployed D7 remains UNVERIFIED until the evidence in "D7 proof" exists.
+Status: web deployed at https://cohue.tech on 24 October 2026; Tiger Data connectivity and HTTPS verified. Persistent Vultr worker is pending account sign-in/installation. Deployed D7 remains UNVERIFIED until the evidence in "D7 proof" exists.
 
 ## Environment (names only; values live in Vercel project settings or ignored .env.local)
 
@@ -11,7 +11,7 @@ DATABASE_URL (pooled, TLS), DATABASE_MIGRATION_URL (optional direct), SESSION_SE
 1. `npm ci`, then `DATABASE_URL=<target> npm run db:migrate` (transactional, idempotent; records files in cohue_migrations).
 2. Optional synthetic showcase: `DATABASE_URL=<target> npm run seed:showcase` (SHOWCASE scope only; resets synthetic missions).
 3. `vercel link`, set the environment above for Production/Preview, `vercel deploy` (preview) then `vercel deploy --prod` when verified. Node 24 per `.node-version`/engines.
-4. Dispatch: vercel.json schedules `/api/internal/dispatch` every minute. Vercel Hobby limits cron to daily, so every-minute dispatch needs Pro, or run `npm run worker` (DISPATCHER_MODE=worker) on a small host against the same DATABASE_URL, or an external scheduler POSTing with `Authorization: Bearer $DISPATCHER_SECRET`. Each drain also runs the expiry/retention sweeper. Post-response `after()` drains only accelerate; they are not durability.
+4. Dispatch: the current Vercel Hobby deployment omits cron; the user selected Vultr credits for the approved persistent-worker alternative. Install `scripts/worker/cohue-worker.service` per `scripts/worker/HOST_SETUP.md`, using DISPATCHER_MODE=worker and the same bounded runtime DATABASE_URL. No worker host is yet installed. A future Pro cron/external scheduler may POST `/api/internal/dispatch` with `Authorization: Bearer $DISPATCHER_SECRET`. Each drain runs the expiry/retention sweeper. Post-response `after()` drains only accelerate; they are not durability.
 5. Health: `GET /api/providers/health` with `Authorization: Bearer $DISPATCHER_SECRET` returns redacted states.
 
 ## D7 proof (required before claiming durability)
@@ -29,3 +29,11 @@ Service `cohue-prod`, ID `rje03je7u3`, project `b4ybdovx63`, AWS us-east-1, Prod
 Both migrations 0000_init.sql and 0001_mission_history.sql applied, then rerun idempotently. Ignored owner-only .env.local now holds certificate-verifying `sslmode=verify-full` URLs: runtime uses observed transaction pooler port39478/database tsdb_transaction, migrations use direct port35959/database tsdb. Runtime role cohue_app has application-table SELECT/INSERT/UPDATE/DELETE and sequence access, no superuser/role/database creation; administrator URI reserved for migration. Credentials are never recorded here or in Git. Both direct and pooled endpoints passed TLS, transactional temporary write/read/rollback checks before privilege separation; application-role read verified separately. No sample live participants seeded by this setup.
 
 Cloud database setup does not imply a Vercel deployment or D7 proof. Runtime scheduler/worker, provider API credentials and production two-device checks remain outstanding. Do not run destructive test suites against this production service; use isolated test data/database for further integration tests.
+
+## Web release evidence
+
+Integrated commit d75e7d2 deployed through connected GitHub main. Vercel project cohue uses Node24, npmci/npmrunbuild and60second API maximum duration. Production runtime/provider secrets are installed; direct migration administrator credentials are excluded. GEMINI_MODEL=gemini-3.1-flash-lite passed richer application extraction/translation validation; original3.8model timed out.
+
+Registrar A records @ and www point to76.76.21.21 per Vercel instructions. Both DNS resolutions verified; https://cohue.tech home/composer/taxonomy/network returned successfully, operator health actual database READY. Provider health DEGRADED denotes configured-but-unprobed by that endpoint; it is not a live provider test. An initial whitespace in dispatcher mode was corrected in hosting settings; subsequent deployment must use the corrected exact valueworker.
+
+Production database was empty before installing30labeled SHOWCASE profiles in the dedicated synthetic scope; no LIVE synthetic profiles seeded. CI https://github.com/richmondazadze/cohue/actions/runs/40153577751 completed successfully onNode24.21.0:64unit tests with actual isolated PostgreSQL and14end-to-end journeys, zero skips. This proves hosted CI, not production worker durability or physical-phone accessibility.
