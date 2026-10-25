@@ -1,0 +1,7 @@
+# Participant refresh and error feedback deployed
+
+25 October 2026, 08:57 CDT. User explicitly requested “Push to live.” Pushed origin/main from9fbbb05 to15717ce, including participant redesign863b9f2 and error feedback15717ce. Clean working tree before push. Vercel Git production deployment dpl_u8yFQCLNKyboUtLhY1NzJxtStLnk (https://cohue-8fws91o4x-richmond-s-projects.vercel.app) reached Ready and aliases include https://cohue.tech and https://www.cohue.tech. No manual environment or database changes.
+
+Actual browser verification on cohue.tech: /join renders App Shell2, approved typography, four-step progress and loaded taxonomy/form; /me renders new inbox with real API-loaded synthetic-showcase invitations and profile-loading state. Existing browser session was already synthetic showcase; label remained explicit. No new participant saved, invitation answered, link issued, deletion or provider action performed during smoke. Toast implementation included in deployed source; failure behavior already verified in local production and contract-fixture tests, not deliberately induced on live. Screenshot docs/status/frontend/release-artifacts/join-live.png. Previous local PostgreSQL timeout is not evidence of a production outage. This smoke is not comprehensive LIVE-mode/provider/D7 acceptance.
+
+Both handoffs synchronized. Documentation-only follow-up commit pushed after successful code deployment; no other chats contacted.

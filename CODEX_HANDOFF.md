@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T13:48:10.144Z (America/Chicago display dates apply).
+Last update: 2026-10-25T13:57:23.337Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1087,3 +1087,14 @@ Shared visual toast provider follows approved landing styling (warm white, fine 
 Validation: npm run check PASS (foundation/lint/types/18 test files,112 tests passed,22 environment-dependent skipped,production build). npm audit --audit-level=high zero vulnerabilities.19 added unit cases cover all typed error codes and client failures, raw-message redaction, unknown exceptions and uncertain write copy. Production-build Playwright:18/18 PASS across error-toasts.spec.ts, participant-experience.spec.ts and core-loop.spec.ts. Includes390/1440px display, duplicate suppression after retry, dismiss retaining inline error, optional support details, reduced-motion/no focus steal,12 participant journeys and existing mission core loop. Tests use contract-validated fixtures; no DB/provider acceptance claim.
 
 Manual CUA against actual local next start on8796: real taxonomy/session service failure produced safe copy and bottom toast, with no raw server detail. Captured docs/status/frontend/error-feedback/artifacts/error-toast-local-service.png; fixture mobile/desktop samples also retained. Local PostgreSQL still times out; this work presents that failure truthfully and does not resolve connectivity. Both handoffs synchronized. Committed locally; no push/deployment requested for this milestone.
+
+
+## Milestone from docs/status/frontend/PARTICIPANT_TOASTS_LIVE.md
+
+# Participant refresh and error feedback deployed
+
+25 October 2026, 08:57 CDT. User explicitly requested “Push to live.” Pushed origin/main from9fbbb05 to15717ce, including participant redesign863b9f2 and error feedback15717ce. Clean working tree before push. Vercel Git production deployment dpl_u8yFQCLNKyboUtLhY1NzJxtStLnk (https://cohue-8fws91o4x-richmond-s-projects.vercel.app) reached Ready and aliases include https://cohue.tech and https://www.cohue.tech. No manual environment or database changes.
+
+Actual browser verification on cohue.tech: /join renders App Shell2, approved typography, four-step progress and loaded taxonomy/form; /me renders new inbox with real API-loaded synthetic-showcase invitations and profile-loading state. Existing browser session was already synthetic showcase; label remained explicit. No new participant saved, invitation answered, link issued, deletion or provider action performed during smoke. Toast implementation included in deployed source; failure behavior already verified in local production and contract-fixture tests, not deliberately induced on live. Screenshot docs/status/frontend/release-artifacts/join-live.png. Previous local PostgreSQL timeout is not evidence of a production outage. This smoke is not comprehensive LIVE-mode/provider/D7 acceptance.
+
+Both handoffs synchronized. Documentation-only follow-up commit pushed after successful code deployment; no other chats contacted.
