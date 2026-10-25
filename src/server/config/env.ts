@@ -8,6 +8,7 @@ const optional = z
   .transform((v) => (v && v.trim() ? v.trim() : undefined));
 const EnvSchema = z.object({
   DATABASE_URL: optional,
+  EVENT_RETENTION_READY: optional.pipe(z.enum(["1"]).optional()).catch(undefined),
   DATABASE_MIGRATION_URL: optional,
   SESSION_SECRET: optional,
   GEMINI_API_KEY: optional,

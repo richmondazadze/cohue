@@ -20,6 +20,7 @@ import {
   type MissionRow,
   type ParticipantRow,
 } from "./store";
+import { scrubDeletedParticipant } from "./privacy";
 import { enqueueJob } from "../runner/jobs";
 
 type ProfileInput = z.output<typeof ProfileInputSchema>;
@@ -112,7 +113,13 @@ async function notifyAffectedMissions(tx: Tx, participantId: string, profileVers
   );
   for (const mission of missions) {
     if (mission.state === "ACTIVATED") {
+      const reviewId = randomUUID();
+      const doc = { id: reviewId, missionId: mission.id, requestedByParticipantId: participantId,
+        kind: "WITHDRAWAL", reason: "Participant details changed; explicit team review required",
+        proposedAvailability: [], status: "OPEN", version: 1 };
+      await tx.query("INSERT INTO review_requests(id,mission_id,status,version,doc) VALUES ($1,$2,'OPEN',1,$3)", [reviewId,mission.id,JSON.stringify(doc)]);
       await appendEvent(tx, mission, "PROFILE_CHANGED", { participantId, profileVersion }, { correlationId });
+      await appendEvent(tx, mission, "REVIEW_REQUESTED", { reviewRequestId: reviewId }, { correlationId });
       continue;
     }
     if (!["AWAITING_APPROVAL", "PROPOSED", "REPROPOSED"].includes(mission.state)) continue;
@@ -148,6 +155,7 @@ export async function deleteParticipant(tx: Tx, session: SessionRecord, id: stri
   await tx.query("UPDATE sessions SET revoked_at=now() WHERE principal_id=$1 AND scope_mode=$2 AND showcase_id=$3", [session.principalId, ...scopeColumns(session.scope)]);
   await tx.query("INSERT INTO access_epochs(principal_id,epoch) VALUES ($1,2) ON CONFLICT (principal_id) DO UPDATE SET epoch=access_epochs.epoch+1", [session.principalId]);
   await notifyAffectedMissions(tx, id, row.profile_version, correlationId);
+  await scrubDeletedParticipant(tx, row);
   return { deletionId: randomUUID(), status: "ACCEPTED" as const, revokedAt: iso(now), purgeBy: iso(purgeBy) };
 }
 
@@ -155,7 +163,7 @@ export async function inbox(session: SessionRecord, participantId: string, limit
   await loadOwnedParticipant(participantId, session);
   const offset = cursor && /^\d{1,6}$/.test(cursor) ? Number(cursor) : 0;
   const rows = await query<InvitationRow>(
-    "SELECT * FROM invitations WHERE participant_id=$1 ORDER BY created_at DESC, id LIMIT $2 OFFSET $3",
+    "SELECT * FROM invitations WHERE participant_id=$1 AND NOT terms ? 'privacyRedacted' ORDER BY created_at DESC, id LIMIT $2 OFFSET $3",
     [participantId, limit + 1, offset],
   );
   return {

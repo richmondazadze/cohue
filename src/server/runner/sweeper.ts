@@ -1,7 +1,10 @@
 import "server-only";
+import { env } from "../config/env";
 import { randomUUID } from "node:crypto";
 import { query, transaction } from "../db/client";
 import { appendEvent, bumpMission, type InvitationRow, type MissionRow } from "../domain/store";
+import { pruneRetention, scrubDeletedParticipant } from "../domain/privacy";
+import type { ParticipantRow } from "../domain/store";
 import { enqueueJob } from "./jobs";
 
 // System expiry and retention, run by the worker/scheduler with clients closed. Not a public permission.
@@ -40,15 +43,13 @@ export async function sweep(): Promise<{ expiredInvitations: number; expiredMiss
       const next = await bumpMission(tx, mission, { state: "EXPIRED" });
       await appendEvent(tx, next, "MISSION_EXPIRED", { state: "EXPIRED" }, { correlationId: randomUUID() });
     });
-  // Personal fields of deleted profiles are scrubbed by purge_by; the opaque row remains for referential integrity.
-  const purged = await query(
-    `UPDATE participants SET profile = jsonb_build_object('displayName','Deleted participant','language','en','needs','[]'::jsonb,
-       'interests','[]'::jsonb,'availability','[]'::jsonb,'capabilities','[]'::jsonb,
-       'visibility', jsonb_build_object('publicGraph',false,'discoverable',false),'participationOptIn',false),
-       purge_by = NULL
-     WHERE deleted_at IS NOT NULL AND purge_by IS NOT NULL AND purge_by < now() RETURNING id`,
-  );
-  if (purged.length) await query("DELETE FROM capabilities WHERE participant_id = ANY($1::uuid[])", [purged.map((p) => (p as { id: string }).id)]);
+  // Recover legacy/interrupted deletions in bounded batches; same transaction-safe scrub as the command.
+  const purged = await query<ParticipantRow>("SELECT * FROM participants WHERE deleted_at IS NOT NULL AND purge_by IS NOT NULL ORDER BY deleted_at LIMIT 50");
+  for (const participant of purged) await transaction(async tx => {
+    await tx.query("SELECT id FROM participants WHERE id=$1 FOR UPDATE", [participant.id]);
+    await scrubDeletedParticipant(tx, participant);
+  });
+  await transaction(tx => pruneRetention(tx, env().EVENT_RETENTION_READY === "1"));
   const media = await query("UPDATE audio_artifacts SET bytes_base64=NULL, status='EXPIRED' WHERE expires_at < now() AND bytes_base64 IS NOT NULL RETURNING id");
   await query("DELETE FROM command_receipts WHERE expires_at < now()");
   await query("UPDATE sessions SET revoked_at=now() WHERE revoked_at IS NULL AND expires_at < now()");

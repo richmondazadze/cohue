@@ -159,7 +159,7 @@ export async function appendEvent<T extends EventType>(
   },
 ): Promise<AgentEvent> {
   const [{ next }] = await query<{ next: number }>(
-    "SELECT COALESCE(MAX(sequence),0)+1 AS next FROM agent_events WHERE mission_id=$1",
+    "UPDATE missions SET event_sequence=GREATEST(event_sequence,COALESCE((SELECT MAX(sequence) FROM agent_events WHERE mission_id=$1),0))+1 WHERE id=$1 RETURNING event_sequence AS next",
     [mission.id],
     tx,
   );

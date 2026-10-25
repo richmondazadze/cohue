@@ -134,7 +134,7 @@ async function currentProposals(mission: MissionRow, client?: Tx): Promise<Group
   if (!mission.current_proposal_revision) return [];
   return (
     await query<{ doc: GroupProposal }>(
-      "SELECT doc FROM group_proposals WHERE mission_id=$1 AND revision=$2 ORDER BY rank",
+      "SELECT doc FROM group_proposals WHERE mission_id=$1 AND revision=$2 AND NOT doc ? 'privacyRedacted' ORDER BY rank",
       [mission.id, mission.current_proposal_revision],
       client,
     )
@@ -142,7 +142,7 @@ async function currentProposals(mission: MissionRow, client?: Tx): Promise<Group
 }
 async function selectedProposal(mission: MissionRow, client?: Tx): Promise<GroupProposal | null> {
   if (!mission.selected_proposal_id) return null;
-  const [row] = await query<{ doc: GroupProposal }>("SELECT doc FROM group_proposals WHERE id=$1", [mission.selected_proposal_id], client);
+  const [row] = await query<{ doc: GroupProposal }>("SELECT doc FROM group_proposals WHERE id=$1 AND NOT doc ? 'privacyRedacted'", [mission.selected_proposal_id], client);
   return row?.doc ?? null;
 }
 
@@ -151,7 +151,7 @@ export async function buildSnapshot(mission: MissionRow, client: Tx, asOf?: AsOf
   const dto = await missionDto(mission, client);
   const seq = asOf
     ? asOf.sequence
-    : (await query<{ seq: number }>("SELECT COALESCE(MAX(sequence),0)::int AS seq FROM agent_events WHERE mission_id=$1", [mission.id], client))[0].seq;
+    : (await query<{ seq: number }>("SELECT event_sequence AS seq FROM missions WHERE id=$1", [mission.id], client))[0].seq;
   const proposals = await currentProposals(mission, client);
   const selected = await selectedProposal(mission, client);
   const focus = selected && selected.revision === mission.current_proposal_revision ? selected : (proposals[0] ?? selected);
@@ -162,7 +162,7 @@ export async function buildSnapshot(mission: MissionRow, client: Tx, asOf?: AsOf
   const memberIds = new Set(focus?.members.map((m) => m.participantId) ?? []);
   const extraIds = mission.excluded_participant_ids.filter((id) => !memberIds.has(id));
   const people = await query<Pick<ParticipantRow, "id" | "profile">>(
-    "SELECT id, profile FROM participants WHERE id = ANY($1::uuid[])",
+    "SELECT id, profile FROM participants WHERE id = ANY($1::uuid[]) AND deleted_at IS NULL",
     [[...memberIds, ...extraIds]],
     client,
   );
@@ -254,6 +254,7 @@ export async function proposals(session: SessionRecord, id: string) {
     fail("NOT_FOUND", "No matching result yet; planning is still running.");
   }
   const [row] = await query<{ doc: unknown }>("SELECT doc FROM match_results WHERE mission_id=$1 AND revision=$2", [id, mission.current_proposal_revision]);
+  if (!row) fail("NOT_FOUND", "Matching history was removed for privacy; review the current plan.");
   return MatchResultSchema.parse(row.doc);
 }
 
@@ -296,7 +297,7 @@ export async function selectProposal(tx: Tx, session: SessionRecord, id: string,
   const mission = await loadOwnedMission(id, session, tx, true);
   assertVersion(mission, expectedVersion);
   if (!["PROPOSED", "REPROPOSED"].includes(mission.state)) fail("STALE_VERSION", "There is no open proposal to select.");
-  const [prow] = await query<{ doc: GroupProposal; revision: number }>("SELECT doc, revision FROM group_proposals WHERE id=$1 AND mission_id=$2", [proposalId, id], tx);
+  const [prow] = await query<{ doc: GroupProposal; revision: number }>("SELECT doc, revision FROM group_proposals WHERE id=$1 AND mission_id=$2 AND NOT doc ? 'privacyRedacted'", [proposalId, id], tx);
   if (!prow) fail("NOT_FOUND", "Proposal not found.");
   if (prow.revision !== mission.current_proposal_revision || prow.revision !== proposalRevision) fail("STALE_VERSION", "A newer proposal revision exists.");
   const proposal = prow.doc;
@@ -308,7 +309,7 @@ export async function selectProposal(tx: Tx, session: SessionRecord, id: string,
   );
   const priorByPerson = new Map(prior.map((p) => [p.participant_id, p]));
   const languages = new Map(
-    (await query<Pick<ParticipantRow, "id" | "profile">>("SELECT id, profile FROM participants WHERE id = ANY($1::uuid[])", [proposal.members.map((m) => m.participantId)], tx)).map((p) => [p.id, p.profile.language]),
+    (await query<Pick<ParticipantRow, "id" | "profile">>("SELECT id, profile FROM participants WHERE id = ANY($1::uuid[]) AND deleted_at IS NULL", [proposal.members.map((m) => m.participantId)], tx)).map((p) => [p.id, p.profile.language]),
   );
   let next = await bumpMission(tx, mission, { state: "AWAITING_APPROVAL", selected_proposal_id: proposalId });
   const created: InvitationRow[] = [];
@@ -487,8 +488,11 @@ export async function memberAccess(session: SessionRecord | null, invite: Sessio
   const memberIds = new Set(members.map((m) => m.participant_id));
   let participantIds: string[] = [];
   if (session && session.scope.executionMode === principal.scope.executionMode) participantIds = await principalParticipantIds(session.principalId, session.scope, client);
-  if (invite) participantIds.push(invite.principalId);
-  const isCreator = session?.principalId === mission.owner_principal_id;
+  if (invite && JSON.stringify(invite.scope) === JSON.stringify(principal.scope)) {
+    const [current] = await query("SELECT id FROM participants WHERE id=$1 AND scope_mode=$2 AND showcase_id=$3 AND deleted_at IS NULL", [invite.principalId,...scopeColumns(principal.scope)], client);
+    if (current) participantIds.push(invite.principalId);
+  }
+  const isCreator = session?.principalId === mission.owner_principal_id && (await principalParticipantIds(session.principalId, session.scope, client)).includes(mission.creator_id);
   const mine = participantIds.filter((p) => memberIds.has(p));
   if (!isCreator && !mine.length) fail("NOT_FOUND", "Mission room not found.");
   if (mission.state !== "ACTIVATED" && mission.state !== "CANCELLED") fail("NOT_FOUND", "The room opens after activation.");

@@ -81,6 +81,7 @@ export const missions = pgTable(
     state: text("state").notNull(),
     version: integer("version").notNull(),
     constraintsVersion: integer("constraints_version").notNull(),
+    eventSequence: integer("event_sequence").notNull().default(0),
     doc: jsonb("doc").notNull(),
     currentProposalRevision: integer("current_proposal_revision"),
     selectedProposalId: uuid("selected_proposal_id"),
@@ -390,3 +391,15 @@ export const missionHistory = pgTable(
   },
   (t) => [uniqueIndex("mission_history_version").on(t.missionId, t.version)],
 );
+
+// Restricted opaque audit only; never exposed through DTOs, max 30 days.
+export const privacyAudit = pgTable("privacy_audit", {
+  id: uuid("id").primaryKey(),
+  ...scope,
+  subjectRef: uuid("subject_ref").notNull(),
+  sourceRef: uuid("source_ref").notNull(),
+  termsHash: text("terms_hash"),
+  action: text("action").notNull(),
+  occurredAt: ts("occurred_at").notNull(),
+  expiresAt: ts("expires_at").notNull(),
+}, (t) => [index("privacy_audit_expiry").on(t.expiresAt), uniqueIndex("privacy_audit_source_action").on(t.scopeMode,t.showcaseId,t.sourceRef,t.action)]);

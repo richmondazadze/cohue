@@ -9,7 +9,9 @@ export const POST = route(
   (ctx) => inTx(ctx, (tx) => issueLink(tx, ctx.session!, ctx.params.id, ctx.input.rotate)),
   {
     store: ({ invitationId, linkEpoch, expiresAt }) => ({ invitationId, linkEpoch, expiresAt }),
-    replay: async (stored) => {
+    replay: async (stored, ctx) => {
+      // Receipt replay cannot restore revoked/deleted source authority.
+      await inTx(ctx, (tx) => issueLink(tx, ctx.session!, ctx.params.id, false));
       const s = stored as Stored;
       return { ...s, token: linkToken(s.invitationId, s.linkEpoch) };
     },

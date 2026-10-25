@@ -3,7 +3,7 @@ import { EXECUTION_POLICY } from "@/contracts";
 import { query, type Tx } from "../db/client";
 import { fail } from "../http/errors";
 import { hmac, tokenHash } from "../http/crypto";
-import { scopeFromRow } from "../http/scope";
+import { scopeFromRow, sameScope } from "../http/scope";
 import { createSessionRecord, iso, INVITE_COOKIE, type SessionRecord } from "../auth/sessions";
 import { invitationDto, principalParticipantIds, type InvitationRow, type MissionRow } from "./store";
 import type { CookieWrite } from "../http/route";
@@ -23,11 +23,11 @@ async function usable(tx: Tx, row: InvitationRow) {
 // OWNER = mission creator, or the invited participant acting from their own profile session.
 export async function issueLink(tx: Tx, session: SessionRecord, invitationId: string, rotate: boolean) {
   const [row] = await query<InvitationRow & { owner_principal_id: string }>(
-    `SELECT i.*, m.owner_principal_id FROM invitations i JOIN missions m ON m.id=i.mission_id WHERE i.id=$1 FOR UPDATE OF i`,
+    `SELECT i.*, m.owner_principal_id FROM invitations i JOIN missions m ON m.id=i.mission_id WHERE i.id=$1 AND NOT i.terms ? 'privacyRedacted' FOR UPDATE OF i`,
     [invitationId],
     tx,
   );
-  if (!row || scopeFromRow(row).executionMode !== session.scope.executionMode) fail("NOT_FOUND", "Invitation not found.");
+  if (!row || !sameScope(scopeFromRow(row), session.scope)) fail("NOT_FOUND", "Invitation not found.");
   const mine = await principalParticipantIds(session.principalId, session.scope, tx);
   if (row.owner_principal_id !== session.principalId && !mine.includes(row.participant_id)) fail("NOT_FOUND", "Invitation not found.");
   await usable(tx, row);
@@ -40,7 +40,7 @@ export async function issueLink(tx: Tx, session: SessionRecord, invitationId: st
 }
 
 async function byToken(token: string, client?: Tx): Promise<InvitationRow> {
-  const [row] = await query<InvitationRow>("SELECT * FROM invitations WHERE token_hash=$1", [tokenHash(token)], client);
+  const [row] = await query<InvitationRow>("SELECT * FROM invitations WHERE token_hash=$1 AND NOT terms ? 'privacyRedacted'", [tokenHash(token)], client);
   if (!row || linkToken(row.id, row.link_epoch) !== token) fail("NOT_FOUND", "This link is not valid.");
   return row;
 }

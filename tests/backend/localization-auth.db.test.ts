@@ -29,7 +29,7 @@ describe.skipIf(!url)("current-source localization authority on isolated Postgre
     await admin.connect();
     await admin.query(`CREATE SCHEMA ${schema}`);
     await admin.query(`SET search_path TO ${schema}`);
-    for (const file of ["drizzle/0000_init.sql", "drizzle/0001_mission_history.sql"])
+    for (const file of ["drizzle/0000_init.sql", "drizzle/0001_mission_history.sql", "drizzle/0002_privacy_retention.sql"])
       await admin.query(readFileSync(file,"utf8").replaceAll("--> statement-breakpoint", "").replaceAll('"public".', `"${schema}".`));
     await admin.end();
     db = await import("@/server/db/client");

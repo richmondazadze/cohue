@@ -210,7 +210,7 @@ const strategist: StepResult = async (tx, mission, dto, job) => {
 async function acceptedGroup(tx: Tx, mission: MissionRow) {
   if (!mission.selected_proposal_id) return null;
   const [p] = await query<{ doc: { members: { participantId: string }[]; commonWindow: { start: string; end: string } } }>(
-    "SELECT doc FROM group_proposals WHERE id=$1",
+    "SELECT doc FROM group_proposals WHERE id=$1 AND NOT doc ? 'privacyRedacted'",
     [mission.selected_proposal_id],
     tx,
   );

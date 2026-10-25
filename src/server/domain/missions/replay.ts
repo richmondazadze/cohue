@@ -11,6 +11,8 @@ export async function replay(session: Parameters<typeof loadOwnedMission>[1], id
   return transaction(async (tx) => {
     await tx.query("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY");
     const mission = await loadOwnedMission(id, session, tx);
+    const [redacted] = await query("SELECT id FROM group_proposals WHERE mission_id=$1 AND doc ? 'privacyRedacted' LIMIT 1", [id], tx);
+    if (redacted) fail("NOT_FOUND", "Historical personal terms were removed for privacy.");
     const rows = await query<{ doc: AgentEvent }>(
       "SELECT doc FROM agent_events WHERE mission_id=$1 AND sequence <= $2 ORDER BY sequence",
       [id, atSequence],

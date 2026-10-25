@@ -7,7 +7,7 @@ import {
   MEDIA_LIMITS,
   type AudioMimeSchema,
 } from "@/contracts";
-import { query, type Tx } from "../db/client";
+import { query, transaction, type Tx } from "../db/client";
 import { fail } from "../http/errors";
 import { scopeColumns, scopeFromRow } from "../http/scope";
 import { iso, type SessionRecord } from "../auth/sessions";
@@ -42,7 +42,7 @@ export async function authorizedInvitationSource(principal: SessionRecord, id: s
     `SELECT i.*, m.owner_principal_id, m.doc, m.state AS mission_state, m.selected_proposal_id
      FROM invitations i JOIN missions m ON m.id=i.mission_id AND m.scope_mode=i.scope_mode AND m.showcase_id=i.showcase_id
      JOIN participants p ON p.id=i.participant_id AND p.scope_mode=i.scope_mode AND p.showcase_id=i.showcase_id AND p.deleted_at IS NULL
-     WHERE i.id=$1 AND i.scope_mode=$2 AND i.showcase_id=$3`,
+     WHERE i.id=$1 AND i.scope_mode=$2 AND i.showcase_id=$3 AND NOT i.terms ? 'privacyRedacted'`,
     [id, mode, showcase], client,
   );
   const creator = row && principal.kind !== "INVITATION" && row.owner_principal_id === principal.principalId;
@@ -108,11 +108,19 @@ async function translate(row: InvitationRow, missionLanguage: string, canonical:
       status: "REVIEW_REQUIRED",
       generatedAt: iso(new Date()),
     });
-    await query(
-      "INSERT INTO localizations(id, source_id, scope_mode, showcase_id, version, doc) VALUES ($1,$2,$3,$4,1,$5)",
-      [doc.id, row.id, row.scope_mode, row.showcase_id, JSON.stringify(doc)],
+    const inserted = await transaction(async tx => {
+      // Provider work finished before locking. Serialize publication against privacy deletion.
+      await tx.query("SELECT id FROM missions WHERE id=$1 FOR SHARE", [row.mission_id]);
+      return query(
+      `INSERT INTO localizations(id, source_id, scope_mode, showcase_id, version, doc)
+       SELECT $1,i.id,i.scope_mode,i.showcase_id,1,$5 FROM invitations i
+       JOIN participants p ON p.id=i.participant_id AND p.deleted_at IS NULL
+       WHERE i.id=$2 AND i.scope_mode=$3 AND i.showcase_id=$4 AND NOT i.terms ? 'privacyRedacted'
+       AND i.status NOT IN ('REVOKED','EXPIRED') AND i.expires_at>now() RETURNING id`,
+      [doc.id, row.id, row.scope_mode, row.showcase_id, JSON.stringify(doc)], tx,
     );
-    return [doc];
+    });
+    return inserted.length ? [doc] : [];
   } catch {
     return [];
   }
@@ -156,6 +164,7 @@ export async function synthesize(tx: Tx, principal: SessionRecord, input: { sour
     text = approved.doc.text;
   }
   const audio = await synthesizeSpeech(text);
+  await tx.query("SELECT id FROM missions WHERE id=$1 FOR SHARE", [row.mission_id]);
   await authorizedInvitationSource(principal, row.id, tx);
   const id = randomUUID();
   const expiresAt = new Date(Math.min(Date.now() + MEDIA_LIMITS.synthesizedTtlSeconds * 1000, row.expires_at.getTime()));
