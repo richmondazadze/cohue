@@ -78,7 +78,10 @@ export function route<K extends ApiOperation>(
       }
       const params = contract.params.safeParse(rawParams);
       if (!params.success) fail("NOT_FOUND", "Unknown resource reference.");
-      if (MUTATION.has(contract.method)) checkOrigin(request);
+      if (MUTATION.has(contract.method)) {
+        checkOrigin(request);
+        rateLimit(request);
+      }
       let file: File | null = null;
       let input: unknown;
       if (options.multipart) {
@@ -174,6 +177,20 @@ async function readInput<K extends ApiOperation>(contract: Contract<K>, request:
     fail("INVALID_INPUT", "Request does not match the contract.", fieldErrors);
   }
   return parsed.data;
+}
+
+// Best-effort per-instance limiter for mutations (serverless instances do not share it).
+const buckets = new Map<string, { count: number; resetAt: number }>();
+function rateLimit(request: NextRequest): void {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "local";
+  const now = Date.now();
+  const bucket = buckets.get(ip);
+  if (!bucket || bucket.resetAt < now) {
+    if (buckets.size > 10_000) buckets.clear();
+    buckets.set(ip, { count: 1, resetAt: now + 60_000 });
+    return;
+  }
+  if (++bucket.count > 300) fail("RATE_LIMITED", "Too many requests; wait a moment.");
 }
 
 function isLocal(request: NextRequest): boolean {
