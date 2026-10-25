@@ -1,6 +1,6 @@
 # Frontend final acceptance — 25 October 2026
 
-Status: targeted production acceptance completed; one reproduced Room draft-loss defect fixed locally, pending integrated build/browser verification. This is not an unconditional release-ready declaration. Product Engineer owns integration, deployment and submission review. Preceding assignment baseline `7c246ea`; frontend fix `8459331`.
+Status: targeted production acceptance completed; reproduced Room draft-loss defect fixed and verified against the clean integrated local build. Production stylesheet presence confirmed; full patched Room journey on production is not rerun. This is not an unconditional release-ready declaration. Product Engineer owns integration, deployment and submission review. Preceding assignment baseline `7c246ea`; frontend fix `8459331`.
 
 ## Target and authority
 
@@ -22,7 +22,7 @@ All mutations below used the installed, visibly labeled SHOWCASE and synthetic o
 | Decline → repair → reconsent | Synthetic designer accepted revision 1; synthetic hardware invite declined. Real worker produced revision 2 replacing that person. Previous reviewed Spanish playback was unavailable on the new unreviewed source; original still readable. Current revision selected (observed select HTTP 201), fresh explicit synthetic responses, then activation. |
 | Activation / tasks | Actual Room showed 3 members/4 tasks. Creator-owned coordination task changed To do → In progress, persisted as version 2. Public resources stay explicitly unverified and separate from members. |
 | Room brief | English original and actual Gemini Spanish draft appeared for current member languages. Organizer reviewed Spanish; reviewed label and Listen visible. Actual BRIEF audio readyState 4, duration 53.684535s, currentTime 48.072184s, paused false, no alerts. No French member remained after this repair, so no new French Room UI pass claimed. Claude's previous en/es/fr producer and live-phone records remain separate evidence. |
-| Room mobile | 390px Tasks and Brief views fit. Reproduced draft-loss defect crossing desktop→390→Brief; fixed in `8459331`, see below. Complete post-fix private-width/motion matrix awaits integrated artifact. |
+| Room mobile | 390px Tasks and Brief views fit. Reproduced draft-loss defect crossing desktop→390→Brief; fixed in `8459331`, see below. Post-fix local Room draft/visibility checks passed; see final clean-build verification below. |
 | Failure / stale media | Reviewed source changed to unreviewed revision during actual repair and old translated Listen was withheld. No deliberate production outage/media-expiry injection; synthetic harness regression and backend stale-source tests are separate, not a fresh deployed failure pass. |
 | Cleanup | Own synthetic mission cancelled normally; reservations released. Temporary reduced-motion emulation and viewport overrides reset. No live session or production service changed. |
 
@@ -32,7 +32,7 @@ No actual physical-phone, screen-reader, recording/STT, contrast audit or realis
 
 Desktop Room Spanish brief review was open with an unsaved edit. Resizing to 390px, then choosing Brief, showed the closed review button and discarded the edit. The wide/mobile ternary unmounted the editor.
 
-`8459331` keeps one Radix Tabs/panel tree, force-mounts its contents and hides inactive phone panels from display/focus. Desktop keeps the existing tasks/brief main panel and team/resources rail. Hidden brief playback becomes inactive and pauses; source hash/version/status keys retire editors/players on source change. No new persistence of private draft data. New bounded `room-review-continuity.spec.ts` asserts exact edited text at 390/1024/1440/768, tab hide/show, and reviewed Listen eligibility. It is authored, pending lead execution. Harness Room briefs reuse its existing typed localizations.
+`8459331` keeps one Radix Tabs/panel tree, force-mounts its contents and hides inactive phone panels from display/focus. Desktop keeps the existing tasks/brief main panel and team/resources rail. Hidden brief playback becomes inactive and pauses; source hash/version/status keys retire editors/players on source change. No new persistence of private draft data. New bounded `room-review-continuity.spec.ts` asserts exact edited text at 390/1024/1440/768, tab hide/show, and reviewed Listen eligibility. Lead subsequently reported hosted CI run 40171182501 SUCCESS including this new test; see final clean-build verification below. Harness Room briefs reuse its existing typed localizations.
 
 Owned paths: `src/features/room/room.tsx`, `tests/e2e/frontend/room-review-continuity.spec.ts`, `tests/e2e/frontend/support/mock-backend.ts`, frontend status/artifacts, serialized paired handoffs.
 
@@ -64,4 +64,17 @@ Safe synthetic reference screenshots: `artifacts/final-repair-1440.png`, `artifa
 
 ## Immediate next step
 
-Product Engineer integrates frontend `8459331` with backend security patch, runs one coordinated build/check/E2E, and supplies the exact test/deployed target. Verify the Room draft preservation and hidden-playback behavior against that artifact. Update this matrix with actual results and complete the human phone actions/video/submission checklist. No unconditional readiness, physical-device success, video production or Devpost submission is claimed here.
+Product Engineer completes runtime alignment and remaining deployment/security review. Local Room draft preservation and hidden playback passed; retain its origin distinction. Complete the human phone actions/video/submission checklist. No unconditional readiness, physical-device success, video production or Devpost submission is claimed here.
+
+
+## Clean integrated artifact verification (supersedes pending Room-fix browser status)
+
+Lead reported `109 tests / 0 skipped`, lint/types/build pass on actual isolated PostgreSQL for `d109836` + `8459331`, hosted CI `40171182501` SUCCESS including the new Room E2E. These are lead results, not independent frontend reruns.
+
+First local artifact had the new Room JS but stale Tailwind output missing md:block/md:hidden/data-active:block: all Room panels computed display:none at 1280px. Reported immediately; lead removed `.next/cache` and rebuilt. No source workaround added. Clean local CSS `8d275d266cd2f008.css` restored correct display. This failed intermediate build is not counted as a pass. Keep clean-build CSS generation in release verification.
+
+Actual CUA on fresh http://127.0.0.1:3100, isolated `cohue_final_ui`, real providers enabled: new labeled SHOWCASE mission `d9d8f332-4f77-4c31-bc4a-0f0618829149`, 2 synthetic members/3 tasks activated through visible UI. Original and actual Spanish Room brief present. Edited unsubmitted Spanish text remained byte-identical across 390/1024/1440/768px; document scrollWidth equaled each viewport. Phone inactive editor panel display:none; selecting Brief restores the edit. Desktop all four panels display:block and mobile tablist hidden. Tasks→ArrowRight focused/selected Brief and retained the edit. Reduced-motion emulation at390px kept editor visible and usable.
+
+Requested English original brief audio: readyState4, duration39.055964s, currentTime10.908951s, pausedfalse, no alerts. Switching to Tasks hid Brief and paused audio at17.048118s; returning to Brief preserved the exact draft and kept audio paused (no automatic resume). Screenshot `artifacts/final-room-draft-fixed-390.png` captures this synthetic check. No new translation approval was needed for the continuity draft.
+
+Cancelled only this local mission normally; final UI confirms reservations released. Restored viewport/media emulation. Reloaded https://cohue.tech read-only: stylesheet `91463bd695a9249c.css` present with both md:block and md:hidden utilities in loaded CSS rules. Lead reports Ready deployment `dpl_GDJQzujJUNsfqebmqkUowQLzdURs`. This read-only stylesheet check does not replace a full patched production Room/security acceptance run. No further product changes after8459331.

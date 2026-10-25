@@ -1,0 +1,7 @@
+# Final Room clean-build browser verification
+
+25 October2026 America/Chicago; precedingbaselinebe9d23a plusbackendd109836. Leadcombined109tests0skip/lint/types/buildandhostedCI40171182501SUCCESS reported. First3100CSSstale/missingnewutilitiescausedhiddenRoompanels; CUAflaggedbeforeapproval. Leadcleaned.next/cache/rebuilt8d275dCSS, no sourceworkaround.
+
+ActualCUAcleanfresh3100 isolatedcohue_final_ui: ownsyntheticmissiond9d8f332-4f77-4c31-bc4a-0f0618829149 activated2members3tasks; RoomSpanisheditor exactdraft preserved390/1024/1440/768 andphoneTasks/Briefchanges, nooverflow. Desktopallpanelsvisible/tablisthidden, phoneinactivepaneldisplaynone. ArrowRightkeyboardfocusBrief anddraftretained. Reducedmotion390editorusable. RealEnglishBRIEFaudioprogressready4/duration39.055964/current10.908951/pausedfalse; hideBrief→pausedat17.048118, reopensameedit/noautoresume. Screenshotfinal-room-draft-fixed-390.png. Localmissioncancellednormally/reservationsreleased; emulationreset. ProductionreloadreadonlyCSS91463bd695a9249c containsmd:block+md:hidden, leadreportsReadynewdeploymentdpl_GDJQzujJUNsfqebmqkUowQLzdURs. No fullpatchedproductionRoomjourneyclaimed.
+
+FINAL_ACCEPTANCE.md updatedwithexactorigin/build/failure/pass/matrixand2minutehumanphone/videoactions. No sourcewritesafter8459331; noindependentbuild/push/deploy/workerchanges/LIVEdecision. Previousproductionmission4403...alsocancelled. HumanphysicalphoneListen/task/voice/screenreader/performance/video/submissionsteps remainexplicitlyuntestedwhereapplicable. Bothhandoffsserializedwiththischeckpoint.

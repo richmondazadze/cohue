@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T07:00:46.595Z (America/Chicago display dates apply).
+Last update: 2026-10-25T07:06:04.693Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -855,3 +855,14 @@ Resumed fromClaude b0db29e. Frontend8459331 preservesRoombriefeditingacrossbreak
 CombinedactualPG npmruncheck passed109tests/18files/0skips, lint/typecheck/productionbuild; audit0. FreshlocalisolatedAPI7tests passed5.6s inclcorecapacity/repair/reconsent/activation andSHOWCASEbriefjourney withprovidersdisabled(originalonly; notmultilingualproviderproof). FrontendfreshRoomfixCUAverificationpending, hostedCI/newdeploymentpending. Backendrealshorten/es/frspeechroundtripspassed separately; notphysicalmic/hostedHTTPproof.
 
 VerifiedofficialDevpostpagesinbrowser: deadlinewidget25Oct11:30AMCDT, mandatoryvideo,1–4team,inpersonjudging; publiccode/video andAIcodingtooldisclosure. RequirementproseusesCSTbutwidgetexplicitCDT; discrepancyrecorded. LocalSUBMISSION_CHECKLIST/DEMO_RUNBOOK/DEVPOST_DRAFT updatedonly; noexternaldraftpublication/submission/licensechange. Newsource stilllocaluntilleadpush, exactdeployment+workerupdatecoordination follows; oldD7proofnotreattributedtonewcode. BothengineerownedFINAL_ACCEPTANCE reportsareauthoritativeforremaininghumanchecks.
+
+
+## Milestone from docs/status/frontend/FINAL_CLEAN_BUILD_VERIFIED.md
+
+# Final Room clean-build browser verification
+
+25 October2026 America/Chicago; precedingbaselinebe9d23a plusbackendd109836. Leadcombined109tests0skip/lint/types/buildandhostedCI40171182501SUCCESS reported. First3100CSSstale/missingnewutilitiescausedhiddenRoompanels; CUAflaggedbeforeapproval. Leadcleaned.next/cache/rebuilt8d275dCSS, no sourceworkaround.
+
+ActualCUAcleanfresh3100 isolatedcohue_final_ui: ownsyntheticmissiond9d8f332-4f77-4c31-bc4a-0f0618829149 activated2members3tasks; RoomSpanisheditor exactdraft preserved390/1024/1440/768 andphoneTasks/Briefchanges, nooverflow. Desktopallpanelsvisible/tablisthidden, phoneinactivepaneldisplaynone. ArrowRightkeyboardfocusBrief anddraftretained. Reducedmotion390editorusable. RealEnglishBRIEFaudioprogressready4/duration39.055964/current10.908951/pausedfalse; hideBrief→pausedat17.048118, reopensameedit/noautoresume. Screenshotfinal-room-draft-fixed-390.png. Localmissioncancellednormally/reservationsreleased; emulationreset. ProductionreloadreadonlyCSS91463bd695a9249c containsmd:block+md:hidden, leadreportsReadynewdeploymentdpl_GDJQzujJUNsfqebmqkUowQLzdURs. No fullpatchedproductionRoomjourneyclaimed.
+
+FINAL_ACCEPTANCE.md updatedwithexactorigin/build/failure/pass/matrixand2minutehumanphone/videoactions. No sourcewritesafter8459331; noindependentbuild/push/deploy/workerchanges/LIVEdecision. Previousproductionmission4403...alsocancelled. HumanphysicalphoneListen/task/voice/screenreader/performance/video/submissionsteps remainexplicitlyuntestedwhereapplicable. Bothhandoffsserializedwiththischeckpoint.
