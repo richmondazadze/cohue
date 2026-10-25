@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
@@ -24,6 +23,7 @@ import { selectedRevision } from "@/client/events";
 import { keys, TERMINAL_STATES, useMissionEvents, useProposals, useSnapshot } from "@/client/queries";
 import { useMediaQuery } from "@/client/media";
 import { formatClock, formatTimestamp } from "@/client/time";
+import { CreatorInvitationReview } from "@/features/invitations/creator-review";
 import { ShareLink } from "@/features/invitations/share-link";
 import { NetworkView } from "./network";
 import {
@@ -370,7 +370,6 @@ function CenterPanel({
   liveFrom: number | null;
 }) {
   const client = useQueryClient();
-  const router = useRouter();
   const mission = snapshot.mission;
   const state = mission.state;
   const start = useCommand("startMission");
@@ -609,11 +608,9 @@ function CenterPanel({
                     <ShareLink
                       invitationId={invitationId}
                       personLabel={name}
-                      onOpenHere={(url) => router.push(new URL(url).pathname)}
                     />
-                    <p className="type-meta mt-1 text-muted">
-                      Opening it here lets you read their terms and review a machine translation; only they can answer.
-                    </p>
+                    <div className="mt-3"><CreatorInvitationReview invitationId={invitationId} personLabel={name} /></div>
+                    <p className="type-meta mt-1 text-muted">Review here as organizer. Open the bearer link only on the participant&apos;s own device.</p>
                   </div>
                 ) : null}
               </li>

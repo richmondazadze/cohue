@@ -33,6 +33,7 @@ export async function transcribeAudio(
   audio: Blob,
   metadata: z.input<typeof TranscriptionMetadataSchema>,
   idempotencyKey: string,
+  signal?: AbortSignal,
 ): Promise<Transcription> {
   const meta = TranscriptionMetadataSchema.safeParse(metadata);
   if (!meta.success)
@@ -51,13 +52,15 @@ export async function transcribeAudio(
   try {
     res = await fetch("/api/voice/transcribe", {
       method: "POST",
+      signal,
       body: form,
       headers: { accept: "application/json", ...headers },
       credentials: "same-origin",
       cache: "no-store",
       referrerPolicy: "no-referrer",
     });
-  } catch {
+  } catch (error) {
+    if (signal?.aborted) throw error;
     throw new ApiRequestError({
       operation: "transcribe",
       code: "NETWORK",

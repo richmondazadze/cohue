@@ -50,6 +50,13 @@ describe("event log reducer", () => {
     expect(s.events).toEqual([]);
     expect(s.accessEpoch).toBe(3);
   });
+  it("drops private event history immediately when a denied stream/backfill revokes access", () => {
+    const s = eventLogReducer(initialEventLog, page([ev(1, "MISSION_CREATED", { state: "DRAFT" })]));
+    const revoked = eventLogReducer(s, { type: "revoke" });
+    expect(revoked.events).toEqual([]);
+    expect(revoked.cursor).toBe(0);
+    expect(revoked.revoked).toBe(true);
+  });
   it("marks ACCESS_REVOKED as revoked", () => {
     const s = eventLogReducer(initialEventLog, page([ev(1, "ACCESS_REVOKED", { reason: "OPT_OUT" })]));
     expect(s.revoked).toBe(true);

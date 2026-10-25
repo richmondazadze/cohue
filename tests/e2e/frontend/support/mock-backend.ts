@@ -5,6 +5,7 @@ import {
   type ApiOperation,
   type AgentEvent,
   type Invitation,
+  type ApiOutput,
 } from "@/contracts";
 import {
   fixtureId,
@@ -27,6 +28,7 @@ export class MockBackend {
   mission = { ...fixtureMission };
   events: AgentEvent[] = [];
   invitations: Invitation[] = [];
+  localizations: ApiOutput<"getInvitation">["data"]["localized"] = [];
   approvals = { required: 0, accepted: 0 };
   taskVersion = 1;
   taskStatus: "TODO" | "IN_PROGRESS" | "DONE" = "TODO";
@@ -142,6 +144,21 @@ export class MockBackend {
         this.session = { principalId: fixtureId(991), kind: "INVITATION", scope, invitationId: inv.id, expiresAt: "2026-12-01T00:00:00Z" };
         return [200, { session: this.session, invitation: inv }];
       }
+      case "getInvitationForReview": {
+        const inv = this.invitations.find((i) => i.id === params.id);
+        return inv ? [200, { invitation: inv, localized: this.localizations.filter((l) => l.sourceId === inv.id) }] : [404, err("NOT_FOUND")];
+      }
+      case "approveLocalization": {
+        const item = this.localizations.find((l) => l.id === params.id);
+        if (!item) return [404, err("NOT_FOUND")];
+        if (item.version !== body.expectedVersion) return [409, err("STALE_VERSION")];
+        item.text = String(body.text);
+        item.status = "APPROVED";
+        item.version++;
+        return [200, item];
+      }
+      case "synthesize":
+        return [503, err("PROVIDER_UNAVAILABLE")];
       case "getInvitation": {
         const inv = this.invitations.find((i) => i.id === params.id);
         return inv ? [200, { invitation: inv, localized: [] }] : [404, err("NOT_FOUND")];

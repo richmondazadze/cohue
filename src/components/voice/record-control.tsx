@@ -12,17 +12,17 @@ type Purpose = "PROFILE" | "MISSION" | "INVITATION_RESPONSE";
  * Record → upload → editable transcript. The transcript is handed to the caller as a draft; nothing is
  * submitted, accepted or extracted automatically. Every failure leaves typing available.
  */
-export function RecordControl({
-  purpose,
-  language,
-  onTranscript,
-  label = "Record instead",
-}: {
+type RecordControlProps = {
   purpose: Purpose;
   language: string;
   onTranscript: (text: string) => void;
   label?: string;
-}) {
+};
+export function RecordControl(props: RecordControlProps) {
+  // Changing source/language retires uploads, recording state and callbacks together.
+  return <RecordingSession key={`${props.purpose}:${props.language}`} {...props} />;
+}
+function RecordingSession({ purpose, language, onTranscript, label = "Record instead" }: RecordControlProps) {
   const meter = useRef<HTMLSpanElement>(null);
   const reduced = useReducedMotionPreference();
   const onLevel = useCallback(
@@ -35,6 +35,8 @@ export function RecordControl({
   const [elapsed, setElapsed] = useState(0);
   const [upload, setUpload] = useState<{ phase: "idle" | "uploading" | "done" } | { phase: "error"; error: unknown }>({ phase: "idle" });
   const key = useRef<string | null>(null);
+  const uploadRequest = useRef<AbortController | null>(null);
+  useEffect(() => () => { uploadRequest.current?.abort(); }, [purpose, language]);
 
   const startedAt = rec.state.phase === "recording" ? rec.state.startedAt : null;
   useEffect(() => {
@@ -47,6 +49,9 @@ export function RecordControl({
     if (rec.state.phase !== "recorded") return;
     key.current ??= newVoiceKey();
     setUpload({ phase: "uploading" });
+    uploadRequest.current?.abort();
+    const controller = new AbortController();
+    uploadRequest.current = controller;
     try {
       const result = await transcribeAudio(
         rec.state.blob,
@@ -58,12 +63,15 @@ export function RecordControl({
           durationMs: Math.max(1, Math.round(rec.state.durationMs)),
         },
         key.current,
+        controller.signal,
       );
+      if (controller.signal.aborted) return;
       key.current = null;
       setUpload({ phase: "done" });
       onTranscript(result.transcript);
       rec.reset();
     } catch (error) {
+      if (controller.signal.aborted) return;
       setUpload({ phase: "error", error });
     }
   };

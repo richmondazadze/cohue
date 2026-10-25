@@ -7,10 +7,15 @@ import { Field, TextArea } from "@/components/ui/field";
 import { ErrorNotice } from "@/components/ui/notice";
 import { useCommand } from "@/client/command";
 import { ApiRequestError } from "@/client/http";
-import { keys, useSession } from "@/client/queries";
+import { keys } from "@/client/queries";
 import { languageName } from "@/features/shared/skills";
 
-type Localized = ApiOutput<"getInvitation">["data"]["localized"][number];
+export type Localized = ApiOutput<"getInvitation">["data"]["localized"][number];
+
+/** Never render/play translations from a different invitation or superseded source revision. */
+export function currentTranslations(items: Localized[], invitation: Invitation): Localized[] {
+  return items.filter((item) => item.sourceId === invitation.id && item.sourceVersion === invitation.proposalRevision);
+}
 
 const statusLabel = (l: Localized) =>
   l.status === "APPROVED"
@@ -28,18 +33,21 @@ const statusLabel = (l: Localized) =>
 export function Translations({
   items,
   invitation,
+  organizerReview = false,
 }: {
   items: Localized[];
   invitation: Invitation;
+  organizerReview?: boolean;
 }) {
   const [playing, setPlaying] = useState<string | null>(null);
-  if (!items.length) return null;
+  const current = currentTranslations(items, invitation);
+  if (!current.length) return null;
   return (
     <section className="mt-5 flex flex-col gap-3" aria-label="Translations">
-      {items.map((l) =>
+      {current.map((l) =>
         l.language === l.originalLanguage ? (
           // The server lists the binding original first so playback can bind to its hash; its text is shown below.
-          <div key={l.id} className="flex flex-wrap gap-3">
+          <div key={`${l.id}:${l.version}:${l.canonicalTextHash}:${l.status}`} className="flex flex-wrap gap-3">
             <Listen
               id={`${l.id}-orig`}
               label={`Listen in ${languageName(l.originalLanguage)} (original)`}
@@ -52,7 +60,7 @@ export function Translations({
           </div>
         ) : (
           <article
-            key={l.id}
+            key={`${l.id}:${l.version}:${l.canonicalTextHash}:${l.status}`}
             lang={l.language}
             className="rounded-field border border-line-panel bg-subtle p-4"
           >
@@ -63,12 +71,12 @@ export function Translations({
               <p className="max-w-[60ch] whitespace-pre-wrap">{l.text}</p>
             ) : null}
             <p className="type-meta mt-2 text-muted">
-              The original terms below ({languageName(l.originalLanguage)}) are
+              The binding original terms ({languageName(l.originalLanguage)}) are
               what you agree to. If the translation seems different, suggest a
               change instead of accepting.
             </p>
             <div className="mt-3 flex flex-wrap gap-3">
-              <Listen
+              {l.status === "APPROVED" ? <Listen
                 key={`${l.id}-tr`}
                 id={`${l.id}-tr`}
                 label={`Listen in ${languageName(l.language)}`}
@@ -77,9 +85,9 @@ export function Translations({
                 invitation={invitation}
                 language={l.language}
                 hash={l.canonicalTextHash}
-              />
+              /> : <p className="type-meta text-muted">Playback is available after the organizer reviews this translation.</p>}
             </div>
-            <OrganizerReview item={l} invitationId={invitation.id} />
+            {organizerReview ? <OrganizerReview item={l} invitationId={invitation.id} /> : null}
           </article>
         ),
       )}
@@ -109,8 +117,11 @@ function Listen({
   const [failure, setFailure] = useState<unknown>(null);
   const audio = useRef<HTMLAudioElement>(null);
   const mediaRequest = useRef<AbortController | null>(null);
+  const generation = useRef(0);
+  const expiresAt = useRef(0);
 
   useEffect(() => () => {
+    generation.current++;
     mediaRequest.current?.abort();
   }, []);
 
@@ -128,10 +139,12 @@ function Listen({
   const run = () => {
     setFailure(null);
     onActivate(id);
-    if (src) {
-      void audio.current?.play().catch(() => undefined);
+    if (src && expiresAt.current > Date.now()) {
+      void audio.current?.play().catch(() => setFailure(new Error("Playback could not start. Use the text or try again.")));
       return;
     }
+    if (src) setSrc(null);
+    const request = ++generation.current;
     synth.mutate(
       {
         input: {
@@ -144,6 +157,7 @@ function Listen({
       },
       {
         onSuccess: async (artifact) => {
+          if (request !== generation.current) return;
           if (artifact.status !== "READY" || !artifact.accessPath) {
             setFailure(
               new ApiRequestError({
@@ -170,7 +184,9 @@ function Listen({
             if (!res.ok || !type.startsWith("audio/"))
               throw new Error("not audio");
             const blob = await res.blob();
-            if (controller.signal.aborted) return;
+            if (controller.signal.aborted || request !== generation.current) return;
+            expiresAt.current = Date.parse(artifact.expiresAt);
+            if (expiresAt.current <= Date.now()) throw new Error("expired");
             setSrc(URL.createObjectURL(blob));
           } catch {
             if (controller.signal.aborted) return;
@@ -185,7 +201,7 @@ function Listen({
             );
           }
         },
-        onError: (e) => setFailure(e),
+        onError: (e) => { if (request === generation.current) setFailure(e); },
       },
     );
   };
@@ -208,7 +224,13 @@ function Listen({
           controls
           autoPlay={active}
           className="w-full max-w-xs"
-          onPlay={() => onActivate(id)}
+          onPlay={() => {
+            if (expiresAt.current <= Date.now()) {
+              audio.current?.pause();
+              setSrc(null);
+              setFailure(new Error("This audio expired. Request a fresh version or use the text."));
+            } else onActivate(id);
+          }}
         />
       ) : null}
       {failure ? (
@@ -229,16 +251,11 @@ function OrganizerReview({
   item: Localized;
   invitationId: string;
 }) {
-  const session = useSession();
   const client = useQueryClient();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState(item.text);
   const approve = useCommand("approveLocalization");
-  if (
-    item.status !== "REVIEW_REQUIRED" ||
-    session.data?.kind === "INVITATION" ||
-    !session.data
-  )
+  if (item.status !== "REVIEW_REQUIRED")
     return null;
   if (!open)
     return (
@@ -286,10 +303,14 @@ function OrganizerReview({
                 },
               },
               {
-                onSuccess: () =>
-                  void client.invalidateQueries({
-                    queryKey: keys.invitation(invitationId),
-                  }),
+                onSuccess: () => {
+                  setOpen(false);
+                  void client.invalidateQueries({ queryKey: keys.invitationReview(invitationId) });
+                  void client.invalidateQueries({ queryKey: keys.invitation(invitationId) });
+                },
+                onError: () => {
+                  void client.invalidateQueries({ queryKey: keys.invitationReview(invitationId) });
+                },
               },
             )
           }

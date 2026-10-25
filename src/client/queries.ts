@@ -24,6 +24,7 @@ export const keys = {
   proposals: (id: string) => ["mission", id, "proposals"] as const,
   room: (id: string) => ["mission", id, "room"] as const,
   invitation: (id: string) => ["invitation", id] as const,
+  invitationReview: (id: string) => ["invitation-review", id] as const,
   preview: ["invitation-preview"] as const,
 };
 
@@ -180,6 +181,18 @@ export function useInvitationDetail(invitationId: string) {
   });
 }
 
+/** Creator-only read, distinct cache from the redeemed participant capability. */
+export function useInvitationReview(invitationId: string) {
+  return useQuery({
+    queryKey: keys.invitationReview(invitationId),
+    queryFn: ({ signal }) => callApi("getInvitationForReview", { params: { id: invitationId }, signal }),
+    refetchInterval: 10_000,
+    refetchIntervalInBackground: false,
+    retry: queryRetry,
+    gcTime: 0,
+  });
+}
+
 function usePageVisible(): boolean {
   return useSyncExternalStore(
     (cb) => {
@@ -219,6 +232,7 @@ export function useMissionEvents(
   const visible = usePageVisible();
   const cursorRef = useRef(0);
   const sseFailures = useRef(0);
+  const accessEpochRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!enabled || !visible) return;
@@ -245,6 +259,12 @@ export function useMissionEvents(
           input: { after: cursorRef.current, limit: 100, format: "json" },
           signal: controller.signal,
         });
+        if (accessEpochRef.current !== null && page.accessEpoch !== accessEpochRef.current) {
+          dispatch({ type: "revoke" });
+          stopped = true;
+          throw new ApiRequestError({ operation: "events", code: "FORBIDDEN", message: "Access changed; reload to fetch the current authorized view.", status: 403, retryable: false });
+        }
+        accessEpochRef.current = page.accessEpoch;
         dispatch({
           type: "page",
           events: page.events,
@@ -262,7 +282,15 @@ export function useMissionEvents(
 
     const fatal = (error: unknown) =>
       error instanceof ApiRequestError &&
-      ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "UNAVAILABLE"].includes(error.code);
+      ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "SCOPE_MISMATCH", "UNAVAILABLE"].includes(error.code);
+    const onFailure = (error: unknown) => {
+      setMeta((m) => ({ ...m, error }));
+      if (fatal(error)) {
+        stopped = true;
+        source?.close();
+        if (error instanceof ApiRequestError && error.code !== "UNAVAILABLE") dispatch({ type: "revoke" });
+      }
+    };
 
     const poll = async () => {
       try {
@@ -277,8 +305,7 @@ export function useMissionEvents(
         if (received > 0) refreshSnapshot();
       } catch (error) {
         if ((error as Error)?.name === "AbortError") return;
-        setMeta((m) => ({ ...m, error }));
-        if (fatal(error)) stopped = true;
+        onFailure(error);
       }
       if (!stopped && !controller.signal.aborted) timer = setTimeout(poll, intervalMs);
     };
@@ -316,9 +343,9 @@ export function useMissionEvents(
           es.close();
           void pull()
             .then(() => refreshSnapshot())
-            .catch((error) => setMeta((m) => ({ ...m, error })))
+            .catch(onFailure)
             .finally(() => {
-              if (source === es) openStream();
+              if (source === es && !stopped) openStream();
             });
           return;
         }
@@ -342,9 +369,8 @@ export function useMissionEvents(
               openStream();
             })
             .catch((error) => {
-              setMeta((m) => ({ ...m, error }));
-              if (fatal(error)) stopped = true;
-              else {
+              onFailure(error);
+              if (!stopped) {
                 sseFailures.current++;
                 openStream();
               }
@@ -366,8 +392,8 @@ export function useMissionEvents(
       })
       .catch((error) => {
         if ((error as Error)?.name === "AbortError") return;
-        setMeta((m) => ({ ...m, error }));
-        if (!fatal(error)) timer = setTimeout(poll, intervalMs);
+        onFailure(error);
+        if (!stopped) timer = setTimeout(poll, intervalMs);
       });
 
     return () => {

@@ -30,7 +30,8 @@ export type EventLogAction =
       accessEpoch: number;
     }
   | { type: "frame"; event: AgentEvent }
-  | { type: "reset" };
+  | { type: "reset" }
+  | { type: "revoke" };
 
 const MAX_EVENTS = 500;
 
@@ -59,6 +60,8 @@ export function eventLogReducer(
   switch (action.type) {
     case "reset":
       return initialEventLog;
+    case "revoke":
+      return { ...initialEventLog, revoked: true };
     case "page": {
       // A changed access epoch invalidates everything derived under the old authorization.
       if (state.accessEpoch !== null && action.accessEpoch < state.accessEpoch)
