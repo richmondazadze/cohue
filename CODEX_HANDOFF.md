@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T04:07:08.207Z (America/Chicago display dates apply).
+Last update: 2026-10-25T04:08:40.913Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -613,3 +613,14 @@ scripts/worker/privacy-smoke.ts is explicitly gated COHUE_PRIVACY_ACCEPTANCE=1, 
 Authorized console operator commands after exact finalcommit and migration are verified: `set -a; . /etc/cohue/worker.env; set +a` (no echo/cat of values), `cd /opt/cohue`, then `COHUE_D7_ACCEPTANCE=1 COHUE_D7_ON_HOST=1 npx tsx --conditions=react-server scripts/worker/prove-d7.ts` while workerheld, followed by privacy harness after D7/quietcoordination. Environment contains only leastprivilege runtime DB/providers, never DATABASE_MIGRATION_URL/admin. No SSHprivatekey copied tohost. Record exacthash/serviceuser/envflag status and sourcechecksum before execution; lead coordinates productionbrowserquiet.
 
 Actual validation: `npx tsc --noEmit` passed; targeted ESLint passed; `npx vitest run tests/backend/acceptance-guards.test.ts`2passed proving both CLI scripts reject absent explicit opt-in BEFORE environment/DB access; gitdiffcheck and foundationpass. These guards/syntax checks do not prove final deployed behavior. No sharedbuild/push/webdeploy. Both handoffs serialized through append script, only owned paths committed. Immediate next action: lead reviewed migration/grant/runtimeprobe + compatible finalweb; exacthash supplied for existinghost update, then actual final D7/SHOWCASEprivacy evidence.
+
+
+## Milestone from docs/status/frontend/STOP_CHECKPOINT.md
+
+# Frontend stopped at user request
+
+24 October2026 America/Chicago. User explicitly stopped all work because credits are running out; received through authorized Product Engineer. No further tests, builds, provider calls, deployments or browser actions. No owned running test/probe/server process remains; production web/held worker state untouched.
+
+Last stable frontend commit13822b3 records fresh local real-provider acceptance. Source fixes809db4f restores review Escape focus,192c2b6 preserves review/draft across breakpoints. Actual local CUA passes: exacttriggerfocus, editedSpanishdraft continuity390/1024/1440/768 withoutoverflow, Spanish/Frenchtranslationapproval, English/Spanish/French DOMplaybackprogress andlanguage-switchpause. OwnSHOWCASEmission86a3cb40-78db-4157-9e31-b999942ab1df cancelled normally; capacityreleased. NoLIVE mutation. DesignSystem1.0 frozen. No frontend source uncommitted by this chat; only this stop record/handoffs added now.
+
+Lastverification: foundation11hashes/handoffsync/diffcheck pass at13822b3; earlier ownedlint/types/38frontendtests passed. Lead reported integrated97tests/lint/types/build pass separately. Not final release acceptance: deployedcommit/journey/providerSTT/extraction/reducedmotion/privateviewport/physicalphone/screenreader/graphperformance remain pending. Next action only after explicit resume: read current pairedhandoffs and ProductEngineer deployment checkpoint; continue remaining agreed acceptance without redoing completed work. No push/deploy. ProductEngineer notified stopped.
