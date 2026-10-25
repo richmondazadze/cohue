@@ -1,7 +1,8 @@
 "use client";
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import * as D from "@radix-ui/react-dialog";
 import * as T from "@radix-ui/react-tabs";
+import { gsap, useGSAP } from "@/client/gsap";
 import { cx } from "./cx";
 
 /**
@@ -25,6 +26,24 @@ export function Sheet({
   footer?: ReactNode;
   trigger?: ReactNode;
 }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  useGSAP(
+    () => {
+      const panel = panelRef.current;
+      if (!open || !panel) return;
+      const mm = gsap.matchMedia();
+      mm.add({ reduce: "(prefers-reduced-motion: reduce)" }, (context) => {
+        if (context.conditions?.reduce) return;
+        gsap.fromTo(
+          panel,
+          { autoAlpha: 0, y: 28, rotationX: 8, transformOrigin: "50% 100%" },
+          { autoAlpha: 1, y: 0, rotationX: 0, duration: 0.45, clearProps: "transform,opacity,visibility" },
+        );
+      });
+      return () => mm.revert();
+    },
+    { dependencies: [open], scope: panelRef, revertOnUpdate: true },
+  );
   return (
     <D.Root open={open} onOpenChange={onOpenChange}>
       {trigger ? <D.Trigger asChild>{trigger}</D.Trigger> : null}
@@ -35,9 +54,10 @@ export function Sheet({
             "fixed z-[60] flex max-h-[92dvh] flex-col bg-surface shadow-float outline-none",
             "inset-x-0 bottom-0 rounded-t-sheet",
             "md:inset-auto md:top-1/2 md:left-1/2 md:w-[min(560px,calc(100vw-48px))] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-panel",
-            "data-[state=open]:animate-[cohue-sheet_240ms_var(--ease-standard)]",
+            "data-[state=open]:animate-[cohue-sheet_240ms_var(--ease-standard)] [perspective:900px]",
           )}
         >
+          <div ref={panelRef} className="flex min-h-0 flex-1 flex-col">
           <div className="flex items-start justify-between gap-4 border-b border-line-subtle px-5 pt-5 pb-4">
             <div className="min-w-0">
               <D.Title className="type-panel">{title}</D.Title>
@@ -64,6 +84,7 @@ export function Sheet({
               {footer}
             </div>
           ) : null}
+          </div>
         </D.Content>
       </D.Portal>
     </D.Root>

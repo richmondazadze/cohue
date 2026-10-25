@@ -1,8 +1,8 @@
 "use client";
-import { createContext, useContext, type ReactNode } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { createContext, useContext, useRef, type ReactNode } from "react";
 import type { AgentEvent } from "@/contracts";
 import { motionFor, type MotionMeaning } from "@/client/events";
+import { gsap, useGSAP } from "@/client/gsap";
 
 // Event-bound motion (Design System v1.0 §7). Only committed events newer than the initial load cue motion;
 // a newer cue interrupts an older one by key; nothing here gates state, focus or command completion.
@@ -30,7 +30,7 @@ const CueContext = createContext<Partial<Record<MotionMeaning, AgentEvent>>>({})
 export const CueProvider = CueContext.Provider;
 export const useCue = (m: MotionMeaning) => useContext(CueContext)[m] ?? null;
 
-/** Entrance tied to a cue. Reduced motion: immediate (opacity ≤100ms, no transform). */
+/** Entrance tied to a cue. Reduced motion: opacity only, within 100ms, no 3D transform. */
 export function CueEntrance({
   cueKey,
   children,
@@ -46,42 +46,70 @@ export function CueEntrance({
   className?: string;
   as?: "div" | "li" | "span";
 }) {
-  const reduced = useReducedMotion();
-  const Tag = as === "li" ? motion.li : as === "span" ? motion.span : motion.div;
-  if (!cueKey) {
-    const Plain = as;
-    return <Plain className={className}>{children}</Plain>;
-  }
+  const ref = useRef<HTMLElement>(null);
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el || !cueKey) return;
+      const mm = gsap.matchMedia();
+      mm.add({ reduce: "(prefers-reduced-motion: reduce)" }, (context) => {
+        const reduce = Boolean(context.conditions?.reduce);
+        gsap.fromTo(
+          el,
+          reduce
+            ? { autoAlpha: 0 }
+            : { autoAlpha: 0, y: 10, rotationX: -12, transformOrigin: "50% 100%" },
+          {
+            autoAlpha: 1,
+            y: 0,
+            rotationX: 0,
+            duration: reduce ? 0.1 : duration,
+            delay: reduce ? 0 : Math.min(index * DUR.stagger, DUR.staggerMax),
+            ease: "power3.out",
+            clearProps: "transform,opacity,visibility",
+          },
+        );
+      });
+      return () => mm.revert();
+    },
+    { dependencies: [cueKey, duration, index], scope: ref, revertOnUpdate: true },
+  );
+  const Tag = as;
   return (
-    <Tag
-      key={cueKey}
-      className={className}
-      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: reduced ? 0.1 : duration,
-        ease: EASE,
-        delay: reduced ? 0 : Math.min(index * DUR.stagger, DUR.staggerMax),
-      }}
-    >
+    <Tag ref={ref as never} className={className}>
       {children}
     </Tag>
   );
 }
 
-/** One-shot emphasis (background flash to transparent) for agent execution rows. No pulse, no loop. */
+/** One-shot emphasis for a newly committed event row. No pulse and no loop. */
 export function Emphasis({ cueKey, children, className }: { cueKey: string | null; children: ReactNode; className?: string }) {
-  const reduced = useReducedMotion();
-  if (!cueKey || reduced) return <div className={className}>{children}</div>;
+  const ref = useRef<HTMLDivElement>(null);
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el || !cueKey) return;
+      const mm = gsap.matchMedia();
+      mm.add({ reduce: "(prefers-reduced-motion: reduce)" }, (context) => {
+        if (context.conditions?.reduce) return;
+        gsap.fromTo(
+          el,
+          { backgroundColor: "rgba(237,242,255,1)" },
+          {
+            backgroundColor: "rgba(237,242,255,0)",
+            duration: DUR.enter * 2,
+            ease: "power2.out",
+            clearProps: "backgroundColor",
+          },
+        );
+      });
+      return () => mm.revert();
+    },
+    { dependencies: [cueKey], scope: ref, revertOnUpdate: true },
+  );
   return (
-    <motion.div
-      key={cueKey}
-      className={className}
-      initial={{ backgroundColor: "rgba(237,242,255,1)" }}
-      animate={{ backgroundColor: "rgba(237,242,255,0)" }}
-      transition={{ duration: DUR.enter * 2, ease: EASE }}
-    >
+    <div ref={ref} className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }

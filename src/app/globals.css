@@ -1,16 +1,11 @@
 /* COHUE Design System v1.0 production mapping. Values mirror docs/design/tokens.v1.0.json exactly. */
 @import "tailwindcss";
 
-@font-face {
-  font-family: "Space Grotesk";
-  src: url("/fonts/space-grotesk-variable.woff2") format("woff2");
-  font-weight: 300 700;
-  font-style: normal;
-  font-display: swap;
-}
+/* Switzer is delivered by the Fontshare API (layout.tsx); its EULA forbids self-hosting or redistributing the files. */
 
 @theme {
-  --font-sans: "Space Grotesk", Arial, sans-serif;
+  --font-sans: "Switzer", Arial, sans-serif;
+  --font-display: "Switzer", Arial, sans-serif;
 
   --color-canvas: #f5f3ef;
   --color-surface: #ffffff;
@@ -42,11 +37,11 @@
   --color-media-ink: #202323;
   --color-on-media-ink: #ffffff;
 
-  --radius-compact: 6px;
-  --radius-field: 8px;
-  --radius-button: 10px;
-  --radius-panel: 16px;
-  --radius-sheet: 24px;
+  --radius-compact: 3px;
+  --radius-field: 4px;
+  --radius-button: 5px;
+  --radius-panel: 8px;
+  --radius-sheet: 12px;
 
   --shadow-float: 0 12px 32px rgba(32, 35, 35, 0.08);
 
@@ -91,6 +86,15 @@
   h4,
   p {
     margin: 0;
+  }
+  h1,
+  h2,
+  h3,
+  .type-entry,
+  .type-experience,
+  .type-section,
+  .type-panel {
+    font-family: var(--font-display);
   }
   a {
     color: inherit;
@@ -213,6 +217,12 @@
   }
   .press:active:not(:disabled) {
     transform: scale(0.98);
+  }
+  .stage-3d {
+    perspective: 1200px;
+  }
+  .stage-page {
+    transform-style: preserve-3d;
   }
 }
 

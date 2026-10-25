@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { prepareShowcaseProfile, SHOWCASE_ID } from "@/client/showcase";
 import { ButtonLink } from "@/components/ui/button";
 import { Panel } from "@/components/ui/surface";
@@ -11,6 +11,7 @@ import { ErrorNotice } from "@/components/ui/notice";
 import { useCommand } from "@/client/command";
 import { keys, useDeviceMemory, useSession } from "@/client/queries";
 import { formatTimestamp } from "@/client/time";
+import { gsap, ScrollTrigger, useGSAP } from "@/client/gsap";
 
 const STEPS = [
   {
@@ -33,23 +34,58 @@ const STEPS = [
 export function Entry() {
   const memory = useDeviceMemory();
   const session = useSession();
+  const mainRef = useRef<HTMLElement>(null);
   const inShowcase = session.data?.scope.executionMode === "SHOWCASE";
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add({ reduce: "(prefers-reduced-motion: reduce)" }, (context) => {
+        if (context.conditions?.reduce) return;
+        gsap.from("[data-rise='hero']", {
+          autoAlpha: 0,
+          y: 28,
+          rotationX: -12,
+          transformOrigin: "50% 100%",
+          stagger: 0.07,
+          duration: 0.75,
+          clearProps: "transform,opacity,visibility",
+        });
+        ScrollTrigger.batch("[data-rise='step']", {
+          start: "top 90%",
+          once: true,
+          onEnter: (batch) => {
+            gsap.from(batch, {
+              autoAlpha: 0,
+              y: 24,
+              rotationX: -10,
+              transformOrigin: "50% 100%",
+              stagger: 0.08,
+              duration: 0.65,
+              clearProps: "transform,opacity,visibility",
+            });
+          },
+        });
+      });
+      return () => mm.revert();
+    },
+    { scope: mainRef },
+  );
   return (
-    <main id="main" tabIndex={-1} className="outline-none">
+    <main id="main" ref={mainRef} data-stage="hero" tabIndex={-1} className="outline-none">
       <section className="gutter mx-auto max-w-[1600px] pt-12 pb-12 text-center md:pt-20">
-        <p className="eyebrow mb-6 inline-flex items-center gap-3">
+        <p data-rise="hero" className="eyebrow mb-6 inline-flex items-center gap-3">
           <span aria-hidden="true" className="block h-px w-7 bg-line-control" />
           Common ground
         </p>
-        <h1 className="type-entry mx-auto max-w-[18ch]">
+        <h1 data-rise="hero" className="type-entry mx-auto max-w-[18ch]">
           What could we{" "}
           <span className="text-muted">make happen together?</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-[60ch] text-ink">
+        <p data-rise="hero" className="mx-auto mt-6 max-w-[60ch] text-ink">
           From strangers to something extraordinary. A living map of what people
           can accomplish together, with every commitment made by a human.
         </p>
-        <div className="mx-auto mt-8 flex max-w-[640px] flex-col gap-3 sm:flex-row sm:justify-center">
+        <div data-rise="hero" className="mx-auto mt-8 flex max-w-[640px] flex-col gap-3 sm:flex-row sm:justify-center">
           <ButtonLink href="/missions/new" variant="primary" className="sm:min-w-[200px]">
             Start a mission
           </ButtonLink>
@@ -61,7 +97,7 @@ export function Entry() {
             {memory.participantId ? "My profile & invitations" : "Join the network"}
           </ButtonLink>
         </div>
-        <p className="type-meta mx-auto mt-4 max-w-[52ch] text-muted">
+        <p data-rise="hero" className="type-meta mx-auto mt-4 max-w-[52ch] text-muted">
           {inShowcase
             ? "Synthetic showcase. Explore the same matching and consent workflow with clearly labeled synthetic profiles."
             : "Live mode. Real people, real availability, real decisions. Nobody is added to a team without saying yes."}
@@ -74,7 +110,7 @@ export function Entry() {
         className="gutter mx-auto grid max-w-[1600px] gap-6 border-t border-line-subtle pt-10 pb-12 md:grid-cols-3"
       >
         {STEPS.map((s) => (
-          <article key={s.n} className="border-t border-line-control pt-4">
+          <article key={s.n} data-rise="step" data-tilt className="border-t border-line-control pt-4">
             <span className="text-3xl font-normal text-muted tabular">{s.n}</span>
             <h2 className="type-section mt-2">{s.title}</h2>
             <p className="mt-2 max-w-[44ch] text-sm leading-5 text-muted">{s.body}</p>
@@ -83,11 +119,11 @@ export function Entry() {
       </section>
 
       {memory.missions.length ? (
-        <section className="gutter mx-auto max-w-[1600px] pb-24" aria-labelledby="your-missions">
+        <section data-rise="step" className="gutter mx-auto max-w-[1600px] pb-24" aria-labelledby="your-missions">
           <h2 id="your-missions" className="type-section mb-4">
             Missions started on this device
           </h2>
-          <Panel as="div" className="divide-y divide-line-subtle">
+          <Panel as="div" data-tilt className="divide-y divide-line-subtle">
             {memory.missions.map((m) => (
               <Link
                 key={m.id}
@@ -121,7 +157,7 @@ function ShowcaseEntry() {
   const [setupError, setSetupError] = useState<unknown>(null);
   const inShowcase = session.data?.scope.executionMode === "SHOWCASE";
   return (
-    <div className="mx-auto mt-8 flex max-w-[560px] flex-col items-center gap-2 rounded-panel border border-dashed border-pending bg-pending-bg/60 px-5 py-4">
+    <div data-rise="hero" data-tilt className="mx-auto mt-8 flex max-w-[560px] flex-col items-center gap-2 rounded-panel border border-dashed border-pending bg-pending-bg/60 px-5 py-4">
       <p className="text-sm text-pending">
         <strong>Synthetic showcase.</strong> 30 synthetic people, clearly labelled. Real matching and commands, no real people or commitments.
       </p>

@@ -1,8 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { motion, useReducedMotion } from "motion/react";
 import { IdSchema, type AgentEvent, type MissionSnapshot } from "@/contracts";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Field, TextArea } from "@/components/ui/field";
@@ -41,7 +40,8 @@ import {
   type CoverageRow,
 } from "./model";
 import { Avatar, ProposalCard } from "./proposals";
-import { CueEntrance, CueProvider, DUR, EASE, Emphasis, cuesOf, liveEvents, useCue } from "./motion";
+import { CueEntrance, CueProvider, DUR, Emphasis, cuesOf, liveEvents, useCue } from "./motion";
+import { gsap, useGSAP } from "@/client/gsap";
 
 export function MissionTheater({ missionId }: { missionId: string }) {
   // Next navigation can preserve this component between mission URLs. Reset streams and cursors
@@ -137,19 +137,32 @@ function TheaterView({
   const activated = state === "ACTIVATED";
   // Activation: a single 480ms emphasis, only when MISSION_ACTIVATED arrives live; a reload renders the end state.
   const activationCue = cues.activation ?? null;
-  const reduced = useReducedMotion();
+  const headerRef = useRef<HTMLElement>(null);
+  useGSAP(
+    () => {
+      const el = headerRef.current;
+      if (!el || !activationCue) return;
+      const mm = gsap.matchMedia();
+      mm.add({ reduce: "(prefers-reduced-motion: reduce)" }, (context) => {
+        if (context.conditions?.reduce) return;
+        gsap.fromTo(
+          el,
+          { rotationX: -6, y: 8, transformOrigin: "50% 0%" },
+          { rotationX: 0, y: 0, duration: DUR.activation, ease: "power3.out", clearProps: "transform" },
+        );
+      });
+      return () => mm.revert();
+    },
+    { dependencies: [activationCue?.id], revertOnUpdate: true },
+  );
 
   const header = (
-    <motion.header
-      key={activationCue?.id ?? "header"}
-      initial={activationCue && !reduced ? { boxShadow: "0 0 0 0px rgba(33,103,71,0)" } : false}
-      animate={
-        activated
-          ? { boxShadow: "0 0 0 2px #E6F2E9, 0 0 0 4px #216747" }
-          : { boxShadow: "0 0 0 0px rgba(0,0,0,0)" }
-      }
-      transition={{ duration: reduced ? 0 : DUR.activation, ease: EASE }}
-      className="flex flex-col gap-3 rounded-t-panel border-b border-line-subtle bg-surface px-5 py-5 md:flex-row md:items-start md:justify-between md:px-6"
+    <header
+      ref={headerRef}
+      className={cx(
+        "flex flex-col gap-3 rounded-t-panel border-b border-line-subtle bg-surface px-5 py-5 md:flex-row md:items-start md:justify-between md:px-6",
+        activated && "shadow-[0_0_0_2px_#E6F2E9,0_0_0_4px_#216747]",
+      )}
     >
       <div className="min-w-0">
         <p className="eyebrow flex items-center gap-2">
@@ -170,7 +183,7 @@ function TheaterView({
           Impact &amp; replay →
         </Link>
       </div>
-    </motion.header>
+    </header>
   );
 
   const footer = (

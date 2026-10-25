@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import { Stage } from "@/components/motion/stage";
 import { Providers } from "@/components/providers";
 import { AppHeader } from "@/components/shell/app-shell";
 
@@ -29,12 +30,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        {/* Fontshare API delivery is the licensed way to use Switzer on the web. */}
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
         <link
-          rel="preload"
-          href="/fonts/space-grotesk-variable.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500,600,700&display=swap"
         />
       </head>
       <body>
@@ -46,7 +47,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </a>
         <Providers>
           <AppHeader />
-          {children}
+          <Stage>{children}</Stage>
         </Providers>
       </body>
     </html>

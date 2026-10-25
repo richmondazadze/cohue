@@ -60,6 +60,7 @@ export function ProposalCard({
   return (
     <article
       aria-labelledby={`proposal-${proposal.id}`}
+      data-tilt
       className="rounded-panel border border-line-panel bg-surface"
     >
       <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line-subtle px-5 py-4">

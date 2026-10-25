@@ -63,7 +63,7 @@ export function Chip({
   removeLabel?: string;
 }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-line-control bg-surface pl-3 text-sm">
+    <span className="inline-flex items-center gap-1 rounded-button border border-line-control bg-surface pl-3 text-sm">
       <span className="py-1.5">{children}</span>
       {onRemove ? (
         <button

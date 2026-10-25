@@ -135,7 +135,7 @@ function InboxItem({ invitation }: { invitation: Invitation }) {
   const router = useRouter();
   const t = invitation.terms;
   return (
-    <li className="rounded-panel border border-line-panel bg-surface p-5">
+    <li data-tilt className="rounded-panel border border-line-panel bg-surface p-5">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <p className="eyebrow">Revision {invitation.proposalRevision}</p>
         <InvitationStatusBadge status={invitation.status} />

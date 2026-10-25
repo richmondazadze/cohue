@@ -55,7 +55,7 @@ export function InvitationGate({ token }: { token: string }) {
   }
   const p = preview.data;
   return (
-    <Panel className="flex flex-col gap-5 p-5 md:p-8">
+    <Panel data-tilt className="flex flex-col gap-5 p-5 md:p-8">
       <div>
         <p className="eyebrow">Invitation</p>
         <h1 className="type-experience mt-2">Someone would like you to join a mission.</h1>

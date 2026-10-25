@@ -55,7 +55,7 @@ function Impact({ snapshot, events }: { snapshot: MissionSnapshot; events: Agent
   const repairs = events.filter((e) => e.type === "REPLAN_COMPLETED").length;
   const declines = events.filter((e) => e.type === "INVITATION_DECLINED" || e.type === "INVITATION_COUNTERPROPOSED").length;
   return (
-    <Panel className="p-5 md:p-6" aria-labelledby="impact-h">
+    <Panel data-tilt className="p-5 md:p-6" aria-labelledby="impact-h">
       <p className="eyebrow">Verifiable outcomes · from committed records only</p>
       <h2 id="impact-h" className="type-section mt-1">
         Impact

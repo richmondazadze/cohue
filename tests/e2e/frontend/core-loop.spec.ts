@@ -34,7 +34,8 @@ for (const width of [390, 1280]) {
 
     mock.completeDiscovery();
     await expect(page.getByRole("heading", { name: "Review proposed groups" })).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText("Sofía Ruiz").first()).toBeVisible();
+    // The desktop-only requirement rail repeats names; assert the visible proposal copy at every width.
+    await expect(page.getByText("Sofía Ruiz").filter({ visible: true }).first()).toBeVisible();
     await shot("theater-proposed");
     await page.getByRole("tab", { name: /map/i }).click();
     await page.getByRole("button", { name: "List", exact: true }).click();

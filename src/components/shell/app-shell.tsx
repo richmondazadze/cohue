@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
+import { gsap, useGSAP } from "@/client/gsap";
 import { cx } from "@/components/ui/cx";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -32,14 +33,34 @@ export function AppHeader() {
   const pathname = usePathname();
   const memory = useDeviceMemory();
   const session = useSession();
+  const headerRef = useRef<HTMLElement>(null);
   const showcase = session.data?.scope.executionMode === "SHOWCASE";
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add({ reduce: "(prefers-reduced-motion: reduce)" }, (context) => {
+        if (context.conditions?.reduce) return;
+        gsap.from("[data-header-piece]", {
+          autoAlpha: 0,
+          y: -12,
+          rotationX: -10,
+          transformOrigin: "50% 0%",
+          stagger: 0.06,
+          duration: 0.55,
+          clearProps: "transform,opacity,visibility",
+        });
+      });
+      return () => mm.revert();
+    },
+    { scope: headerRef },
+  );
   return (
-    <header className="sticky top-0 z-20 border-b border-line-subtle bg-canvas/95 backdrop-blur-none">
+    <header ref={headerRef} className="sticky top-0 z-20 border-b border-line-subtle bg-canvas/95 backdrop-blur-none">
       <div className="gutter mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-x-6 gap-y-2 py-3 md:py-4">
-        <Link href="/" className="-m-2 rounded-button p-2" aria-label="COHUE home">
+        <Link data-header-piece href="/" className="-m-2 rounded-button p-2" aria-label="COHUE home">
           <Logo />
         </Link>
-        <nav aria-label="Primary" className="order-3 -mx-2 flex w-full gap-1 overflow-x-auto md:order-none md:w-auto">
+        <nav data-header-piece aria-label="Primary" className="order-3 -mx-2 flex w-full gap-1 overflow-x-auto md:order-none md:w-auto">
           {NAV.map((item) => {
             const active =
               pathname === item.href ||
@@ -66,7 +87,9 @@ export function AppHeader() {
             );
           })}
         </nav>
-        <ModeBadge showcase={showcase} />
+        <span data-header-piece>
+          <ModeBadge showcase={showcase} />
+        </span>
       </div>
       {showcase ? <ShowcaseBanner /> : null}
     </header>

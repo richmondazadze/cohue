@@ -136,7 +136,7 @@ function RoomView({ room }: { room: Room }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="rounded-panel border-2 border-activated bg-surface p-5 outline-2 outline-offset-2 outline-activated md:p-6">
+      <header data-tilt className="rounded-panel border-2 border-activated bg-surface p-5 outline-2 outline-offset-2 outline-activated md:p-6">
         <p className="eyebrow">Mission Room</p>
         <h1 className="type-experience mt-2 break-words">{room.mission.objective}</h1>
         <div className="mt-3 flex flex-wrap items-center gap-3">

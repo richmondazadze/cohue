@@ -104,7 +104,7 @@ function ToggleChips({
               onChange(on ? selected.filter((x) => x !== s.id) : [...selected, s.id])
             }
             className={cx(
-              "press inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 text-sm font-medium",
+              "press inline-flex min-h-11 items-center gap-1.5 rounded-button border px-4 text-sm font-medium",
               on
                 ? "border-action bg-selected text-action"
                 : "border-line-control bg-surface text-ink hover:bg-hover",
