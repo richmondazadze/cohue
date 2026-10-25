@@ -9,7 +9,7 @@ import {
   ProfileExtractionSchema,
 } from "@/contracts";
 import { generateJson } from "../providers/gemini";
-import { metaConfigured, metaGenerateJson, metaModel } from "../providers/meta";
+import { draftWithFallback, metaConfigured, metaGenerateJson, metaModel } from "../providers/meta";
 import { synthesizeSpeech } from "../providers/elevenlabs";
 import { timingSafeEqual } from "node:crypto";
 import { hmac } from "../http/crypto";
@@ -223,17 +223,10 @@ export async function coordinatorTurn(
     validate: RawMission.extend({ reply: z.string().trim().min(1).max(600), questions: z.array(z.string().trim().min(1).max(300)).max(2) }),
     semantic: missionSemantic,
   };
-  let drafter: "GEMINI" | "META" = "GEMINI";
-  let raw: z.infer<typeof request.validate>;
-  try {
-    // With a second model available, a slow Gemini hands over instead of keeping the person waiting.
-    raw = await generateJson(metaConfigured() ? { ...request, budgetMs: 12_000 } : request);
-  } catch (error) {
-    // Two providers, one contract: Meta's Muse Spark drafts the turn when Gemini cannot.
-    if (!metaConfigured()) throw error;
-    raw = await metaGenerateJson(request);
-    drafter = "META";
-  }
+  const { value: raw, drafter } = await draftWithFallback(
+    (budgetMs) => generateJson({ ...request, budgetMs }),
+    () => metaGenerateJson(request),
+  );
   const { reply, questions, ...mission } = raw;
   const draft = toMissionExtraction(mission);
   const strategist = await strategistReview(transcript, draft, language);

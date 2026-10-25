@@ -82,3 +82,25 @@ export async function metaGenerateJson<T>(input: {
   }
   return parsed.data!;
 }
+
+/**
+ * Hedged drafting across two providers: Gemini starts first; if it hasn't answered after `hedgeMs`, Meta starts too,
+ * and the first usable result wins. Without a Meta key this is just the Gemini call.
+ */
+export async function draftWithFallback<T>(
+  gemini: (budgetMs?: number) => Promise<T>,
+  meta: () => Promise<T>,
+  hedgeMs = 6_000,
+): Promise<{ value: T; drafter: "GEMINI" | "META" }> {
+  if (!metaConfigured()) return { value: await gemini(), drafter: "GEMINI" };
+  const first = gemini(25_000).then((value) => ({ value, drafter: "GEMINI" as const }));
+  const second = new Promise<void>((resolve) => {
+    const t = setTimeout(resolve, hedgeMs);
+    first.then(() => clearTimeout(t), resolve);
+  }).then(() => meta().then((value) => ({ value, drafter: "META" as const })));
+  try {
+    return await Promise.any([first, second]);
+  } catch (error) {
+    throw error instanceof AggregateError ? error.errors[0] : error;
+  }
+}
