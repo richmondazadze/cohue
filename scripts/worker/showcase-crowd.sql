@@ -34,6 +34,8 @@ WITH base AS (
   SELECT s.id, s.discoverable, s.opt_in, s.skill, s.category, s.skill2, s.category2, s.level, s.g,
     jsonb_build_object(
       'displayName', 'Synthetic ' || s.first_name || ' ' || s.initial || '. #' || (30 + s.g),
+      'username', NULL,
+      'avatarId', '3d_' || (1 + s.g % 5),
       'language', s.lang,
       'needs', jsonb_build_array(s.skill2),
       'interests', CASE WHEN s.g % 2 = 0 THEN jsonb_build_array('accessibility') ELSE jsonb_build_array(s.skill2) END,

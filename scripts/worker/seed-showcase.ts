@@ -32,7 +32,12 @@ try {
     void _v;
     void _s;
     void _c;
-    const shifted = { ...profile, availability: profile.availability.map((a) => ({ ...a, start: shift(a.start), end: shift(a.end) })) };
+    // Every synthetic person shows one of the five licensed avatars, spread evenly.
+    const shifted = {
+      ...profile,
+      avatarId: profile.avatarId ?? `3d_${(i % 5) + 1}`,
+      availability: profile.availability.map((a) => ({ ...a, start: shift(a.start), end: shift(a.end) })),
+    };
     await client.query(
       `INSERT INTO participants(id, owner_principal_id, scope_mode, showcase_id, profile, profile_version, discoverable, public_graph, participation_opt_in, created_at)
        VALUES ($1,$2,'SHOWCASE',$3,$4,1,$5,$6,$7, now() + make_interval(secs => $8))
