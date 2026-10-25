@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T10:38:27.237Z (America/Chicago display dates apply).
+Last update: 2026-10-25T10:47:28.089Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -876,3 +876,12 @@ Live bug fixes from the user's testing, 25 Oct 2026 ~05:45 CDT, commit 7a18331 (
 2. Voice "The recording duration could not be verified". Root cause: Chrome/Edge/Android MediaRecorder WebM is written live with no header Duration, and music-metadata returns undefined, so every such recording failed closed. Fix: src/server/domain/webm-duration.ts measures duration from the EBML block timeline (Cluster Timecode + SimpleBlock relative timecodes, TimecodeScale), used only when the header lacks it; the 60 s limit still applies. Verified on real Chrome recordings (3.44 s and 20.42 s measured; music-metadata undefined for both).
 
 Evidence: `npm run check` 112 tests incl. new tests/backend/webm-duration.test.ts with a real Chrome fixture; e2e 18 passed on a disposable DB (own server on :3102 because :3100 was held by another session's process), including new session-continuity.spec.ts. Production after deploy cohue-jgt3fyofy: session-continuity.spec passed against https://cohue.tech; posting the real Chrome WebM to /api/voice/transcribe now passes the duration check and reaches ElevenLabs (which reports no speech for the synthetic tone, as expected).
+
+
+## Milestone from docs/status/lead/SHOWCASE_CROWD.md
+
+Synthetic showcase crowd, 25 Oct 2026 ~05:47 CDT, at the user's request ("Yes" to the recommended alternative to adding invented people to LIVE, which was declined because it would fabricate consent and misrepresent users).
+
+scripts/worker/showcase-crowd.sql (commit 11b124e, also run by `npm run seed:showcase`) upserts 170 more clearly labelled synthetic profiles ("Synthetic <name> <initial>. #31–#200") in SHOWCASE scope 00000000-0000-4000-8000-000000000384 only, owned by the showcase operator: six skills, levels 2–5, some with two skills, English/Spanish/French, six timezones, six staggered availability patterns relative to tomorrow 15:00 Chicago, ~10% not discoverable and ~8% opted out for realism. No MiroFish code or dependency.
+
+Production: applied once through the Tiger SQL editor (212 capability rows inserted). Showcase now 200 people, 169 matchable; 0 "Synthetic" profiles in LIVE. showcase.spec and showcase-journey.spec passed against https://cohue.tech: a 3-person mission over the crowd searched 4,372 combinations in 14 ms (exhausted, FEASIBLE, 5 proposals), activated, and produced en/es/fr briefs; mission cf9d6553-29ff-4cfd-9cde-df64c282c1f7 cancelled afterwards. Locally the same crowd ran in ~5 ms. Larger groups (max 8) over 169 people will hit the 50k-node bound and report "best found, not proven optimal" honestly.
