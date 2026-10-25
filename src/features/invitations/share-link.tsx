@@ -24,10 +24,12 @@ export function ShareLink({
   invitationId,
   personLabel,
   onOpenHere,
+  forSelf = false,
 }: {
   invitationId: string;
   personLabel: string;
   onOpenHere?: (url: string) => void;
+  forSelf?: boolean;
 }) {
   const issue = useCommand("issueInvitationLink");
   const [link, setLink] = useState<{ url: string; expiresAt: string } | null>(null);
@@ -63,15 +65,15 @@ export function ShareLink({
 
   return (
     <div className="flex flex-col gap-3 rounded-field border border-line-panel bg-subtle p-4 sm:flex-row sm:items-start">
-      <QrCode value={link.url} size={168} label={`QR code for ${personLabel}'s invitation link`} />
+      <QrCode value={link.url} size={168} label={forSelf ? "QR code for your private invitation" : `QR code for ${personLabel}'s invitation link`} />
       <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <p className="type-compact">Invitation link for {personLabel}</p>
+        <p className="type-compact">{forSelf ? "Your private invitation link" : `Invitation link for ${personLabel}`}</p>
         <p className="type-meta text-muted">
-          Share it yourself, in person or by message. COHUE does not send it. Anyone holding the link can open this one invitation, so share it only with {personLabel}.
+          {forSelf ? "Keep this link private. It opens this one invitation; use it on your own device. COHUE has not sent it to anyone." : <>Share it yourself, in person or by message. COHUE does not send it. Anyone holding the link can open this one invitation, so share it only with {personLabel}.</>}
         </p>
         <input
           readOnly
-          aria-label={`Invitation link for ${personLabel}`}
+          aria-label={forSelf ? "Your private invitation link" : `Invitation link for ${personLabel}`}
           value={link.url}
           onFocus={(e) => e.currentTarget.select()}
           className="w-full rounded-field border border-line-control bg-surface px-3 py-2 text-sm"

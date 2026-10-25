@@ -17,12 +17,13 @@ type RecordControlProps = {
   language: string;
   onTranscript: (text: string) => void;
   label?: string;
+  beforeTranscribe?: () => Promise<void>;
 };
 export function RecordControl(props: RecordControlProps) {
   // Changing source/language retires uploads, recording state and callbacks together.
   return <RecordingSession key={`${props.purpose}:${props.language}`} {...props} />;
 }
-function RecordingSession({ purpose, language, onTranscript, label = "Record instead" }: RecordControlProps) {
+function RecordingSession({ purpose, language, onTranscript, label = "Record instead", beforeTranscribe }: RecordControlProps) {
   const meter = useRef<HTMLSpanElement>(null);
   const reduced = useReducedMotionPreference();
   const onLevel = useCallback(
@@ -53,6 +54,8 @@ function RecordingSession({ purpose, language, onTranscript, label = "Record ins
     const controller = new AbortController();
     uploadRequest.current = controller;
     try {
+      await beforeTranscribe?.();
+      if (controller.signal.aborted) return;
       const result = await transcribeAudio(
         rec.state.blob,
         {
