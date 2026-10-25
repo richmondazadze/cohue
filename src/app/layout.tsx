@@ -1,10 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import { Stage } from "@/components/motion/stage";
-import { Providers } from "@/components/providers";
-import { AppHeader } from "@/components/shell/app-shell";
-import { LiveAlerts } from "@/components/shell/live-alerts";
+import { AppChrome } from "@/components/shell/app-chrome";
 
 export const metadata: Metadata = {
   title: { default: "COHUE", template: "%s · COHUE" },
@@ -40,17 +37,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
-        <a
-          href="#main"
-          className="sr-only z-[80] rounded-button bg-surface px-4 py-3 focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
-        >
-          Skip to content
-        </a>
-        <Providers>
-          <AppHeader />
-          <Stage>{children}</Stage>
-          <LiveAlerts />
-        </Providers>
+        <AppChrome>{children}</AppChrome>
       </body>
     </html>
   );

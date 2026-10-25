@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T13:03:56.652Z (America/Chicago display dates apply).
+Last update: 2026-10-25T13:07:49.210Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1040,3 +1040,16 @@ Review http://127.0.0.1:8795/cohue/. Both handoffs appended identically. This re
 All eight arrow glyphs replaced with decorative inline currentColor SVGs; consistent16px rendering, no emoji font dependency or extra accessible-name noise. Scroll reveals now use bounded headings/cards/list items rather than entire long sections, with4px blur/6px lift/opacity at500ms existing ease-out, once only. Reduced-motion disables blur/translation and smooth scroll; keyboard focus inside pending blocks makes them visible. No libraries or continuous animation loops added.
 
 Validation: npm run check PASS (foundation/lint/types/tests/build); audit zero vulnerabilities; SVG count/no-arrow-glyph/script syntax pass. Actual mobile browser observed433 CSS pixels, all arrows16px and no overflow; screenshot artifacts/cohue-locked-mobile.png. Reduced-motion emulation: zero pending elements, filter none, scroll auto. Production next start smoke at8796 static landing rendered semantic content and SVG actions. No physical-device/FPS claim. Both handoffs synchronized via serialized append. Review remains http://127.0.0.1:8795/cohue/.
+
+
+## Milestone from docs/status/frontend/COHUE_LANDING_INTEGRATED.md
+
+# Approved landing integrated as application homepage
+
+25 October 2026. Preceding baseline58136f9. User explicitly requests using the approved landing as the homepage and pushing to Git. Home / now renders the approved design through src/features/landing (trusted repository-authored static markup, isolated CSS, cleaned-up React IntersectionObserver). SVG arrows, bounded blur reveals, reduced-motion parity, semantic content and mobile layout preserved. AppChrome omits product header/providers/Stage/live alerts on the marketing homepage, retaining the previous wrapper on product routes. The existing Entry/showcase is preserved at /app; landing showcase CTA points there. All product CTAs now use same-origin routes. No API/domain/contracts/dependencies changed.
+
+Approved standalone reference/checksum remains intact. Production implementation mapping: src/app/page.tsx, src/features/landing/**. Historical original design sources unchanged. Page metadata updated. Landing CSS scoped to .landing-page to avoid changing product pages. Static markup is authored locally and never interpolates external data. Existing application UI remains its own current implementation.
+
+Validation: npm run check PASS (foundation/lint/types/93 passed,22 skipped/build), npm audit --audit-level=high zero vulnerabilities. Final build rerun after CSS/skip-link refinements PASS. Actual next start browser smoke at localhost8796: / renders approved hero, one nav/eight SVG arrows, no hydration/runtime warnings; mobile390px has no overflow and Archivo headings; showcase link navigates to /app with preserved Entry and synthetic-showcase control. Screenshot landing-overhaul/artifacts/cohue-home-production.png. Prior standalone reduced-motion verification retained; React observer includes cleanup and media-change clearing. No live DB/provider execution or deployed website verification claimed.
+
+Both handoffs synchronized. User authorizes push to origin/main; commit/push follows this record. No other chats contacted. Git push may trigger configured hosting automation; a successful push is not deployment-success evidence.

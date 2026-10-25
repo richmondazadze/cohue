@@ -28,3 +28,7 @@ One-time blur-to-clear entrances on bounded content blocks: opacity0→1, transl
 ## Scope and review
 
 Local review: http://127.0.0.1:8795/cohue/. Next static path: /landing-lab/cohue/index.html. This is approved as the landing and future design reference, but the current production home remains unchanged pending integration. Original template/reference provenance is retained separately; this direction is the refined derivative, not the kinetic replica. Google Fonts remain an external dependency. Mobile browser rendering and reduced-motion emulation verified; no physical-device performance certification.
+
+## Production homepage mapping
+
+User authorized homepage integration and Git push on25 October2026. The approved reference is implemented at `/` by `src/app/page.tsx` and `src/features/landing/**`; existing app entry/showcase moved to `/app`. Runtime CTAs use same-origin routes. See `../COHUE_LANDING_INTEGRATED.md` for checks and deployment limits. The standalone reference/checksum remains the locked visual lookup.
