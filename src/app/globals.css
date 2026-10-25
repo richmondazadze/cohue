@@ -1,0 +1,262 @@
+/* COHUE Design System v1.0 production mapping. Values mirror docs/design/tokens.v1.0.json exactly. */
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/fonts/space-grotesk-variable.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Space Grotesk", Arial, sans-serif;
+
+  --color-canvas: #f5f3ef;
+  --color-surface: #ffffff;
+  --color-graph: #fcfcfa;
+  --color-subtle: #f7f8f6;
+  --color-hover: #eaede8;
+  --color-ink: #202323;
+  --color-muted: #626662;
+  --color-line-subtle: #e2e5df;
+  --color-line-panel: #d5d9d1;
+  --color-line-control: #7b847c;
+  --color-grid-dot: #dedfd8;
+  --color-action: #315cce;
+  --color-action-hover: #254daf;
+  --color-action-pressed: #1e408f;
+  --color-selected: #edf2ff;
+  --color-approved: #216747;
+  --color-approved-bg: #e6f2e9;
+  --color-pending: #785317;
+  --color-pending-bg: #fff2d6;
+  --color-declined: #a13f36;
+  --color-declined-bg: #fbe4de;
+  --color-evidence: #466a84;
+  --color-evidence-bg: #edf3f7;
+  --color-suggested: #626662;
+  --color-activated: #216747;
+  --color-activated-bg: #e6f2e9;
+  --color-overlay: rgba(32, 35, 35, 0.32);
+  --color-media-ink: #202323;
+  --color-on-media-ink: #ffffff;
+
+  --radius-compact: 6px;
+  --radius-field: 8px;
+  --radius-button: 10px;
+  --radius-panel: 16px;
+  --radius-sheet: 24px;
+
+  --shadow-float: 0 12px 32px rgba(32, 35, 35, 0.08);
+
+  /* Responsive bands from the approved PRD: 320 / 390 / 480 / 768 / 1024 / 1440 */
+  --breakpoint-xs: 390px;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1440px;
+  --breakpoint-2xl: 1600px;
+
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --duration-press: 80ms;
+  --duration-feedback: 120ms;
+  --duration-enter: 180ms;
+  --duration-sheet: 240ms;
+  --duration-graph: 320ms;
+  --duration-activation: 480ms;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  p {
+    margin: 0;
+  }
+  a {
+    color: inherit;
+    text-underline-offset: 5px;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-action);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--color-selected);
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .type-entry {
+    font-size: 40px;
+    line-height: 44px;
+    font-weight: 500;
+    letter-spacing: -0.05em;
+  }
+  .type-experience {
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+  }
+  .type-section {
+    font-size: 22px;
+    line-height: 28px;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+  }
+  .type-panel {
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .type-compact {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+  }
+  .type-meta {
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 400;
+  }
+  .eyebrow {
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  @media (min-width: 480px) {
+    .type-entry {
+      font-size: 48px;
+      line-height: 50px;
+    }
+    .type-experience {
+      font-size: 32px;
+      line-height: 36px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .type-entry {
+      font-size: 64px;
+      line-height: 68px;
+    }
+    .type-experience {
+      font-size: 38px;
+      line-height: 44px;
+    }
+    .type-section {
+      font-size: 24px;
+      line-height: 30px;
+    }
+  }
+  .gutter {
+    padding-inline: 16px;
+  }
+  @media (min-width: 768px) {
+    .gutter {
+      padding-inline: 24px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .gutter {
+      padding-inline: 32px;
+    }
+  }
+  @media (min-width: 1440px) {
+    .gutter {
+      padding-inline: 48px;
+    }
+  }
+  .graph-canvas {
+    background-color: var(--color-graph);
+    background-image: radial-gradient(
+      var(--color-grid-dot) 0.8px,
+      transparent 0.8px
+    );
+    background-size: 24px 24px;
+  }
+  .safe-bottom {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .press:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+@keyframes cohue-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cohue-sheet {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cohue-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Graph: React Flow owns node transforms; CSS only eases committed layout changes (320ms). */
+.cohue-graph .react-flow__node {
+  transition: transform 320ms var(--ease-standard);
+}
+.cohue-graph.cohue-reduced .react-flow__node {
+  transition: none;
+}
+.cohue-node-enter > * {
+  animation: cohue-fade 180ms var(--ease-standard);
+}
+.cohue-graph .react-flow__edge-path {
+  transition: stroke 180ms var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .press:active:not(:disabled) {
+    transform: none;
+  }
+}

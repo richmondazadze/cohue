@@ -135,7 +135,7 @@ export async function principalParticipantIds(principalId: string, scope: Scope,
   const [mode, showcase] = scopeColumns(scope);
   return (
     await query<{ id: string }>(
-      "SELECT id FROM participants WHERE owner_principal_id=$1 AND scope_mode=$2 AND showcase_id=$3 AND deleted_at IS NULL",
+      "SELECT id FROM participants WHERE owner_principal_id=$1 AND scope_mode=$2 AND showcase_id=$3 AND deleted_at IS NULL ORDER BY created_at, id",
       [principalId, mode, showcase],
       client,
     )
