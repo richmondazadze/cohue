@@ -48,7 +48,8 @@ export async function kickoffPlan(session: SessionRecord | null, invite: Session
   let drafter: "GEMINI" | "META" = "GEMINI";
   let raw: z.infer<typeof request.validate>;
   try {
-    raw = await generateJson(request);
+    // With a second model available, a slow Gemini hands over instead of keeping the person waiting.
+    raw = await generateJson(metaConfigured() ? { ...request, budgetMs: 12_000 } : request);
   } catch (error) {
     if (!metaConfigured()) throw error;
     raw = await metaGenerateJson(request);

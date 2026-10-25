@@ -47,8 +47,10 @@ export async function metaGenerateJson<T>(input: {
           { role: "system", content: input.system },
           { role: "user", content: input.prompt.slice(0, 8000) },
         ],
-        temperature: 0.2,
-        max_tokens: 2048,
+        // Muse Spark always reasons first; reasoning shares max_tokens with the visible JSON, so keep effort
+        // low for these direct drafting tasks and leave room for both.
+        reasoning_effort: "low",
+        max_tokens: 8192,
         response_format: { type: "json_schema", json_schema: { name: "result", schema: toJsonSchema(input.responseSchema) } },
       }),
     },
@@ -56,16 +58,27 @@ export async function metaGenerateJson<T>(input: {
   );
   const body = await providerJson(
     response,
-    z.object({ choices: z.array(z.object({ message: z.object({ content: z.string().nullable().optional() }) })).max(10) }),
+    z.object({
+      choices: z
+        .array(z.object({ finish_reason: z.string().nullable().optional(), message: z.object({ content: z.string().nullable().optional() }) }))
+        .max(10),
+    }),
     "Meta Model API",
   );
+  const choice = body.choices[0];
   let raw: unknown;
   try {
-    raw = JSON.parse(body.choices[0]?.message.content ?? "");
+    raw = JSON.parse(choice?.message.content ?? "");
   } catch {
+    // Diagnostics name the failure shape only, never prompt or output text.
+    console.error(`Meta Model API unusable output: finish_reason=${choice?.finish_reason ?? "none"} length=${choice?.message.content?.length ?? 0}`);
     return fail("PROVIDER_UNAVAILABLE", "The Meta model returned unusable output.");
   }
   const parsed = input.validate.safeParse(raw);
-  if (!parsed.success || input.semantic?.(parsed.data)) fail("PROVIDER_UNAVAILABLE", "The Meta model returned unusable output.");
+  const problem = parsed.success ? input.semantic?.(parsed.data) : parsed.error.issues.map((i) => `${i.path.join(".")}:${i.code}`).slice(0, 5).join(",");
+  if (!parsed.success || problem) {
+    console.error(`Meta Model API output rejected: ${problem}`);
+    fail("PROVIDER_UNAVAILABLE", "The Meta model returned unusable output.");
+  }
   return parsed.data!;
 }

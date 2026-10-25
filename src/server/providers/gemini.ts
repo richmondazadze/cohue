@@ -15,12 +15,14 @@ export async function generateJson<T>(input: {
   validate: z.ZodType<T>;
   semantic?: (value: T) => string | null;
   attempts?: number;
+  /** Total budget; interactive callers with a fallback model pass a shorter one. */
+  budgetMs?: number;
 }): Promise<T> {
   const key = env().GEMINI_API_KEY;
   const model = env().GEMINI_MODEL;
   if (!key || !model) fail("PROVIDER_UNAVAILABLE", "Language model is not configured; use the manual form.");
   const attempts = input.attempts ?? 2;
-  const deadline = Date.now() + 35_000;
+  const deadline = Date.now() + (input.budgetMs ?? 35_000);
   for (let attempt = 1; attempt <= attempts; attempt++) {
     const remaining = deadline - Date.now();
     if (remaining < 500) break;

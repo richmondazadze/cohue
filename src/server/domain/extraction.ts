@@ -226,7 +226,8 @@ export async function coordinatorTurn(
   let drafter: "GEMINI" | "META" = "GEMINI";
   let raw: z.infer<typeof request.validate>;
   try {
-    raw = await generateJson(request);
+    // With a second model available, a slow Gemini hands over instead of keeping the person waiting.
+    raw = await generateJson(metaConfigured() ? { ...request, budgetMs: 12_000 } : request);
   } catch (error) {
     // Two providers, one contract: Meta's Muse Spark drafts the turn when Gemini cannot.
     if (!metaConfigured()) throw error;
