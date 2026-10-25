@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T14:56:30.342Z (America/Chicago display dates apply).
+Last update: 2026-10-25T14:58:23.731Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1193,3 +1193,16 @@ Codex hit its usage limit mid-release; Claude finished it at the user's request 
 - Live verification against https://cohue.tech after the worker release: showcase-journey (worker discovery over the 200-person crowd, activation, en/es/fr briefs, Spanish kickoff plan) and session-continuity specs, 2/2 passed; the synthetic mission was cancelled by the spec.
 
 Left as found: Codex's unstaged `.gitignore` line (`/motion/`). Still open: D7 rerun on the current release, physical two-phone run.
+
+
+## Milestone from docs/status/lead/AVATAR_BACKFILL.md
+
+# Production avatar backfill (25 Oct 2026, ~10:00 CDT)
+
+User approved in the thread ("Approved. Run all. Also for existing user profile assign them each avatars").
+
+- Read-only check: production cohue_migrations = 0000–0003 (0003_profile_identity present); participants_scoped_username index present. Confirms Codex's report.
+- Before: 204 non-deleted profiles (LIVE 4, SHOWCASE 200), all without avatarId.
+- Ran scripts/worker/assign-avatars.sql (84209bb; idempotent, deterministic from md5(id), skips profiles that already chose an avatar, leaves usernames): 204 updated, 0 without avatar after. Spread 3d_1 47, 3d_2 41, 3d_3 40, 3d_4 35, 3d_5 41. profile_version unchanged (avatar is presentation, not commitment terms).
+- Showcase seeding (seed-showcase.ts, showcase-crowd.sql) now assigns avatars so a reseed keeps them.
+- After: showcase-journey and session-continuity against https://cohue.tech passed.
