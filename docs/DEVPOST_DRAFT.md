@@ -39,3 +39,8 @@ More languages after validation, calendar availability import, and richer team r
 The "synthetic showcase" mode uses 30 clearly labeled synthetic people so the matching can be explored without real participants; it runs the same engine and commands but is not real people or real commitments.
 
 Built with: next.js, react, typescript, postgresql, tiger-data, drizzle, zod, gemini, elevenlabs, serpapi, vultr, vercel, react-flow, gsap, tailwind
+
+
+## AI development tools
+
+Claude Code and Codex assisted implementation, debugging, documentation and testing. Human participants made the actual mission and consent decisions in the recorded live run; synthetic showcase responses are explicitly labeled operator decisions.

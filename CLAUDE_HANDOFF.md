@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T06:58:36.619Z (America/Chicago display dates apply).
+Last update: 2026-10-25T07:00:46.595Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -844,3 +844,14 @@ Finalproof limits: nofreshphysicalphone/screenreader/frameprofiling, recording/v
 CriticalRoomdraftlossactualrepro→8459331stableRadixlayoutfix, authoredorientation/tabreviewE2Ependingexecution. Ownedlint38frontendtestsPASS; finalnpx tsc --noEmitPASSafterbackendfixedtransientnullability. Sourcehashes/pairedhandoffsanddiffcheckverificationatcommit. Safeownsyntheticscreenshotsfinalrepair/room/brief, notnewdeploymentproof. Composer5widthsnounder24visiblecontrolfound/noxoverflow; noimaginedfix. KnownimmediaterepairedcardSTALERACE not reproducedonsettledrev2selection201, remainslimitation.
 
 LeadcombinedactualPG/check/buildrunning; nofurtherproductwrites/sharedbuildbyfrontend. Nextfresh3100Roomexactdraft/motion/hideplayercheck; finaldeployidentity+humanphoneListen/task/voice/screenreader/performance/video/submission remainexplicit. Noindependentpush/deploy. STOPrevokedonlyforassignedfinalwork. Bothhandoffsserializedwiththischeckpoint.
+
+
+## Milestone from docs/status/lead/FINAL_PATCH_INTEGRATION.md
+
+# Final patch integration checkpoint — 25 October 2026
+
+Resumed fromClaude b0db29e. Frontend8459331 preservesRoombriefeditingacrossbreakpoints; backendd109836 bindsinvitecapabilitytosamemissionandcurrentmembership, movesTTSprovideroutsidereceipttransaction, recheckssessionepoch/source/hash/currentreviewedtext beforeatomicpublish/replay, deniesstaleartifactGET. Leadreviewedpreparehook. No newmigration/dependency/runnerchanges.
+
+CombinedactualPG npmruncheck passed109tests/18files/0skips, lint/typecheck/productionbuild; audit0. FreshlocalisolatedAPI7tests passed5.6s inclcorecapacity/repair/reconsent/activation andSHOWCASEbriefjourney withprovidersdisabled(originalonly; notmultilingualproviderproof). FrontendfreshRoomfixCUAverificationpending, hostedCI/newdeploymentpending. Backendrealshorten/es/frspeechroundtripspassed separately; notphysicalmic/hostedHTTPproof.
+
+VerifiedofficialDevpostpagesinbrowser: deadlinewidget25Oct11:30AMCDT, mandatoryvideo,1–4team,inpersonjudging; publiccode/video andAIcodingtooldisclosure. RequirementproseusesCSTbutwidgetexplicitCDT; discrepancyrecorded. LocalSUBMISSION_CHECKLIST/DEMO_RUNBOOK/DEVPOST_DRAFT updatedonly; noexternaldraftpublication/submission/licensechange. Newsource stilllocaluntilleadpush, exactdeployment+workerupdatecoordination follows; oldD7proofnotreattributedtonewcode. BothengineerownedFINAL_ACCEPTANCE reportsareauthoritativeforremaininghumanchecks.

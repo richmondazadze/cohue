@@ -1,7 +1,7 @@
 # COHUE demo runbook (item 4 acceptance and video)
 
 Release on web and worker: see the latest `docs/status/lead/` note. Site: https://cohue.tech.
-Protect the final window before the deadline (PRD-supplied, unconfirmed: Sunday 25 Oct 11:30 AM CDT; freeze 8:30, record 9:30, submit 10:30).
+Protect the final window before the deadline (verified Devpost deadline widget: Sunday 25 Oct 11:30 AM CDT; freeze 8:30, record 9:30, submit 10:30).
 
 ## A. Real two-phone journey (counts as item 4 evidence)
 
