@@ -24,3 +24,7 @@ No root/schema/config/backend paths staged; no app build/push/deploy by frontend
 ## Demo walkthrough (planned, not passed)
 
 Use dedicated labeled SHOWCASE. Open synthetic entry, confirm organizer profile, speak or type mission, review extracted requirements/time/size before starting. Inspect actual proposals and requirement/approval distinction. Review original/localized invitation as organizer; approval only reviews translation. Share participant-specific link/QR into separate browser session; explicitly redeem and decline one, inspect real repair/reconsent, then answer current invitations and activate through server gate. Open Room, update authorized task, inspect replay read-only evidence. Demonstrate voice/text fallbacks and current-source media. Keep LIVE unrelated data untouched. Capture actual run only once deployed checks pass; user/lead handles recording/submission per release plan.
+
+## Resume blocker
+
+See BROWSER_ACCEPTANCE_BLOCKER.md: local3100HTTP200, but CUA navigation rejected because local browser use is disabled in Work settings.38unit tests rerun pass. No freshbuild responsive/checkbox/creatorreview browser pass claimed. Product Engineer notified; awaiting enabled browser capability or lead-owned acceptance evidence.

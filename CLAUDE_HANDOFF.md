@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T02:45:05.929Z (America/Chicago display dates apply).
+Last update: 2026-10-25T03:52:56.619Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -527,3 +527,20 @@ Owned fixes: `src/components/ui/surface.tsx` KeyValue allows row wrapping and co
 Actual local verification: targeted ESLint zero warnings, `npx tsc --noEmit` pass, `npx vitest run tests/frontend`38/38pass. No shared build/typegen/push/deploy. Lead approved fixes and owns rebuild. Current local3100 serves previousproductionbuild; browser correction verification is explicitly pending fresh build and final deployment. Earlier CUA localhost3100 connection refusal preceded lead startup; no local server started by frontend.
 
 Immediate next action: lead rebuild/restart integrated source, run frontend E2E including translation-review.spec.ts, then frontend verifies44px checked/unchecked/toggle/focus and1024summary correction plus remaining viewport/mobile/media/core-journey gates. RELEASE_ACCEPTANCE remains in progress. No real-device/screenreader/30node60edge/frame-rate/provider/D7 evidence claimed by frontend here.
+
+
+## Milestone from docs/status/frontend/BROWSER_ACCEPTANCE_BLOCKER.md
+
+# Frontend acceptance resume — browser settings blocker
+
+24 October 2026, resumed on shared main b412e35. Read current matching handoffs/status; no completed source changes repeated. Current release work order remains authoritative and DesignSystem1.0 stays frozen.
+
+Actual checks after resume:
+- `curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3100/`:200. This establishes HTTP reachability only, not UI correctness or source identity beyond lead's reported b412e35 build.
+- CUA `qa.goto('http://127.0.0.1:3100/join')`: rejected before navigation with “Local browser use is disabled in Work settings”. No browser verification executed after resume, no new screenshot or microphone interaction.
+- `npx vitest run tests/frontend`:38passed,8files, runner22:52:28 America/Chicago (2026-10-25T03:52:28Z), exit0.
+- Both handoffs byte-identical; no frozen design edits. Existing38tests are unit/SSR/transport checks, not fresh browser acceptance.
+
+Product Engineer notified immediately. No alternate browser automation was used to bypass disabled CUA. Needs user to enable local browser use or lead to perform required checks through its enabled authorized context. Freshbuild1024onboarding overflow correction,44pxcheckbox checked/unchecked/focus behavior and creator review sheet remain unverified by this engineer. Existing synthetic E2E spec remains authored, run results belong to lead's integration runner when executed.
+
+Independent source/unit review continued without further speculative changes. No root/backend/schema/config/build/push/deploy performed. Real three-language audio/phone/screenreader/30node60edge profiling and final deployed two-session acceptance remain pending, not waived. Immediate next action: after browser capability is restored, run targeted freshbuild CUA matrix then final deployed checks on lead-confirmed reviewed commit. Lead may continue integrated acceptance in parallel; user-authorized coordination is active.
