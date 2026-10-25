@@ -1,0 +1,3 @@
+# Operator runtime environment parsing correction
+
+Preceding baseline95dfaa7. Corrected documented on-host acceptance command to use Node --env-file=/etc/cohue/worker.env, never shell-source the runtime file. Systemd/dotenv values are data; shell expansion could corrupt credentials or interpret special characters. No such source command was executed. No secrets displayed/transferred, no new permissions, no product module/config changes. On-host acceptance remains prepared/unexecuted; old worker held while lead migrates. Backend proof/runtime claims unchanged. Documentation check: gitdiffcheck and foundationpass; no app tests warranted for command-text correction. Both handoffs appended serially; lead notified before console execution.

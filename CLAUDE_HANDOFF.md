@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T04:08:40.913Z (America/Chicago display dates apply).
+Last update: 2026-10-25T04:08:46.852Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -624,3 +624,10 @@ Actual validation: `npx tsc --noEmit` passed; targeted ESLint passed; `npx vites
 Last stable frontend commit13822b3 records fresh local real-provider acceptance. Source fixes809db4f restores review Escape focus,192c2b6 preserves review/draft across breakpoints. Actual local CUA passes: exacttriggerfocus, editedSpanishdraft continuity390/1024/1440/768 withoutoverflow, Spanish/Frenchtranslationapproval, English/Spanish/French DOMplaybackprogress andlanguage-switchpause. OwnSHOWCASEmission86a3cb40-78db-4157-9e31-b999942ab1df cancelled normally; capacityreleased. NoLIVE mutation. DesignSystem1.0 frozen. No frontend source uncommitted by this chat; only this stop record/handoffs added now.
 
 Lastverification: foundation11hashes/handoffsync/diffcheck pass at13822b3; earlier ownedlint/types/38frontendtests passed. Lead reported integrated97tests/lint/types/build pass separately. Not final release acceptance: deployedcommit/journey/providerSTT/extraction/reducedmotion/privateviewport/physicalphone/screenreader/graphperformance remain pending. Next action only after explicit resume: read current pairedhandoffs and ProductEngineer deployment checkpoint; continue remaining agreed acceptance without redoing completed work. No push/deploy. ProductEngineer notified stopped.
+
+
+## Milestone from docs/status/backend/OPERATOR_ENV_PARSING.md
+
+# Operator runtime environment parsing correction
+
+Preceding baseline95dfaa7. Corrected documented on-host acceptance command to use Node --env-file=/etc/cohue/worker.env, never shell-source the runtime file. Systemd/dotenv values are data; shell expansion could corrupt credentials or interpret special characters. No such source command was executed. No secrets displayed/transferred, no new permissions, no product module/config changes. On-host acceptance remains prepared/unexecuted; old worker held while lead migrates. Backend proof/runtime claims unchanged. Documentation check: gitdiffcheck and foundationpass; no app tests warranted for command-text correction. Both handoffs appended serially; lead notified before console execution.
