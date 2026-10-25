@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T14:24:56.898Z (America/Chicago display dates apply).
+Last update: 2026-10-25T14:29:21.737Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1153,3 +1153,14 @@ npm run check PASS; audit zero vulnerabilities. Production-build fixture browser
 Manual actual browser against production Next server8796 configured to isolated DB: chose3D avatar3, username redesign_review/display nameLocal redesign review, progressed all four steps with opt-ins unselected, saved successfully and /me showed persistent username, saved confirmation and identity-edit control. Actual composer loaded taxonomy/profile/session and full structured fields. Screenshot full-redesign/artifacts/identity-real-db.png retained. No provider call, invite response or production participant created.
 
 Refined app entry into landing-style editorial layout with short gentle entrances, impact data into clearer type hierarchy, and shared sheets default to subtle approved styling. Existing API/consent behavior preserved. Scoped CSS only. npm run check PASS before tiny coordinator badge sizing refinement; audit/regression final sweep pending. Full goal remains active: final screenshots/state-matrix audit, speaking-intensity detail and objective completion audit remain. No push/deployment/chat messages. Both handoffs synchronized.
+
+
+## Milestone from docs/status/frontend/FULL_REDESIGN_PRODUCTION_DB_CHECK.md
+
+# Production database compatibility check
+
+25 October 2026. Preceding baseline df010a2. User made Tiger Data side-panel access available and explicitly deferred pushing the app live until a later go-ahead. No deployment, push, production migration or production participant mutation performed.
+
+Inspected the authenticated Tiger Cloud service `cohue-prod`: Ready, high availability enabled, application tables present. Ran the read-only query `SELECT name FROM public.cohue_migrations ORDER BY name;` through its SQL editor. Successful result contained exactly 0000_init.sql, 0001_mission_history.sql and 0002_privacy_retention.sql. Therefore repository migration 0003_profile_identity.sql is pending in production; local identity acceptance does not establish production synchronization.
+
+Release prerequisite: apply the repository migration through the normal migration runner before deploying the username/avatar consumers, then verify migration ledger and scoped unique index. Existing local PostgreSQL acceptance remains recorded in FULL_REDESIGN_DB_VISUAL_SLICE.md. Full redesign goal remains incomplete pending final UI/state and speaking-intensity audit. No other chats contacted.
