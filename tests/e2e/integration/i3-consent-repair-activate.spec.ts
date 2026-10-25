@@ -251,6 +251,14 @@ test("decline triggers repair, changed group needs reconsent, activation opens t
   const current = await creator.device.ok("room", {
     params: { id: created.id },
   });
+  // Shared team brief: the canonical original, in the mission language, bound to this mission.
+  const [canonicalBrief] = current.briefs;
+  expect(canonicalBrief).toMatchObject({
+    sourceId: created.id,
+    status: "APPROVED",
+    language: created.language,
+  });
+  expect(canonicalBrief.text).toContain(created.objective);
   const creatorMembership = current.memberships.find(
     (m) => m.participantId === creator.participantId,
   );

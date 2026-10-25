@@ -30,8 +30,9 @@ export async function scrubDeletedParticipant(tx: Tx, participant: ParticipantRo
       [randomUUID(),mode,showcase,participant.id,action.id,source.terms_hash,action.action ?? source.status,action.created_at]);
   }
   const sourceIds=sources.map(s=>s.id);
-  await tx.query("DELETE FROM localizations WHERE scope_mode=$1 AND showcase_id=$2 AND source_id=ANY($3::uuid[])",[mode,showcase,sourceIds]);
-  await tx.query("DELETE FROM audio_artifacts WHERE scope_mode=$1 AND showcase_id=$2 AND (owner_principal_id=$3 OR doc->>'sourceInvitationId'=ANY($4::text[]))",[mode,showcase,participant.owner_principal_id,sourceIds]);
+  await tx.query("DELETE FROM localizations WHERE scope_mode=$1 AND showcase_id=$2 AND (source_id=ANY($3::uuid[]) OR source_id=ANY($4::uuid[]))",[mode,showcase,sourceIds,missionIds]);
+  // Mission briefs are rebuilt from redacted tasks/roles, so their translations and audio go too.
+  await tx.query("DELETE FROM audio_artifacts WHERE scope_mode=$1 AND showcase_id=$2 AND (owner_principal_id=$3 OR doc->>'sourceInvitationId'=ANY($4::text[]) OR doc->>'sourceMissionId'=ANY($5::text[]))",[mode,showcase,participant.owner_principal_id,sourceIds,missionIds]);
   const refs=[participant.id,...missionIds,...sourceIds];
   await tx.query(`DELETE FROM command_receipts WHERE scope_mode=$1 AND showcase_id=$2 AND
     (principal_id=$3 OR EXISTS(SELECT 1 FROM unnest($4::text[]) r WHERE position(r IN result::text)>0))`,[mode,showcase,participant.owner_principal_id,refs]);
@@ -67,6 +68,8 @@ export async function pruneRetention(tx: Tx, pruneEvents = false) {
   // Terminal mission payloads and all cascading private history have a bounded lifetime.
   await tx.query("DELETE FROM missions WHERE state IN ('CANCELLED','EXPIRED','FAILED') AND COALESCE((SELECT MAX(recorded_at) FROM mission_history h WHERE h.mission_id=missions.id),created_at)<now()-interval '720 hours'");
   await tx.query("DELETE FROM mission_history WHERE recorded_at<now()-interval '720 hours'");
-  await tx.query("DELETE FROM localizations l WHERE NOT EXISTS(SELECT 1 FROM invitations i WHERE i.id=l.source_id AND i.scope_mode=l.scope_mode AND i.showcase_id=l.showcase_id)");
+  // Sources are invitations or (for team briefs) missions; anything else is orphaned.
+  await tx.query("DELETE FROM localizations l WHERE NOT EXISTS(SELECT 1 FROM invitations i WHERE i.id=l.source_id AND i.scope_mode=l.scope_mode AND i.showcase_id=l.showcase_id) AND NOT EXISTS(SELECT 1 FROM missions m WHERE m.id=l.source_id AND m.scope_mode=l.scope_mode AND m.showcase_id=l.showcase_id)");
   await tx.query("DELETE FROM audio_artifacts a WHERE a.doc ? 'sourceInvitationId' AND NOT EXISTS(SELECT 1 FROM invitations i WHERE i.id::text=a.doc->>'sourceInvitationId' AND i.scope_mode=a.scope_mode AND i.showcase_id=a.showcase_id)");
+  await tx.query("DELETE FROM audio_artifacts a WHERE a.doc ? 'sourceMissionId' AND NOT EXISTS(SELECT 1 FROM missions m WHERE m.id::text=a.doc->>'sourceMissionId' AND m.scope_mode=a.scope_mode AND m.showcase_id=a.showcase_id)");
 }

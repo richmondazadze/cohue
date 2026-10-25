@@ -34,6 +34,7 @@ import {
   type ParticipantRow,
 } from "../store";
 import { enqueueJob } from "../../runner/jobs";
+import { missionBriefs } from "../briefs";
 
 type CreateInput = z.output<typeof CreateMissionSchema>;
 const SKILLS = new Map(INITIAL_TAXONOMY.skills.map((s) => [s.id, s]));
@@ -477,7 +478,7 @@ export async function buildRoom(mission: MissionRow, client?: Tx) {
   const memberships = (await query<{ doc: unknown }>("SELECT doc FROM mission_memberships WHERE mission_id=$1 ORDER BY participant_id", [mission.id], client)).map((r) => r.doc);
   const tasks = (await query<{ doc: Record<string, unknown>; status: string; version: number }>("SELECT doc, status, version FROM mission_tasks WHERE mission_id=$1 ORDER BY id", [mission.id], client)).map((r) => ({ ...r.doc, status: r.status, version: r.version }));
   const reviews = (await query<{ doc: Record<string, unknown>; status: string; version: number }>("SELECT doc, status, version FROM review_requests WHERE mission_id=$1", [mission.id], client)).map((r) => ({ ...r.doc, status: r.status, version: r.version }));
-  return RoomSchema.parse({ mission: await missionDto(mission, client), memberships, tasks, opportunities: await loadOpportunities(mission.id, client), briefs: [], reviews });
+  return RoomSchema.parse({ mission: await missionDto(mission, client), memberships, tasks, opportunities: await loadOpportunities(mission.id, client), briefs: await missionBriefs(mission, { generate: false, client }), reviews });
 }
 
 // MEMBER: creator principal, owner of a member profile, or an invitation session of a member.
@@ -501,6 +502,8 @@ export async function memberAccess(session: SessionRecord | null, invite: Sessio
 
 export async function room(session: SessionRecord | null, invite: SessionRecord | null, id: string) {
   const { mission } = await memberAccess(session, invite, id);
+  // Missing member-language brief drafts are generated here, outside any transaction, then read back.
+  await missionBriefs(mission, { generate: true });
   return buildRoom(mission);
 }
 

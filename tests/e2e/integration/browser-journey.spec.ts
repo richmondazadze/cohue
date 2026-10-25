@@ -67,6 +67,9 @@ test("creator UI and phone UIs complete decline, repair, reconsent and activatio
   await page.getByLabel("Skill").nth(1).selectOption("hardware");
   await page.getByLabel("Smallest group").selectOption("3");
   await page.getByLabel("Largest group").selectOption("3");
+  // The composer never assumes the creator takes part; this journey's creator is a team member.
+  const takePart = page.getByLabel("I will take part as a member");
+  if (!(await takePart.isChecked())) await takePart.check();
   await page.getByRole("button", { name: "Review requirements" }).click();
   await page.getByRole("button", { name: "Start discovery" }).click();
   await expect(page).toHaveURL(/\/missions\/[0-9a-f-]{36}$/);
@@ -83,6 +86,8 @@ test("creator UI and phone UIs complete decline, repair, reconsent and activatio
   await respondOnPhone(browser, builderLink, "decline");
 
   await expect(page.getByRole("heading", { name: "Review the repaired proposal" })).toBeVisible({ timeout: 60_000 });
+  // Select only once the repaired revision itself is on screen, as a person would.
+  await expect(page.getByText(/Option 1 · revision 2/)).toBeVisible({ timeout: 30_000 });
   await page.getByRole("button", { name: /Select this group/ }).first().click();
   await expect(page.getByRole("heading", { name: "Invitations" })).toBeVisible({ timeout: 20_000 });
   // Changed group terms: the designer must approve again, and the replacement builder for the first time.

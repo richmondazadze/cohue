@@ -15,6 +15,7 @@ import { generateJson, geminiConfigured } from "../providers/gemini";
 import { synthesizeSpeech, transcribeAudio } from "../providers/elevenlabs";
 import type { InvitationRow, MissionRow } from "./store";
 import { validateAudioDuration } from "./audio-duration";
+import { assertBriefLocalization, authorizedBriefMission, isBriefSource, synthesizeBrief } from "./briefs";
 
 type LocalizedText = z.infer<typeof LocalizedTextSchema>;
 const sha = (text: string) => createHash("sha256").update(text.normalize("NFC"), "utf8").digest("hex");
@@ -130,6 +131,10 @@ async function translate(row: InvitationRow, missionLanguage: string, canonical:
 export async function assertLocalizationSource(session: SessionRecord, id: string, tx?: Tx) {
   const [row] = await query<LocalizationRow>(`SELECT id, version, doc FROM localizations WHERE id=$1${tx ? " FOR UPDATE" : ""}`, [id], tx);
   if (!row) fail("NOT_FOUND", "Translation not found.");
+  if (await isBriefSource(session, row.doc.sourceId, tx)) {
+    await assertBriefLocalization(session, row, tx);
+    return row;
+  }
   const source = await authorizedInvitationSource(session, row.doc.sourceId, tx, true);
   if (row.doc.sourceVersion !== source.proposal_revision || row.doc.canonicalTextHash !== sha(canonicalInvitationText(source)))
     fail("STALE_VERSION", "The invitation text changed; review the new translation.");
@@ -148,7 +153,7 @@ export async function approveLocalization(tx: Tx, session: SessionRecord, id: st
 
 // TTS speaks only authorized text: canonical text in the mission language, or an APPROVED translation of it.
 export async function synthesize(tx: Tx, principal: SessionRecord, input: { sourceId: string; sourceKind: "INVITATION" | "BRIEF"; sourceVersion: number; canonicalTextHash: string; language: string }) {
-  if (input.sourceKind !== "INVITATION") fail("NOT_FOUND", "Briefs are not available for playback yet.");
+  if (input.sourceKind === "BRIEF") return synthesizeBrief(tx, principal, input);
   const row = await authorizedInvitationSource(principal, input.sourceId, tx);
   if (row.proposal_revision !== input.sourceVersion) fail("STALE_VERSION", "The invitation changed.");
   const canonical = canonicalInvitationText(row);
@@ -193,12 +198,17 @@ export async function mediaFor(principal: SessionRecord, id: string) {
     [id, mode, showcase],
   );
   if (!row || row.owner_principal_id !== principal.principalId || row.expires_at < new Date() || !row.bytes_base64) fail("NOT_FOUND", "Media not found.");
-  const stored = z.object({ sourceInvitationId: z.string().uuid() }).passthrough().safeParse(row.doc);
+  const stored = z
+    .object({ sourceInvitationId: z.string().uuid().optional(), sourceMissionId: z.string().uuid().optional() })
+    .passthrough()
+    .refine((v) => Boolean(v.sourceInvitationId) !== Boolean(v.sourceMissionId))
+    .safeParse(row.doc);
   if (!stored.success) return fail("NOT_FOUND", "Media source not found.");
-  const { sourceInvitationId, ...publicDoc } = stored.data;
+  const { sourceInvitationId, sourceMissionId, ...publicDoc } = stored.data;
   const doc = AudioArtifactSchema.parse(publicDoc);
   // Source identity is private persistence metadata, never part of the public media DTO.
-  await authorizedInvitationSource(principal, sourceInvitationId);
+  if (sourceInvitationId) await authorizedInvitationSource(principal, sourceInvitationId);
+  else await authorizedBriefMission(principal, sourceMissionId!);
   return { doc, bytes: Buffer.from(row.bytes_base64!, "base64"), mimeType: row.mime_type };
 }
 

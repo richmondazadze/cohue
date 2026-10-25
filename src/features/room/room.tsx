@@ -14,6 +14,7 @@ import { keys, useRoom } from "@/client/queries";
 import { useMediaQuery } from "@/client/media";
 import { formatTimestamp } from "@/client/time";
 import { languageName } from "@/features/shared/skills";
+import { Listen, OrganizerReview } from "@/features/invitations/translations";
 
 type Room = ApiOutput<"room">["data"];
 type Task = Room["tasks"][number];
@@ -84,14 +85,7 @@ function RoomView({ room }: { room: Room }) {
       <h2 id="brief-h" className="type-section">Brief</h2>
       <p>{room.mission.objective}</p>
       <p className="text-sm text-muted">Expected output: {room.mission.expectedOutput}</p>
-      {room.briefs.map((b) => (
-        <article key={b.id} lang={b.language} className="rounded-field border border-line-panel bg-surface p-4">
-          <p className="eyebrow mb-1">
-            {languageName(b.language)} · {b.status === "APPROVED" ? "reviewed" : b.status === "REVIEW_REQUIRED" ? "translation needs review" : b.status.toLowerCase()}
-          </p>
-          <p className="whitespace-pre-wrap">{b.text}</p>
-        </article>
-      ))}
+      <BriefList room={room} />
     </section>
   );
   const resources = (
@@ -246,5 +240,53 @@ function TaskRow({ task, ownerRole, missionId }: { task: Task; ownerRole: string
         <ErrorNotice className="mt-3" error={update.error} />
       ) : null}
     </li>
+  );
+}
+
+type Brief = Room["briefs"][number];
+/** Shared team brief: the canonical original plus member-language translations. Playback only for reviewed text. */
+function BriefList({ room }: { room: Room }) {
+  const [playing, setPlaying] = useState<string | null>(null);
+  const label = (b: Brief) =>
+    b.language === b.originalLanguage
+      ? "original"
+      : b.status === "APPROVED"
+        ? "translation reviewed by the organizer"
+        : b.status === "REVIEW_REQUIRED"
+          ? "machine translation · review required"
+          : b.status.toLowerCase();
+  return (
+    <>
+      {room.briefs.map((b) => (
+        <article
+          key={`${b.id}:${b.version}:${b.status}`}
+          lang={b.language}
+          className="rounded-field border border-line-panel bg-surface p-4"
+        >
+          <p className="eyebrow mb-1">
+            {languageName(b.language)} · {label(b)}
+          </p>
+          <p className="whitespace-pre-wrap">{b.text}</p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            {b.status === "APPROVED" ? (
+              <Listen
+                id={`${b.id}-brief`}
+                label={`Listen in ${languageName(b.language)}`}
+                active={playing === `${b.id}-brief`}
+                onActivate={setPlaying}
+                source={{ sourceId: b.sourceId, sourceKind: "BRIEF", sourceVersion: b.sourceVersion }}
+                language={b.language}
+                hash={b.canonicalTextHash}
+              />
+            ) : (
+              <p className="type-meta text-muted">Playback is available after the organizer reviews this translation.</p>
+            )}
+          </div>
+          {b.language !== b.originalLanguage ? (
+            <OrganizerReview item={b} queryKeys={[keys.room(room.mission.id)]} />
+          ) : null}
+        </article>
+      ))}
+    </>
   );
 }

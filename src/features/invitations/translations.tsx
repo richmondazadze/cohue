@@ -53,7 +53,7 @@ export function Translations({
               label={`Listen in ${languageName(l.originalLanguage)} (original)`}
               active={playing === `${l.id}-orig`}
               onActivate={setPlaying}
-              invitation={invitation}
+              source={invitationSource(invitation)}
               language={l.originalLanguage}
               hash={l.canonicalTextHash}
             />
@@ -82,12 +82,17 @@ export function Translations({
                 label={`Listen in ${languageName(l.language)}`}
                 active={playing === `${l.id}-tr`}
                 onActivate={setPlaying}
-                invitation={invitation}
+                source={invitationSource(invitation)}
                 language={l.language}
                 hash={l.canonicalTextHash}
               /> : <p className="type-meta text-muted">Playback is available after the organizer reviews this translation.</p>}
             </div>
-            {organizerReview ? <OrganizerReview item={l} invitationId={invitation.id} /> : null}
+            {organizerReview ? (
+              <OrganizerReview
+                item={l}
+                queryKeys={[keys.invitationReview(invitation.id), keys.invitation(invitation.id)]}
+              />
+            ) : null}
           </article>
         ),
       )}
@@ -95,12 +100,19 @@ export function Translations({
   );
 }
 
-function Listen({
+export type PlaybackSource = { sourceId: string; sourceKind: "INVITATION" | "BRIEF"; sourceVersion: number };
+const invitationSource = (invitation: Invitation): PlaybackSource => ({
+  sourceId: invitation.id,
+  sourceKind: "INVITATION",
+  sourceVersion: invitation.proposalRevision,
+});
+
+export function Listen({
   id,
   label,
   active,
   onActivate,
-  invitation,
+  source,
   language,
   hash,
 }: {
@@ -108,7 +120,7 @@ function Listen({
   label: string;
   active: boolean;
   onActivate: (id: string | null) => void;
-  invitation: Invitation;
+  source: PlaybackSource;
   language: string;
   hash: string;
 }) {
@@ -147,13 +159,7 @@ function Listen({
     const request = ++generation.current;
     synth.mutate(
       {
-        input: {
-          sourceId: invitation.id,
-          sourceKind: "INVITATION",
-          sourceVersion: invitation.proposalRevision,
-          canonicalTextHash: hash,
-          language,
-        },
+        input: { ...source, canonicalTextHash: hash, language },
       },
       {
         onSuccess: async (artifact) => {
@@ -244,12 +250,12 @@ function Listen({
 }
 
 /** Source-authorized review. Only the mission organizer's own session can approve; others get an honest denial. */
-function OrganizerReview({
+export function OrganizerReview({
   item,
-  invitationId,
+  queryKeys,
 }: {
   item: Localized;
-  invitationId: string;
+  queryKeys: readonly (readonly unknown[])[];
 }) {
   const client = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -305,11 +311,10 @@ function OrganizerReview({
               {
                 onSuccess: () => {
                   setOpen(false);
-                  void client.invalidateQueries({ queryKey: keys.invitationReview(invitationId) });
-                  void client.invalidateQueries({ queryKey: keys.invitation(invitationId) });
+                  for (const queryKey of queryKeys) void client.invalidateQueries({ queryKey });
                 },
                 onError: () => {
-                  void client.invalidateQueries({ queryKey: keys.invitationReview(invitationId) });
+                  void client.invalidateQueries({ queryKey: queryKeys[0] });
                 },
               },
             )
