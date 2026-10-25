@@ -1,9 +1,9 @@
 import "server-only";
-import { EXECUTION_POLICY } from "@/contracts";
+import { EXECUTION_POLICY, ParticipantIdentitySchema } from "@/contracts";
 import { query, type Tx } from "../db/client";
 import { fail } from "../http/errors";
 import { hmac, tokenHash } from "../http/crypto";
-import { scopeFromRow, sameScope } from "../http/scope";
+import { scopeColumns, scopeFromRow, sameScope } from "../http/scope";
 import { createSessionRecord, iso, INVITE_COOKIE, type SessionRecord } from "../auth/sessions";
 import { invitationDto, principalParticipantIds, type InvitationRow, type MissionRow } from "./store";
 import type { CookieWrite } from "../http/route";
@@ -77,14 +77,20 @@ export async function redeem(tx: Tx, token: string, cookies: CookieWrite[]) {
   };
 }
 
+async function disclosedIdentities(row: InvitationRow) {
+ const invitation=invitationDto(row);
+ const rows = await query<{id:string;displayName:string;username:string|null;avatarId:string|null}>(`SELECT id,profile->>'displayName' AS "displayName",profile->>'username' AS username,profile->>'avatarId' AS "avatarId" FROM participants WHERE id=ANY($1::uuid[]) AND scope_mode=$2 AND showcase_id=$3 AND deleted_at IS NULL`,[invitation.terms.disclosedGroup.map(m=>m.participantId),...scopeColumns(scopeFromRow(row))]);
+ return rows.map(value=>ParticipantIdentitySchema.parse(value));
+}
+
 export async function detail(invite: SessionRecord, invitationId: string) {
   if (invite.invitationId !== invitationId) fail("FORBIDDEN", "This session is bound to a different invitation.");
   const row = await authorizedInvitationSource(invite, invitationId);
-  return { invitation: invitationDto(row), localized: await localizeInvitation(row, row.doc.language) };
+  return { invitation: invitationDto(row), localized: await localizeInvitation(row, row.doc.language), identities: await disclosedIdentities(row) };
 }
 
 // Separate creator read; narrow bearer sessions never inherit this authority.
 export async function reviewDetail(session: SessionRecord, invitationId: string) {
   const row = await authorizedInvitationSource(session, invitationId, undefined, true);
-  return { invitation: invitationDto(row), localized: await localizeInvitation(row, row.doc.language) };
+  return { invitation: invitationDto(row), localized: await localizeInvitation(row, row.doc.language), identities: await disclosedIdentities(row) };
 }

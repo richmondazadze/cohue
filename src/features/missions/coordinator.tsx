@@ -24,7 +24,9 @@ const VOICE_LANG: Record<string, string> = { en: "en-US", es: "es-ES", fr: "fr-F
 const MODEL_NAME = { GEMINI: "Gemini", META: "Meta Muse Spark" } as const;
 
 let playing: HTMLAudioElement | null = null;
+let speechStatus: ((value: boolean) => void) | null = null;
 function stopSpeaking() {
+  speechStatus?.(false);
   playing?.pause();
   playing = null;
   globalThis.speechSynthesis?.cancel();
@@ -34,6 +36,7 @@ function speak(text: string, language: string, audio: { mimeType: string; base64
   stopSpeaking();
   if (audio) {
     playing = new Audio(`data:${audio.mimeType};base64,${audio.base64}`);
+    playing.onplay=()=>speechStatus?.(true);playing.onpause=()=>speechStatus?.(false);playing.onended=()=>speechStatus?.(false);
     void playing.play().catch(() => browserSpeak(text, language));
     return;
   }
@@ -44,6 +47,7 @@ function browserSpeak(text: string, language: string) {
   if (!synth) return;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = VOICE_LANG[language] ?? language;
+  u.onstart=()=>speechStatus?.(true);u.onend=()=>speechStatus?.(false);u.onerror=()=>speechStatus?.(false);
   synth.speak(u);
 }
 
@@ -65,6 +69,8 @@ export function CoordinatorChat({
   const turnCmd = useCommand("coordinateMission");
   const speakCmd = useCommand("speakCoordinator");
   const [turns, setTurns] = useState<Turn[]>([]);
+  const [speaking,setSpeaking]=useState(false);
+  useEffect(()=>{speechStatus=setSpeaking;return()=>{stopSpeaking();speechStatus=null}},[]);
   const [text, setText] = useState("");
   // The composer renders only after hydration, so device storage can seed state directly.
   const [speakReplies, setSpeakReplies] = useState(() => {
@@ -76,7 +82,7 @@ export function CoordinatorChat({
 
   useEffect(() => stopSpeaking, []);
   useEffect(() => {
-    log.current?.lastElementChild?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    log.current?.lastElementChild?.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }, [turns, turnCmd.isPending]);
 
   const toggleSpeak = (v: boolean) => {
@@ -130,7 +136,7 @@ export function CoordinatorChat({
   const full = turns.length >= MAX_TURNS - 1;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="coordinator-conversation flex flex-col gap-4">
       <div className="flex items-start gap-3">
         <span aria-hidden className="mt-1 grid size-9 shrink-0 place-items-center rounded-full bg-action text-sm font-semibold text-white">
           C
@@ -143,6 +149,8 @@ export function CoordinatorChat({
         </div>
       </div>
 
+      {speakCmd.isPending ? <p role="status" className="coordinator-speaking">Preparing the Coordinator’s voice…</p> : null}
+      {speaking ? <div className="coordinator-speaking" role="status"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m4 9 5 0 5-4v14l-5-4H4V9Zm13-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><span>Coordinator is speaking</span><Button size="sm" onClick={stopSpeaking}>Stop voice</Button></div> : null}
       {turns.length ? (
         <ol ref={log} aria-live="polite" aria-label="Conversation with the Coordinator" className="m-0 flex max-h-[420px] list-none flex-col gap-3 overflow-y-auto p-0">
           {turns.map((t, i) => (

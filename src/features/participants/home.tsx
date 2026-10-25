@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { IdentityEditor } from "./identity-editor";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState, type RefObject } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -245,6 +246,7 @@ function Home({
                     <p>{languageName(participant.data.language)}</p>
                   </div>
                 </div>
+                <IdentityEditor participant={participant.data}/>
                 <dl className="m-0">
                   <KeyValue label="Username">{participant.data.username ? `@${participant.data.username}` : "Not chosen yet"}</KeyValue>
                 <KeyValue label="Language">

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ApiInput, ApiOutput, CommitmentTerms, Invitation } from "@/contracts";
@@ -137,8 +138,8 @@ function ResponseView({ detail }: { detail: Detail }) {
           <ul className="mt-2 flex list-none flex-col gap-1 p-0">
             {t.disclosedGroup.map((m) => (
               <li key={m.participantId} className="flex items-center gap-2">
-                <span aria-hidden="true" className="text-muted">●</span>
-                {m.role}
+                {detail.identities?.find(p=>p.id===m.participantId)?.avatarId ? <Image width={36} height={36} className="rounded-full" alt="" src={`/avatars/${detail.identities.find(p=>p.id===m.participantId)!.avatarId}.png`}/> : <span aria-hidden="true" className="text-muted">●</span>}
+                <span>{detail.identities?.find(p=>p.id===m.participantId)?.displayName ?? m.role}<span className="block text-xs text-muted">{m.role}{detail.identities?.find(p=>p.id===m.participantId)?.username ? ` · @${detail.identities.find(p=>p.id===m.participantId)!.username}` : ""}</span></span>
                 {m.participantId === t.participantId ? <strong className="text-action">(you)</strong> : null}
               </li>
             ))}

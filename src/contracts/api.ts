@@ -29,6 +29,7 @@ import {
   MissionSnapshotSchema,
   NetworkPageSchema,
   RoomSchema,
+  ParticipantIdentitySchema,
 } from "./projections";
 import {
   HashSchema,
@@ -478,6 +479,7 @@ export const apiContracts = {
     z.strictObject({
       invitation: InvitationSchema,
       localized: z.array(LocalizedTextSchema).max(20),
+      identities: z.array(ParticipantIdentitySchema).max(8).optional(),
     }),
     200,
   ),
@@ -490,6 +492,7 @@ export const apiContracts = {
     z.strictObject({
       invitation: InvitationSchema,
       localized: z.array(LocalizedTextSchema).max(20),
+      identities: z.array(ParticipantIdentitySchema).max(8).optional(),
     }),
     200,
   ),

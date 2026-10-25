@@ -112,7 +112,9 @@ export async function updateParticipant(
       JSON.stringify(c),
     ]);
   await tx.query("INSERT INTO access_epochs(principal_id,epoch) VALUES ($1,2) ON CONFLICT (principal_id) DO UPDATE SET epoch=access_epochs.epoch+1", [session.principalId]);
-  await notifyAffectedMissions(tx, id, updated.profile_version, correlationId);
+  // Identity-only changes do not alter matching feasibility or any person's approved commitment.
+  const domainFields = (p: ProfileInput) => JSON.stringify({capabilities:p.capabilities,needs:p.needs,interests:p.interests,availability:p.availability,visibility:p.visibility,participationOptIn:p.participationOptIn,language:p.language});
+  if (domainFields(row.profile) !== domainFields(profile)) await notifyAffectedMissions(tx, id, updated.profile_version, correlationId);
   return participantDto(updated);
 }
 

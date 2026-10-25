@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T14:18:46.069Z (America/Chicago display dates apply).
+Last update: 2026-10-25T14:21:51.106Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1131,3 +1131,14 @@ Invitation gate/decision, responsibility/group sections, Room header/kickoff and
 Validation: final npm run check PASS (114 tests passed,22 skipped,types/lint/build); audit zero vulnerabilities;17 production-build fixture browser regressions PASS on isolated final results (/tmp/cohue-identity-verified.log), covering participant steps at390/1440, voice, mission loop390/1280, translation and Room review continuity. Earlier overlapping test runs wrote conflicting output; isolated final rerun is authoritative. Database connection probe failed after bounded timeout; migration was NOT applied and DB uniqueness/concurrency acceptance remains unverified. No deployment/push. Both handoffs synchronized.
 
 Full goal remains active: invitation identity projection, existing-profile identity editor, actual migration/DB tests, coordinator-speaking visuals, remaining screen-by-screen visual audit and requirement-complete browser evidence still outstanding. See full-redesign/IMPLEMENTATION_PLAN.md and IDENTITY_INTEGRATION.md. Do not mistake this slice for full acceptance. No other chats contacted.
+
+
+## Milestone from docs/status/frontend/FULL_REDESIGN_IDENTITY_EDITOR_SLICE.md
+
+# Full redesign — identity editing and speech state slice
+
+25 October2026. Preceding baselinef4ebfc6. Full goal remains active. Added existing-profile username/display-name/avatar editor through versioned updateParticipant command, with explicit save and validation. Identity-only edits no longer trigger domain repair/review notices (matching-relevant fields still do). Profile versions/access epochs remain fenced. Added optional, validated disclosed-group identity projection to authorized invitation detail/review; public bearer preview stays identity-free. Group UI renders persisted identity only. No private skill/time profile fields enter this projection.
+
+Coordinator preparing/speaking/stop-voice state now follows actual HTML audio or speech-synthesis lifecycle; reduced-motion chat scrolling respected. Existing reviewed-audio intensity/recording views remain. No fabricated model thoughts or automatic consent. Database connectivity re-probe still times out; no migration applied, actual concurrent scoped username DB uniqueness remains unverified.
+
+npm run check PASS; audit zero vulnerabilities. Production-build fixture browser regression5/5 PASS: identity editor versioned save, mission core loop390/1280, API failure, translation review. DB/provider/invitation real-user acceptance not claimed. Full visual audit, final scope/gap audit, coordinator intensity detail and migration-backed acceptance remain pending. No push/deployment/chat messages. Both handoffs synchronized by script.

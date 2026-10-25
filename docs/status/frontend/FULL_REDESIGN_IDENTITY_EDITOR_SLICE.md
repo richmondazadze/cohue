@@ -1,0 +1,7 @@
+# Full redesign — identity editing and speech state slice
+
+25 October2026. Preceding baselinef4ebfc6. Full goal remains active. Added existing-profile username/display-name/avatar editor through versioned updateParticipant command, with explicit save and validation. Identity-only edits no longer trigger domain repair/review notices (matching-relevant fields still do). Profile versions/access epochs remain fenced. Added optional, validated disclosed-group identity projection to authorized invitation detail/review; public bearer preview stays identity-free. Group UI renders persisted identity only. No private skill/time profile fields enter this projection.
+
+Coordinator preparing/speaking/stop-voice state now follows actual HTML audio or speech-synthesis lifecycle; reduced-motion chat scrolling respected. Existing reviewed-audio intensity/recording views remain. No fabricated model thoughts or automatic consent. Database connectivity re-probe still times out; no migration applied, actual concurrent scoped username DB uniqueness remains unverified.
+
+npm run check PASS; audit zero vulnerabilities. Production-build fixture browser regression5/5 PASS: identity editor versioned save, mission core loop390/1280, API failure, translation review. DB/provider/invitation real-user acceptance not claimed. Full visual audit, final scope/gap audit, coordinator intensity detail and migration-backed acceptance remain pending. No push/deployment/chat messages. Both handoffs synchronized by script.
