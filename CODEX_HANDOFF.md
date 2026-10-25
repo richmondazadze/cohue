@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T06:04:06.318Z (America/Chicago display dates apply).
+Last update: 2026-10-25T06:06:07.183Z (America/Chicago display dates apply).
 Current milestone: USER STOPPED all work for credit conservation. Read docs/status/lead/STOP_STAGE_HANDOFF.md first. Local release implementation/tests saved; production migration0002 applied through Tiger SQL editor, runtime grant statement executed but runtime probe pending. New web/worker release NOT deployed; EVENT_RETENTION_READY NOT enabled. Vultr worker remains INACTIVE on old8385a34, production web remains available. Local test/dev/worker processes stopped. Resume only on new user instruction; no final readiness claim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -760,3 +760,8 @@ Re-anchor: through the Tiger SQL editor (admin session), shifted availability of
 New spec tests/e2e/integration/showcase-journey.spec.ts against https://cohue.tech with COHUE_EXPECT_PROVIDERS=1: passed in 11 s. Operator session → mission (design + hardware, size 3, creator participates) → real matcher PROPOSED → select → share links redeemed on separate contexts and labeled operator ACCEPTs for the synthetic invitees → approvals complete → activation → Mission Room brief: en APPROVED original plus real Gemini es and fr drafts (REVIEW_REQUIRED). Mission f290db75-a8cc-4934-b965-5342e5ef194e then cancelled to release synthetic capacity. showcase.spec also passes on production again (FEASIBLE, LIVE isolation).
 
 Not covered: real people on physical phones, voice input on devices, screen readers, the browser UI on production (API-level run). Item 4 needs the user or helpers with two phones.
+
+
+## Milestone from docs/status/lead/LIVE_WIDTH_SWEEP.md
+
+Automated live-site sweep, 25 Oct 2026 ~01:10 CDT, https://cohue.tech on release 266a240 (Playwright Chromium, no data created). Pages /, /join, /missions/new at 320, 390, 768, 1024 and 1440 px, each with and without prefers-reduced-motion: all HTTP 200, zero horizontal overflow, Switzer loaded from Fontshare on every page, no page errors, no visible text left hidden by motion. One interactive element under 24×24 px on /missions/new at 320/768/1024 (not yet identified; minor). Screenshots kept outside the repo. Not covered: authenticated screens (theater, invitation, room) at every width, real devices, screen readers, contrast audit, graph performance.
