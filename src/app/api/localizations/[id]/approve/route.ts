@@ -1,5 +1,5 @@
 import { route } from "@/server/http/route";
-import { providerUnavailable } from "@/server/providers/status";
+import { approveLocalization } from "@/server/domain/media";
+import { inTx } from "@/server/http/tx";
 
-// Provider-backed; returns PROVIDER_UNAVAILABLE until the account is configured and probed (no fixture fallback).
-export const POST = route("approveLocalization", async () => providerUnavailable("approveLocalization"));
+export const POST = route("approveLocalization", (ctx) => inTx(ctx, (tx) => approveLocalization(tx, ctx.session!, ctx.params.id, ctx.input)));

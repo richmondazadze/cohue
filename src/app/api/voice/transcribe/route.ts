@@ -1,5 +1,5 @@
 import { route } from "@/server/http/route";
-import { providerUnavailable } from "@/server/providers/status";
+import { transcribe } from "@/server/domain/media";
 
-// Provider-backed; returns PROVIDER_UNAVAILABLE until the account is configured and probed (no fixture fallback).
-export const POST = route("transcribe", async () => providerUnavailable("transcribe"));
+// Multipart `audio` + JSON `metadata`; transcript is a reviewable draft and never a response or consent.
+export const POST = route("transcribe", (ctx) => transcribe(ctx.file, ctx.input), { multipart: true, acceptInvite: true });

@@ -1,5 +1,5 @@
 import { route } from "@/server/http/route";
-import { providerUnavailable } from "@/server/providers/status";
+import { extractMissionDraft } from "@/server/domain/extraction";
 
-// Provider-backed; returns PROVIDER_UNAVAILABLE until the account is configured and probed (no fixture fallback).
-export const POST = route("extractMission", async () => providerUnavailable("extractMission"));
+// Review-only, stateless draft for the composer; the creator confirms every field before createMission.
+export const POST = route("extractMission", (ctx) => extractMissionDraft(ctx.input.text, ctx.input.language));

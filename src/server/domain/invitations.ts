@@ -7,6 +7,7 @@ import { scopeFromRow } from "../http/scope";
 import { createSessionRecord, iso, INVITE_COOKIE, type SessionRecord } from "../auth/sessions";
 import { invitationDto, principalParticipantIds, type InvitationRow, type MissionRow } from "./store";
 import type { CookieWrite } from "../http/route";
+import { localizeInvitation } from "./media";
 
 const TERMINAL = new Set(["CANCELLED", "EXPIRED"]);
 // Token derived from (invitation, epoch) so replay recomputes it; only its keyed hash is stored.
@@ -80,5 +81,6 @@ export async function detail(invite: SessionRecord, invitationId: string) {
   if (invite.invitationId !== invitationId) fail("FORBIDDEN", "This session is bound to a different invitation.");
   const [row] = await query<InvitationRow>("SELECT * FROM invitations WHERE id=$1", [invitationId]);
   if (!row) fail("NOT_FOUND", "Invitation not found.");
-  return { invitation: invitationDto(row), localized: [] };
+  const [mission] = await query<{ doc: { language: string } }>("SELECT doc FROM missions WHERE id=$1", [row.mission_id]);
+  return { invitation: invitationDto(row), localized: await localizeInvitation(row, mission.doc.language) };
 }

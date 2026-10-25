@@ -24,6 +24,7 @@ export function buildProposal(input: {
   search: MatchOutput["search"];
   profileVersions: Map<string, number>;
   names: Map<string, string>;
+  resourceTitle?: string;
 }): GroupProposal {
   const { mission, group } = input;
   const missionId = mission.id;
@@ -91,7 +92,7 @@ export function buildProposal(input: {
       complete: input.search.complete,
       stoppedBecause: input.search.stoppedBecause,
     },
-    rationale: `${group.participantIds.length} people share ${Math.round((group.commonWindow.end - group.commonWindow.start) / 60000)} minutes from ${window.start}. Coverage — ${coveredSummary}. Ranked by optional coverage ${group.score.optionalCoverage}, mutual benefit ${group.score.mutualBenefit}, interest relevance ${group.score.interestRelevance}, preserved commitments ${group.score.preservedCommitments}.${input.search.complete ? "" : " Search stopped at its bound, so this is the best found, not proven optimal."}`.slice(0, 2000),
+    rationale: `${group.participantIds.length} people share ${Math.round((group.commonWindow.end - group.commonWindow.start) / 60000)} minutes from ${window.start}. Coverage — ${coveredSummary}. Ranked by optional coverage ${group.score.optionalCoverage}, mutual benefit ${group.score.mutualBenefit}, interest relevance ${group.score.interestRelevance}, preserved commitments ${group.score.preservedCommitments}.${input.search.complete ? "" : " Search stopped at its bound, so this is the best found, not proven optimal."}${input.resourceTitle ? ` Public resource to review first (unverified, not a team member): ${input.resourceTitle}.` : ""}`.slice(0, 2000),
     createdAt: iso(Date.now()),
   });
 }

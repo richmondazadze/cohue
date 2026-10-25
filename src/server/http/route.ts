@@ -36,12 +36,17 @@ export type Ctx<K extends ApiOperation> = {
   tx: Tx | null;
   cookies: CookieWrite[];
   request: NextRequest;
+  file: File | null;
 };
 type Options<K extends ApiOperation> = {
   // Replay hook: rebuild response data from the stored receipt (e.g. recompute a derived token).
   replay?: (stored: unknown, ctx: Ctx<K>) => Promise<Data<K>>;
   // What is stored in the receipt; defaults to the response data.
   store?: (data: Data<K>) => unknown;
+  // SESSION operations whose handler authorizes the source itself may run on an invitation session.
+  acceptInvite?: boolean;
+  // multipart/form-data with a JSON `metadata` part (validated as input) and one `audio` file part.
+  multipart?: boolean;
 };
 type Handler<K extends ApiOperation> = (ctx: Ctx<K>) => Promise<Data<K>>;
 
@@ -74,10 +79,25 @@ export function route<K extends ApiOperation>(
       const params = contract.params.safeParse(rawParams);
       if (!params.success) fail("NOT_FOUND", "Unknown resource reference.");
       if (MUTATION.has(contract.method)) checkOrigin(request);
-      const input = await readInput(contract, request);
+      let file: File | null = null;
+      let input: unknown;
+      if (options.multipart) {
+        const form = await request.formData().catch(() => fail("INVALID_INPUT", "Expected multipart form data."));
+        const audio = form.get("audio");
+        file = audio instanceof File ? audio : null;
+        let metadata: unknown = {};
+        try {
+          metadata = JSON.parse(String(form.get("metadata") ?? "{}"));
+        } catch {
+          fail("INVALID_INPUT", "metadata must be JSON.");
+        }
+        const parsed = contract.input.safeParse(metadata);
+        if (!parsed.success) fail("INVALID_INPUT", "metadata does not match the contract.");
+        input = parsed.data;
+      } else input = await readInput(contract, request);
       const session = await resolveSession(request.cookies.get(GUEST_COOKIE)?.value);
       const invite = await resolveSession(request.cookies.get(INVITE_COOKIE)?.value);
-      authorize(contract.auth, request, session, invite);
+      authorize(contract.auth, request, session ?? (options.acceptInvite ? invite : null), invite);
       const ctx: Ctx<K> = {
         params: params.data as Record<string, string>,
         input: input as Input<K>,
@@ -87,9 +107,10 @@ export function route<K extends ApiOperation>(
         tx: null,
         cookies: [],
         request,
+        file,
       };
       let data: Data<K>;
-      const principal = principalFor(contract.auth, session, invite);
+      const principal = principalFor(contract.auth, session ?? (options.acceptInvite ? invite : null), invite);
       if (contract.idempotentCommand) {
         const key = CommandHeadersSchema.safeParse({
           "idempotency-key": request.headers.get("idempotency-key") ?? undefined,

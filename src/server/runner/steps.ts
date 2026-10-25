@@ -12,6 +12,8 @@ import {
   type ParticipantRow,
 } from "../domain/store";
 import { claimCommit, enqueueJob, leaseJob, recordFailure, type JobRow } from "./jobs";
+import { serpConfigured, webSearch, type SearchHit } from "../providers/serpapi";
+import { iso } from "../auth/sessions";
 
 const ms = (s: string) => Date.parse(s);
 
@@ -53,7 +55,8 @@ export async function loadCandidates(tx: Tx, mission: MissionRow): Promise<{
   };
 }
 
-type StepResult = (tx: Tx, mission: MissionRow, dto: Mission, job: JobRow) => Promise<void>;
+type Prefetch = { hits: SearchHit[]; searchFailed: boolean };
+type StepResult = (tx: Tx, mission: MissionRow, dto: Mission, job: JobRow, prefetch: Prefetch) => Promise<void>;
 const meta = (job: JobRow, correlationId: string) => ({
   runId: job.checkpoint.runId,
   agent: job.agent,
@@ -71,7 +74,7 @@ const director: StepResult = async (tx, mission, dto, job) => {
   await enqueueJob(tx, next, "SCOUT", "SCOUT", "DISCOVERING");
 };
 
-const scout: StepResult = async (tx, mission, dto, job) => {
+const scout: StepResult = async (tx, mission, dto, job, prefetch) => {
   const c = randomUUID();
   await appendEvent(tx, mission, "SCOUT_SEARCH_STARTED", { operation: "searchParticipants", evidenceIds: [] }, { ...meta(job, c), status: "STARTED" });
   const { rows } = await loadCandidates(tx, mission);
@@ -111,6 +114,26 @@ const scout: StepResult = async (tx, mission, dto, job) => {
   }
   const next = await bumpMission(tx, mission);
   await appendEvent(tx, next, "CANDIDATES_FOUND", { candidateIds: ids }, { correlationId: c });
+  // Public web evidence is stored as PUBLIC_UNVERIFIED opportunities; it never fills a HUMAN requirement.
+  const opportunityIds: string[] = [];
+  for (const hit of prefetch.hits) {
+    const id = randomUUID();
+    const doc = {
+      id,
+      missionId: mission.id,
+      scope: dto.scope,
+      sourceURL: hit.link,
+      title: hit.title,
+      retrievedAt: iso(new Date()),
+      providerSearchId: hit.searchId.slice(0, 200),
+      relevanceEvidence: hit.snippet,
+      verificationStatus: "PUBLIC_UNVERIFIED" as const,
+    };
+    await tx.query("INSERT INTO external_opportunities(id, mission_id, scope_mode, showcase_id, doc) VALUES ($1,$2,$3,$4,$5)", [id, mission.id, mission.scope_mode, mission.showcase_id, JSON.stringify(doc)]);
+    opportunityIds.push(id);
+  }
+  if (opportunityIds.length) await appendEvent(tx, next, "OPPORTUNITIES_FOUND", { opportunityIds }, { correlationId: c });
+  if (prefetch.searchFailed) await appendEvent(tx, next, "PROVIDER_FAILED", { code: "UNAVAILABLE", retryable: false }, { correlationId: c, status: "FAILED" });
   await enqueueJob(tx, next, "STRATEGIST", "STRATEGIST", "DISCOVERING");
 };
 
@@ -141,8 +164,9 @@ const strategist: StepResult = async (tx, mission, dto, job) => {
   const revision = (mission.current_proposal_revision ?? 0) + 1;
   const versions = new Map(rows.map((r) => [r.id, r.profile_version]));
   const names = new Map(rows.map((r) => [r.id, r.profile.displayName]));
+  const [resource] = await query<{ title: string }>("SELECT doc->>'title' AS title FROM external_opportunities WHERE mission_id=$1 ORDER BY id LIMIT 1", [mission.id], tx);
   const proposals = result.groups.map((group) =>
-    buildProposal({ mission: dto, scope: dto.scope, revision, group, search: result.search, profileVersions: versions, names }),
+    buildProposal({ mission: dto, scope: dto.scope, revision, group, search: result.search, profileVersions: versions, names, resourceTitle: resource?.title }),
   );
   const matchResult = MatchResultSchema.parse({
     feasibility: result.feasibility,
@@ -210,6 +234,21 @@ const ALLOWED_STATES: Record<string, string[]> = {
 export async function runOne(owner: string): Promise<"IDLE" | "DONE" | "STALE" | "FAILED"> {
   const job = await leaseJob(owner);
   if (!job) return "IDLE";
+  // Provider calls run before the transaction, outside row locks; the commit still checks fence and version.
+  const prefetch: Prefetch = { hits: [], searchFailed: false };
+  if (job.checkpoint.kind === "SCOUT" && serpConfigured()) {
+    const [m] = await query<MissionRow>("SELECT * FROM missions WHERE id=$1", [job.mission_id]);
+    const searches = await query<{ n: number }>("SELECT COUNT(DISTINCT doc->>'providerSearchId')::int AS n FROM external_opportunities WHERE mission_id=$1", [job.mission_id]);
+    if (m && (searches[0]?.n ?? 0) < 3) {
+      const reqs = await query<{ doc: { kind: string; normalizedSkillId: string; outcome: string | null } }>("SELECT doc FROM mission_requirements WHERE mission_id=$1", [m.id]);
+      const resources = reqs.filter((r) => r.doc.kind === "RESOURCE").map((r) => r.doc.outcome ?? r.doc.normalizedSkillId);
+      const q = `${m.doc.objective} ${resources.length ? resources.join(" ") : "free tools guide"}`;
+      prefetch.hits = await webSearch(q, m.doc.language).catch(() => {
+        prefetch.searchFailed = true;
+        return [];
+      });
+    }
+  }
   try {
     return await transaction(async (tx) => {
       const [mission] = await query<MissionRow>("SELECT * FROM missions WHERE id=$1 FOR UPDATE", [job.mission_id], tx);
@@ -220,7 +259,7 @@ export async function runOne(owner: string): Promise<"IDLE" | "DONE" | "STALE" |
       }
       if (!(await claimCommit(tx, job, "SUCCEEDED"))) throw new StaleFence();
       await tx.query("UPDATE agent_runs SET status='SUCCEEDED', started_at=COALESCE(started_at, now()), ended_at=now() WHERE id=$1", [job.checkpoint.runId]);
-      await STEPS[kind](tx, mission, await missionDto(mission, tx), job);
+      await STEPS[kind](tx, mission, await missionDto(mission, tx), job, prefetch);
       return "DONE";
     });
   } catch (error) {

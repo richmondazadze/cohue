@@ -206,6 +206,11 @@ export async function buildSnapshot(mission: MissionRow, client: Tx, asOf?: AsOf
   }
   for (const id of extraIds)
     nodes.push({ id, kind: "participant", label: (names.get(id) ?? "Former candidate").slice(0, 120), status: "DECLINED", evidenceRefs: [] });
+  const opportunities = await loadOpportunities(mission.id, client);
+  for (const o of opportunities) {
+    nodes.push({ id: o.id, kind: "opportunity", label: o.title, status: "PUBLIC_UNVERIFIED", evidenceRefs: [] });
+    edges.push({ id: uuidFrom(`evidence:${o.id}`), source: o.id, target: mission.id, kind: "EVIDENCE", status: "PUBLIC_UNVERIFIED", proposalRevision: null, eventId: null });
+  }
   const accepted = asOf ? [...asOf.statuses.values()].filter((v) => v === "ACCEPTED").length : invites.filter((i) => i.status === "ACCEPTED").length;
   return MissionSnapshotSchema.parse({
     scope: dto.scope,
@@ -213,7 +218,7 @@ export async function buildSnapshot(mission: MissionRow, client: Tx, asOf?: AsOf
     mission: dto,
     graph: { snapshotSequence: seq, nodes, edges },
     proposals,
-    opportunities: [],
+    opportunities,
     approvals: { required: selected ? selected.members.length : 0, accepted },
     receivedAt: iso(new Date()),
   });
@@ -437,6 +442,14 @@ export async function activate(tx: Tx, session: SessionRecord, id: string, expec
     await tx.query("INSERT INTO mission_tasks(id, mission_id, owner_membership_id, status, version, doc) VALUES ($1,$2,$3,'TODO',1,$4)", [task.id, id, membership.id, JSON.stringify(task)]);
     taskIds.push(task.id);
   }
+  // A public resource informs the first step as an explicit, unverified review task for the creator.
+  const [resource] = await loadOpportunities(id, tx);
+  const creatorMembership = membershipIds[invites.findIndex((i) => i.participant_id === mission.creator_id)];
+  if (resource && creatorMembership) {
+    const task = { id: randomUUID(), missionId: id, ownerMembershipId: creatorMembership, description: `Review public resource (unverified): ${resource.title} — ${resource.sourceURL}`.slice(0, 2000), status: "TODO" as const, dueAt: null, version: 1 };
+    await tx.query("INSERT INTO mission_tasks(id, mission_id, owner_membership_id, status, version, doc) VALUES ($1,$2,$3,'TODO',1,$4)", [task.id, id, creatorMembership, JSON.stringify(task)]);
+    taskIds.push(task.id);
+  }
   const next = await bumpMission(tx, mission, { state: "ACTIVATED" });
   await appendEvent(tx, next, "MISSION_ACTIVATED", { membershipIds, taskIds }, { correlationId, proposalRevision, status: "SUCCEEDED" });
   for (const t of taskIds) await appendEvent(tx, next, "TASK_CREATED", { taskId: t }, { correlationId, proposalRevision });
@@ -444,11 +457,15 @@ export async function activate(tx: Tx, session: SessionRecord, id: string, expec
 }
 
 // ---------- room / tasks / reviews ----------
+type Opportunity = z.input<typeof RoomSchema>["opportunities"][number];
+async function loadOpportunities(missionId: string, client?: Tx): Promise<Opportunity[]> {
+  return (await query<{ doc: Opportunity }>("SELECT doc FROM external_opportunities WHERE mission_id=$1 ORDER BY id LIMIT 30", [missionId], client)).map((r) => r.doc);
+}
 export async function buildRoom(mission: MissionRow, client?: Tx) {
   const memberships = (await query<{ doc: unknown }>("SELECT doc FROM mission_memberships WHERE mission_id=$1 ORDER BY participant_id", [mission.id], client)).map((r) => r.doc);
   const tasks = (await query<{ doc: Record<string, unknown>; status: string; version: number }>("SELECT doc, status, version FROM mission_tasks WHERE mission_id=$1 ORDER BY id", [mission.id], client)).map((r) => ({ ...r.doc, status: r.status, version: r.version }));
   const reviews = (await query<{ doc: Record<string, unknown>; status: string; version: number }>("SELECT doc, status, version FROM review_requests WHERE mission_id=$1", [mission.id], client)).map((r) => ({ ...r.doc, status: r.status, version: r.version }));
-  return RoomSchema.parse({ mission: await missionDto(mission, client), memberships, tasks, opportunities: [], briefs: [], reviews });
+  return RoomSchema.parse({ mission: await missionDto(mission, client), memberships, tasks, opportunities: await loadOpportunities(mission.id, client), briefs: [], reviews });
 }
 
 // MEMBER: creator principal, owner of a member profile, or an invitation session of a member.

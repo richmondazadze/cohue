@@ -1,5 +1,5 @@
 import { route } from "@/server/http/route";
-import { providerUnavailable } from "@/server/providers/status";
+import { extractProfile } from "@/server/domain/extraction";
 
-// Provider-backed; returns PROVIDER_UNAVAILABLE until the account is configured and probed (no fixture fallback).
-export const POST = route("parseProfile", async () => providerUnavailable("parseProfile"));
+// Review-only, stateless: nothing is persisted until the person confirms and creates the profile.
+export const POST = route("parseProfile", (ctx) => extractProfile(ctx.input.text, ctx.input.language));
