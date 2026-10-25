@@ -9,6 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useCommand } from "@/client/command";
 import { ErrorNotice } from "@/components/ui/notice";
+import { MotionLayer } from "@/components/motion/motion-layer";
 import "./participants.css";
 
 // Layout adapted from Efferd's free App Shell 2; COHUE's existing Radix primitives supply mobile focus management.
@@ -102,7 +103,8 @@ export function ParticipantShell({ children }: { children: ReactNode }) {
             {live.isError ? <ErrorNotice error={live.error}/> : null}
           </div>
         ) : null}
-        {children}
+        <div data-motion-root>{children}</div>
+        <MotionLayer />
         <footer className="participant-footer">
           <span>Common ground. Real possibilities.</span>
           <Link href="/">

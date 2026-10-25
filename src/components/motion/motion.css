@@ -1,0 +1,164 @@
+/* App-wide motion: one quiet vocabulary. Things arrive with a short blur-and-offset ease-in, leave faster
+   than they arrive, and never move when the person asks for reduced motion. Opacity, transform and
+   filter only, so nothing reflows. Timing follows the approved participant ease. */
+:root {
+  --motion-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --motion-in: 460ms;
+  --motion-out: 200ms;
+  --motion-blur: 6px;
+  --motion-y: 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Until the first reveal is queued the workspace stays invisible, with a short failsafe if scripts never run. */
+  [data-motion-root]:not([data-motion-ready]) {
+    opacity: 0;
+    animation: motion-gate 0s 1.2s forwards;
+  }
+  /* Page blocks and newly arrived content, driven by MotionLayer. Hidden only while JS has queued them. */
+  [data-motion="pending"] {
+    opacity: 0;
+  }
+  [data-motion="in"] {
+    animation: motion-blur-in var(--motion-in) var(--motion-ease) both;
+    animation-delay: calc(min(var(--motion-i, 0), 10) * 45ms);
+  }
+
+  /* Tab panels: each newly shown panel settles in. */
+  [role="tabpanel"][data-state="active"] {
+    animation: motion-blur-in 320ms var(--motion-ease) both;
+  }
+
+  /* Desktop sidebar: width eases; labels re-enter with a soft blur when it expands. */
+  .participant-sidebar {
+    transition: width 320ms var(--motion-ease), padding 320ms var(--motion-ease);
+  }
+  .participant-shell-main {
+    transition: margin-left 320ms var(--motion-ease);
+  }
+  .participant-sidebar nav a span,
+  .participant-sidebar .participant-brand span,
+  .participant-sidebar .sidebar-group-label,
+  .participant-sidebar .sidebar-bottom > * {
+    animation: motion-blur-in-x 360ms var(--motion-ease) both;
+  }
+  .participant-sidebar nav a {
+    transition: background-color 160ms ease, color 160ms ease, translate 220ms var(--motion-ease);
+  }
+  .participant-sidebar nav a:hover {
+    translate: 2px 0;
+  }
+
+  /* Mobile navigation drawer: slides out from the edge with blur; the overlay softens the page behind. */
+  .participant-mobile-sidebar[data-state="open"] {
+    animation: motion-drawer-in 380ms var(--motion-ease) both;
+  }
+  .participant-mobile-sidebar[data-state="closed"] {
+    animation: motion-drawer-out var(--motion-out) var(--motion-ease) both;
+  }
+  .participant-mobile-overlay {
+    backdrop-filter: blur(3px);
+  }
+  .participant-mobile-overlay[data-state="open"] {
+    animation: motion-fade-in 300ms var(--motion-ease) both;
+  }
+  .participant-mobile-overlay[data-state="closed"] {
+    animation: motion-fade-out var(--motion-out) var(--motion-ease) both;
+  }
+
+  /* Dialogs and sheets leave as gently as they arrive. */
+  .participant-sheet[data-state="closed"] {
+    animation: motion-blur-out var(--motion-out) var(--motion-ease) both !important;
+  }
+
+  /* Live alerts slide in from the side they sit on. */
+  .participant-notifications [role="status"] > div {
+    animation: motion-blur-in-x 380ms var(--motion-ease) both;
+  }
+
+  /* Header breadcrumb title follows the route. */
+  .participant-breadcrumb > span:last-child {
+    animation: motion-blur-in 360ms var(--motion-ease) both;
+  }
+}
+
+@keyframes motion-blur-in {
+  from {
+    opacity: 0;
+    filter: blur(var(--motion-blur));
+    transform: translateY(var(--motion-y));
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+@keyframes motion-blur-out {
+  from {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(6px);
+  }
+}
+@keyframes motion-blur-in-x {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+@keyframes motion-drawer-in {
+  from {
+    opacity: 0.4;
+    filter: blur(8px);
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+@keyframes motion-drawer-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0.4;
+    filter: blur(6px);
+    transform: translateX(-100%);
+  }
+}
+@keyframes motion-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes motion-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes motion-gate {
+  to {
+    opacity: 1;
+  }
+}
