@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T12:55:11.001Z (America/Chicago display dates apply).
+Last update: 2026-10-25T13:00:28.451Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1014,3 +1014,18 @@ Complete reading experience at ?view=reading includes all five steps, principles
 Actual browser evidence: live WebGL desktop hero, menu navigation to gallery, step drawer content/focus, full reading-mode text, and OS reduced-motion emulation selecting reading mode automatically. Responsive checks at 320/390/768/1024/1440 CSS pixels: no horizontal overflow; minimum primary navigation targets44px and primary actions48px. Mobile hero eyebrow/copy separation verified. Desktop screenshot: docs/status/frontend/landing-overhaul/artifacts/cohue-desktop.png. Inline JavaScript syntax, import-map JSON, unique IDs/nonempty links and original-source SHA256 checks pass. npm audit --audit-level=high: zero vulnerabilities. npm run check: PASS (foundation, lint, types, 93 tests passed; 22 environment-dependent tests skipped; production build passed). Actual next start production smoke at localhost:8796/landing-lab/cohue/index.html: hero/WebGL and real navigation rendered, zero warning/error console entries. Skipped tests are not evidence of real DB/provider/deployed behavior. No physical-device, sustained FPS or deployed-home acceptance claim.
 
 This is the requested complete local landing, ready for user review. Application-wide redesign and live publication are separate work. Both handoffs synchronized through the serialized append script; no chat notification sent.
+
+
+## Milestone from docs/status/frontend/COHUE_LANDING_REFINED.md
+
+# COHUE landing — professional scrolling refinement
+
+25 October 2026. Preceding baseline e872a1d. User explicitly requests a professional, in-depth full-scroll landing with subtle animation because the kinetic version was excessive. Supersedes the previous kinetic adaptation's current-page description. No other chats contacted.
+
+Replaced public/landing-lab/cohue/index.html with a natural document-scroll landing: sticky navigation, editorial hero, illustrative mission workflow, three use cases, complete five-step process, consent/language/change principles, synthetic-showcase entry, six FAQs, closing actions and footer. Preserved COHUE mark, warm light palette, blue accent, sans/serif character and truthful domain copy. Removed WebGL/Three imports, physics, pinned chapters, cursor effects, split text and per-frame loops entirely. Original reference replica/export stays untouched; previous derivative is recoverable from e872a1d. Production root and application unchanged; no push/deployment.
+
+Motion uses CSS opacity/8px translateY section entrances, 500ms existing ease-out curve, IntersectionObserver once per section, no repeated replay or reading-text animation. Buttons use160ms feedback and fine-pointer hover gating. Reduced-motion renders every section immediately, disables smooth anchor scrolling and translation; no-JS content stays visible. Native anchors and normal browser scrolling preserve user control. No new dependencies.
+
+Verified actual CUA desktop and mobile (433 CSS-pixel observed viewport, no horizontal overflow), settled How it works anchor below sticky header, all five steps/six FAQs and automatic reduced-motion parity (zero pending sections, scroll behavior auto). Production next start smoke on8796/landing-lab/cohue/index.html: title/content correct, zero canvas, no overflow, zero console warning/error entries. npm run check PASS (foundation/lint/types/93 tests passed,22 skipped/build); npm audit --audit-level=high zero vulnerabilities. Static script syntax, unique IDs, anchor targets and absence of WebGL/requestAnimationFrame checks pass. Screenshots in landing-overhaul/artifacts/cohue-refined-{desktop,mobile,process}.png. No physical-device or sustained-frame-rate certification claimed.
+
+Review http://127.0.0.1:8795/cohue/. Both handoffs appended identically. This remains a local landing preview, not a live-home deployment or application-wide redesign.
