@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T15:25:27.822Z (America/Chicago display dates apply).
+Last update: 2026-10-25T16:00:24.451Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1219,3 +1219,18 @@ User ask: full app motion, subtle blur/offset ease-in for everything, sidebar sl
 - prefers-reduced-motion: nothing hidden or moved (verified: root opacity 1, no motion attributes). First-paint gate has a 1.2 s CSS failsafe.
 
 Verification: unit 114/114, lint, types, build; mocked frontend browser suite 51/51 against a local production build (twice). Production (https://cohue.tech, deployment cohue-992z37ob5): sampled blur 12 px → 9.3 px with opacity rising during a route change; 35 staggered reveal events on /join; drawer opens/closes; after jumping to the bottom and scrolling back, 0 hidden blocks and 0 horizontal overflow on /missions/new, /join, /me, /app at 1440 and 390; showcase-journey and session-continuity passed live. Hosted CI for f8bc188 was in progress at this note. Not checked: physical-device frame rate.
+
+
+## Milestone from docs/status/lead/AUTONOMOUS_COORDINATOR.md
+
+# Organizer quick start and hands-free Coordinator (25 Oct 2026, 10:30–11:05 CDT)
+
+- 7df6821 quick start: the composer's profile gate is a one-step "Who's organizing?" (username + one of five avatars) creating a private organizer identity: no skills or availability, not discoverable, not opted in (src/features/participants/quick-identity.tsx). Full Join stays linked for anyone who wants to be matched.
+- a7de4f3 autonomous flow (user ask: clean card without the "C" mark, lock until identity saved, voice that flows without manual steps, visible animation of each autonomous fill):
+  - Coordinator card: eyebrow + "Tell me your idea." heading.
+  - Chat and brief are wrapped in `.composer-lockable`, `inert` and greyed until a participant exists on this device (LIVE quick start or showcase synthetic organizer).
+  - RecordControl gains `autoTranscribe` and `startSignal`. In the Coordinator, stopping a recording transcribes and sends the turn; if the reply asks questions the microphone reopens, after the spoken reply ends when voice is on. A reply with no questions shows "Brief complete. Taking you to review…" and opens review after 2.2 s (Stay here cancels); createMission/startMission still require the creator's taps.
+  - Each reply lists what it filled (chips); the composer marks filled fields (`data-fill` a/b waves, `.fill-target`) so objective, output, each requirement and group/time settle in with a staggered blur + highlight. MotionLayer skips `.fill-target` to avoid double animation. Reduced motion: no animation.
+- Tests: new coordinator-handsfree.spec (fake microphone: two spoken turns, no Send tap, mic reopens, fields filled, review reached, no createMission) and lock test; quick-identity.spec; existing composer specs now organize first via MockBackend.organize(). Frontend 54/54 on a local production build, unit 114, lint. live-features composer test updated for auto-transcribe and the organizer step (DB-backed, CI only).
+- Production: cohue.tech now serves Vercel's Security Checkpoint to automated clients (curl/headless 403 "Code 21"); real Chrome passes. Automated live checks after 15:45 UTC were therefore limited to the user's Chrome. Hosted CI production journeys may hit the same checkpoint.
+- Note: the git-ignored motion/film Remotion project (another thread) makes a root `tsc -p .` report errors in motion/ locally; CI does not see it.
