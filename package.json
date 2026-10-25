@@ -42,7 +42,8 @@
     "@radix-ui/react-label": "2.1.17",
     "drizzle-orm": "0.45.4",
     "pg": "8.23.1",
-    "server-only": "0.0.1"
+    "server-only": "0.0.1",
+    "music-metadata": "12.3.0"
   },
   "devDependencies": {
     "typescript": "5.9.3",

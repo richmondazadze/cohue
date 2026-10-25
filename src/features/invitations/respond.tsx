@@ -30,8 +30,8 @@ export function InvitationResponse({ invitationId }: { invitationId: string }) {
   const detail = useInvitationDetail(invitationId);
   const hydrated = useHydrated();
   if (!hydrated || detail.isPending) return <Skeleton className="h-96 w-full rounded-panel" label="Loading invitation" />;
-  if (detail.isError && !detail.data) {
-    const noAccess = isApiError(detail.error) && ["UNAUTHENTICATED", "FORBIDDEN", "NOT_FOUND"].includes(detail.error.code);
+  const noAccess = isApiError(detail.error) && ["UNAUTHENTICATED", "FORBIDDEN", "NOT_FOUND", "INVITATION_REVOKED", "SCOPE_MISMATCH"].includes(detail.error.code);
+  if (noAccess || (detail.isError && !detail.data)) {
     return (
       <div className="flex flex-col gap-4">
         <ErrorNotice

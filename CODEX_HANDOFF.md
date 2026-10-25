@@ -1,7 +1,7 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T01:54:59.601Z (America/Chicago display dates apply).
-Current milestone: the user assigned BOTH frontend and backend roles to the Claude Code lead continuation (2026-10-24T23:45:54Z). Working product on local PostgreSQL: full backend (38 contract 1.1.0 routes, matcher, consent/repair/reconsent/activation, events/SSE/replay, sweeper, worker) and full frontend (approved design, theater, invitations, room, replay, voice screens, showcase). Combined checks and real-UI two-device e2e pass locally. Provider calls unproven (no keys), not deployed, deployed D7 UNVERIFIED. Complete log: docs/status/lead/CLAUDE_SESSION_LOG.md.
+Last update: 2026-10-25T02:12:34.726Z (America/Chicago display dates apply).
+Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
 
@@ -307,3 +307,99 @@ No product modules changed, no deployment or D7 evidence claimed. .env.local mod
 User approved Gemini credential creation at action time. Dedicated project gen-lang-client-0252269051 (project number407404753204) and COHUE HackTX2026 key created; free tier, no billing enabled. Credential saved directly from visible key field into ignored .env.local; clipboard copy did not yield usable text and was corrected before verification. Authenticated models request HTTP200. gemini-2.5-flash was listed but generation returned404 (unavailable to new users); provider response recommended gemini-3.8-flash. Configured that model and actual generateContent JSON-schema request returned HTTP200 with nonempty English/Spanish/French fields. This is a small synthetic structured-output probe, not the full product extraction/translation acceptance suite.
 
 All three required provider credentials and model/voice identifiers are now configured locally. No further vendor keys required for the planned core. Hosting secret installation and deployed QA/D7 remain outstanding. Secret values excluded from tracked milestone/screenshots. No claim of complete application provider acceptance or deployment.
+
+
+## Milestone from docs/status/frontend/RESUME_DEBUG_2026_10_24.md
+
+# Frontend continuation debug — 24 October 2026
+
+User authorized delegation and continuation from Claude's implementation. Baseline b4191b9. Approved Design System v1.0 sources and appearance preserved; no contracts/dependencies/backend changes.
+
+## Corrected
+
+- Theater, Mission Room, and invitation detail previously rendered cached successful query data after a background authorization failure. They now show the denied state immediately for forbidden/unauthenticated/not-found/scope mismatch, and invitation revocation. Theater also clears its mission projections when access is denied.
+- Theater now remounts its stateful session for a changed mission ID, avoiding reuse of one mission's event cursor/animation history on another mission's dynamic URL.
+- A failed transcription followed by discarding and recording new audio previously reused the old request key. New/discarded recordings retire that key; identical upload retries retain it.
+- Late microphone permission after navigation/unmount now stops the returned stream immediately. Generation fencing blocks stale recording callbacks; constructor/start failures stop tracks and expose a typed-text fallback. Changing the meter callback no longer tears down an active recording.
+- Invitation media fetch is aborted on unmount; aborted responses do not create unreleased object URLs or update detached players.
+
+## Validation
+
+`npx vitest run tests/frontend`: 19 passed across4files. Four new regression cases simulate an authorization failure with previous successful query data retained and confirm Theater/Room/Invitation display only the error. These are rendering tests, not deployed authorization proof. Targeted ESLint and TypeScript no-emit checks run; final integrated `npm run check` and production browser checks owned by lead after backend changes integrate. No browser automation outside CUA used, no product deployment claim.
+
+## Remaining verification / gaps
+
+Production CUA smoke, 320/390/768/1024/1440 responsive bands, keyboard/reduced-motion checks, actual phone/screen reader checks, and microphone navigation/retry UI checks still require evidence. Creator-side translation listing requires a shared authorization contract change and remains deferred by lead until core deployment reliability. Per-device profile convenience storage remains one local entry across live/showcase; server access still authorizes every read, but switching scope can show stale profile links/denied reads. No visual redesign authorized.
+
+Lead integrates owned paths, serializes both handoffs, commits and deploys. This worker did not manually edit handoffs or commit.
+
+## Production smoke copy sweep
+
+Lead CUA smoke found stale onboarding copy claiming voice would arrive later. Updated it to the implemented record/review/save flow. Home now displays synthetic-mode copy when the session is SHOWCASE instead of hardcoded real-people LIVE claims. Transcription failure copy says no transcript was added, rather than asserting the provider never used a recording after a potentially lost response. Targeted ESLint and whitespace check passed. No redesign.
+
+
+## Milestone from docs/status/backend/RELEASE_HARDENING.md
+
+# Backend release hardening — 24 October 2026
+
+Resumed at user request through lead delegation. Read repository instructions, both synchronized handoffs, backend work order and shared contract/resolution authorities. No architecture/design/contract changes; no production data tests or deployment claims. Lead serializes handoffs/commit.
+
+## Fixed
+
+- Exhausted runner jobs recheck mission input version, allowed state and current FAILED-job fence under locks before failing a mission. A late failure cannot clobber a corrected mission or newer lease.
+- SerpApi reserves every attempted call before network I/O under a mission lock and current lease/fence check. The existing private job checkpoint JSON holds searchAttempts; aggregate maximum three per mission across jobs includes failed, empty and crash-interrupted calls. Burned reservations are deliberately conservative. No exactly-once external-call claim.
+- Gemini, ElevenLabs STT and SerpApi JSON bodies pass bounded Zod boundary validation. Invalid provider payloads return safe typed errors instead of unchecked casts.
+- Server measures uploaded audio duration with pinned music-metadata (lead-owned dependency addition), rejects unreadable/unknown/nonpositive/>60second audio regardless of client metadata. Raw upload bytes zeroed in finally, including failure; no disk persistence. Transient File/Blob copies remain GC-managed memory.
+- Gemini reviewed extraction/translation uses low thinking for Gemini3/4 and a bounded30second provider timeout. The richer extraction prompt timed out with gemini-3.8-flash; actual account-listed gemini-3.1-flash-lite passed. Ignored local model configured to3.1 Flash Lite; lead must use same hosting setting.
+
+## Evidence
+
+- `COHUE_TEST_DATABASE_URL=postgresql://cohue@127.0.0.1:54329/cohue_test npx vitest run tests/backend`:12passed, no skipped DB test. Includes expired-lease recovery, stale commit fence, ordered events, three successful jobs; added late-exhaustion regression and ten concurrent search reservations admitting exactlythree, stale fence rejected.
+- Owned ESLint run passed. Lead runs full check/audit/production smoke after integration.
+- Generated local2second WAV/MP3/MP4/Ogg/WebM through ffmpeg, measured all successfully (2.0–2.04seconds). Unit test rejects61second WAV below3MB, accepts2second WAV, rejects malformed data. Artifacts are ignored; no raw participant audio used.
+- Real application Gemini `extractProfile` and `extractMissionDraft` synthetic English/Spanish/French:6successful provider calls with `gemini-3.1-flash-lite`, schema/semantic validation and explicit requiresConfirmation true. Python mapped to taxonomy software; two web/design mission requirements returned per language. Original3.8Flash probes timed out at15/30seconds; no fixture fallback.
+
+## Outstanding release verification
+
+D7 is UNVERIFIED until deployed every-minute scheduler/worker progress with clients closed, restart/lease recovery, stale fence rejection, ordering and unique activation/member/task effects are captured. Vercel Hobby cannot run every-minute cron; lead resolves supported host/scheduler without silently buying a plan. Existing local runner test is rehearsal only. Creator-side translation listing remains an existing INVITATION-only contract gap; lead elected to defer contract expansion. Full localized invitation review/playback and end-to-end providers, phone/device/accessibility, actual deployed retention remain separate acceptance gates.
+
+## Final verification additions
+
+Provider fetch now retains its timeout through receipt of the body, caps upstream bodies at4MB, and maps oversized/invalid responses to safe errors. Gemini has a35second overall JSON retry deadline with at most20seconds per attempt, leaving headroom under the deployment60second limit. The authoritative local model is `gemini-3.1-flash-lite`.
+
+Backend suite final run:13passed on actual isolated PostgreSQL (4files), owned ESLint passed. One real SerpApi search through actual local mission runner stored5public resources, reached PROPOSED, and included an explicitly unverified public-resource review in the deterministic rationale; it never became a human team member. Worker host template in scripts/worker/cohue-worker.service and HOST_SETUP.md is prepared, not installed or proven deployed.
+
+Direct low-level translation calls returned JSON in English/Spanish/French in1.7–3.6seconds; French reformatted a timestamp. Strengthened invitation translation semantic check to require both binding ISO timestamps verbatim and requested literal timestamp preservation. This prevents changed-time output being offered as a valid translation; domain probe results follow separately. Machine translations remain REVIEW_REQUIRED and never confer consent.
+
+Actual `localizeInvitation` against isolated test invitations with configured real Gemini3.1FlashLite passed Spanish and French: translated records present, REVIEW_REQUIRED, both canonical ISO timestamps preserved. Original English is approved canonical text. These are domain-level provider probes, not a deployed invitation UI acceptance claim.
+
+
+## Milestone from docs/status/lead/CI_INTEGRATION.md
+
+# CI integration readiness — 24 October 2026
+
+Updated `.github/workflows/ci.yml` to run against an ephemeral PostgreSQL17 service. Separate `cohue_ci_unit` and `cohue_ci` databases isolate direct runner-unit writes from application integration journeys. Both receive actual migrations. The job preserves Node24 via `.node-version`, frozen foundation checks, lint/typecheck/unit/build, dependency audit and production test server. It seeds the labelled synthetic showcase, starts an independent leased-job worker, and requires backend integration rather than treating missing routes as a pass. Frontend live tests now receive an explicit local base URL instead of being skipped. All e2e run serially to avoid cross-file participant matching interference. Failure evidence includes worker logs. Workflow permissions are read-only contents; no production/provider credentials or account secrets are referenced.
+
+Validation performed locally on this checkout with Node26.4.0 and existing PostgreSQL17 server, using newly created `cohue_ci_review_unit` and `cohue_ci_review_e2e` databases, never production Tiger Data or the lead's `cohue_test` database:
+
+- YAML parsed with installed js-yaml; required backend flag, PostgreSQL service and trigger invariants checked. `git diff --check` passed.
+- Fresh migrations0000_init (61statements) and0001_mission_history (3statements) applied to both databases.
+- Actual PostgreSQL `tests/backend/runner.db.test.ts`:1 passed, including lease recovery/fencing/ordered effects and newly added stale-exhaustion/provider-budget checks.
+- Showcase seed installed30 SHOWCASE participants and0 LIVE participants before the API rehearsal.
+- Production build served at127.0.0.1:3101 with independent worker and explicit empty vendor keys. API-only I2/I3/showcase suites:6 passed in5sec, covering deterministic proposals, creator authorization, exhausted no-solution, raced capacity, decline/repair/reconsent/activation/room, and showcase isolation. No browser UI was automated during this rehearsal.
+- Rehearsal worker and server stopped afterward. Named review databases contain only disposable synthetic test data and remain local for reproducibility.
+
+This is not a hosted CI pass, Node24 execution result, deployed D7 proof, real-provider acceptance or browser/mobile accessibility validation. Lead must push and inspect the resulting GitHub Actions run. Full browser suites and absent-provider fallback behavior remain subject to that hosted run and CUA production review.
+
+
+## Milestone from docs/status/lead/INTEGRATED_RELEASE_PREP.md
+
+# Integrated release preparation — 24 October 2026
+
+User authorized lead delegation, debugging, deployment configuration and cohue.tech connection. Delegated backend, frontend and CI work integrated in shared main; no other chats messaged. D1–D12/contracts/design authority preserved. See frontend RESUME_DEBUG_2026_10_24, backend RELEASE_HARDENING and lead CI_INTEGRATION notes for exact owned changes/evidence.
+
+Combined npm run check passed:63unit tests+1DBskip without test env, lint/types/build/frozen hashes pass; actual isolated PostgreSQL backend13tests separately passed. npm audit high:0vulnerabilities. Fresh isolated CI rehearsal migrations, actual runner regression and6API integration tests passed. Root API I2/capacity4passed, initial provider-enabled I3 interrupted due old3.8latency; rerun provider-disabled I3 passed1.9sec. Actual3.1FlashLite extraction6language calls and binding timestamp translationsSpanish/French passed; real SerpApi runner stored5resources and reachedPROPOSED. English speech roundtrip passed preceding milestone. Browser production build home/onboarding/manual step navigation verified through CUA; not full phone/reduced-motion/screen-reader certification.
+
+Created/linked Vercel project cohue (prj_T4Ns4cSWAwPOrdnug31In0TKfQSv), connected GitHub richmondazadze/cohue. Node24 configured. Production provider/runtime secrets configured through stdin, no migration administrator credential installed. NEXT_PUBLIC_APP_URL=https://cohue.tech; GEMINI_MODEL=gemini-3.1-flash-lite. Runtime modeworker. Hobby plan prohibits every-minute Vercel cron; removed cron configuration in favor of user-selected Vultr worker. This is approved alternative infrastructure, not new orchestration architecture. API maxDuration60, npmci/npmrunbuild declared. User reports$100Vultrcredits; current sidebar is login screen, user sign-in requested. No instance purchased/worker deployed yet. Worker systemd template prepared, D7 UNVERIFIED.
+
+Added cohue.tech/www.cohue.tech to Vercel, saved registrar A records @/www→76.76.21.21 per Vercel instructions, both public DNS resolutions verified. Registrar nameservers/email/security unchanged. Screenshot proof ignored under artifacts. Web deployment follows this commit; no live deployment proof in this predeployment note. Real provider-backed end-to-end, deployed D7, full phone/accessibility and release recording/submission remain required. No claim all release gates complete.

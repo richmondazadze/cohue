@@ -91,3 +91,30 @@ export async function recordFailure(job: JobRow, message: string): Promise<"RETR
     return rows.length && exhausted ? "EXHAUSTED" : "RETRY";
   });
 }
+
+// Conservatively reserve before network I/O, including attempts that fail, return no hits or crash.
+// Counters live in the existing private checkpoint JSON; the mission lock serializes all its jobs.
+export async function reserveSearchAttempt(job: JobRow): Promise<boolean> {
+  return transaction(async (tx) => {
+    const [mission] = await query<{ version: number; state: string }>(
+      "SELECT version, state FROM missions WHERE id=$1 AND scope_mode=$2 AND showcase_id=$3 FOR UPDATE",
+      [job.mission_id, job.scope_mode, job.showcase_id], tx,
+    );
+    if (!mission || mission.version !== job.input_version || mission.state !== "DISCOVERING") return false;
+    const [current] = await query(
+      "SELECT id FROM jobs WHERE id=$1 AND fence=$2 AND lease_owner=$3 AND status='LEASED' FOR UPDATE",
+      [job.id, job.fence, job.lease_owner], tx,
+    );
+    if (!current) return false;
+    const [budget] = await query<{ used: number }>(
+      "SELECT COALESCE(SUM(COALESCE((checkpoint->>'searchAttempts')::int,0)),0)::int AS used FROM jobs WHERE mission_id=$1 AND scope_mode=$2 AND showcase_id=$3",
+      [job.mission_id, job.scope_mode, job.showcase_id], tx,
+    );
+    if (budget.used >= 3) return false;
+    await tx.query(
+      "UPDATE jobs SET checkpoint=jsonb_set(checkpoint,'{searchAttempts}',to_jsonb(COALESCE((checkpoint->>'searchAttempts')::int,0)+1)) WHERE id=$1",
+      [job.id],
+    );
+    return true;
+  });
+}

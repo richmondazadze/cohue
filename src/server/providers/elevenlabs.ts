@@ -1,7 +1,8 @@
 import "server-only";
+import { z } from "zod";
 import { env } from "../config/env";
 import { fail } from "../http/errors";
-import { providerFetch } from "./http";
+import { providerFetch, providerJson } from "./http";
 
 const base = "https://api.elevenlabs.io";
 const lang = (tag: string) => tag.split("-")[0].toLowerCase();
@@ -21,7 +22,10 @@ export async function transcribeAudio(audio: Blob, filename: string, language: s
     headers: { "xi-api-key": key! },
     body: form,
   }, 30_000);
-  const body = (await response.json()) as { text?: string; language_code?: string };
+  const body = await providerJson(response, z.object({
+    text: z.string().max(100_000),
+    language_code: z.string().min(2).max(20).optional(),
+  }), "ElevenLabs");
   const text = body.text?.trim();
   if (!text) fail("PROVIDER_UNAVAILABLE", "No speech was recognized; try again or type instead.");
   return { text: text!.slice(0, 2000), language: body.language_code ? lang(body.language_code) : lang(language) };

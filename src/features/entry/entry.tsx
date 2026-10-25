@@ -30,6 +30,8 @@ const STEPS = [
 
 export function Entry() {
   const memory = useDeviceMemory();
+  const session = useSession();
+  const inShowcase = session.data?.scope.executionMode === "SHOWCASE";
   return (
     <main id="main" tabIndex={-1} className="outline-none">
       <section className="gutter mx-auto max-w-[1600px] pt-12 pb-12 text-center md:pt-20">
@@ -58,8 +60,9 @@ export function Entry() {
           </ButtonLink>
         </div>
         <p className="type-meta mx-auto mt-4 max-w-[52ch] text-muted">
-          Live mode. Real people, real availability, real decisions. Nobody is
-          added to a team without saying yes.
+          {inShowcase
+            ? "Synthetic showcase. Explore the same matching and consent workflow with clearly labeled synthetic profiles."
+            : "Live mode. Real people, real availability, real decisions. Nobody is added to a team without saying yes."}
         </p>
         <ShowcaseEntry />
       </section>

@@ -78,6 +78,7 @@ export function RecordControl({
             size="sm"
             onClick={() => {
               setUpload({ phase: "idle" });
+              key.current = null;
               setElapsed(0);
               void rec.start();
             }}
@@ -115,7 +116,7 @@ export function RecordControl({
           <Button size="sm" variant="primary" onClick={send} pending={upload.phase === "uploading"} pendingLabel="Uploading and transcribing…">
             Transcribe to text
           </Button>
-          <Button size="sm" variant="tertiary" onClick={rec.reset} disabled={upload.phase === "uploading"}>
+          <Button size="sm" variant="tertiary" onClick={() => { key.current = null; setUpload({ phase: "idle" }); rec.reset(); }} disabled={upload.phase === "uploading"}>
             Discard
           </Button>
         </div>
@@ -128,7 +129,7 @@ export function RecordControl({
       ) : null}
       {rec.state.phase === "error" ? <Notice tone="pending">{rec.state.message}</Notice> : null}
       {upload.phase === "error" ? (
-        <ErrorNotice error={upload.error} title="Transcription unavailable. Your recording was not used; type instead or retry." onRetry={send} />
+        <ErrorNotice error={upload.error} title="Transcription unavailable. No transcript was added; type instead or retry." onRetry={send} />
       ) : null}
       {upload.phase === "done" ? (
         <p role="status" className="type-meta text-approved">

@@ -108,6 +108,11 @@ function Listen({
   const [src, setSrc] = useState<string | null>(null);
   const [failure, setFailure] = useState<unknown>(null);
   const audio = useRef<HTMLAudioElement>(null);
+  const mediaRequest = useRef<AbortController | null>(null);
+
+  useEffect(() => () => {
+    mediaRequest.current?.abort();
+  }, []);
 
   // Switching to another language stops this player (never two voices at once).
   useEffect(() => {
@@ -151,8 +156,12 @@ function Listen({
             );
             return;
           }
+          mediaRequest.current?.abort();
+          const controller = new AbortController();
+          mediaRequest.current = controller;
           try {
             const res = await fetch(artifact.accessPath, {
+              signal: controller.signal,
               headers: { accept: "audio/*" },
               credentials: "same-origin",
               cache: "no-store",
@@ -160,8 +169,11 @@ function Listen({
             const type = res.headers.get("content-type") ?? "";
             if (!res.ok || !type.startsWith("audio/"))
               throw new Error("not audio");
-            setSrc(URL.createObjectURL(await res.blob()));
+            const blob = await res.blob();
+            if (controller.signal.aborted) return;
+            setSrc(URL.createObjectURL(blob));
           } catch {
+            if (controller.signal.aborted) return;
             setFailure(
               new ApiRequestError({
                 operation: "media",

@@ -92,8 +92,12 @@ export function useRecorder(onLevel?: (level: number) => void) {
   const [state, setState] = useState<RecorderState>({ phase: "idle" });
   const media = useRef<{ stream: MediaStream; recorder: MediaRecorder; ctx?: AudioContext; raf?: number; timer?: ReturnType<typeof setTimeout> } | null>(null);
   const discardNext = useRef(false);
+  const generation = useRef(0);
+  const levelCallback = useRef(onLevel);
+  useEffect(() => { levelCallback.current = onLevel; }, [onLevel]);
 
   const teardown = useCallback(() => {
+    generation.current += 1;
     const m = media.current;
     if (!m) return;
     if (m.raf) cancelAnimationFrame(m.raf);
@@ -101,8 +105,8 @@ export function useRecorder(onLevel?: (level: number) => void) {
     m.stream.getTracks().forEach((t) => t.stop());
     void m.ctx?.close().catch(() => undefined);
     media.current = null;
-    onLevel?.(0);
-  }, [onLevel]);
+    levelCallback.current?.(0);
+  }, []);
 
   useEffect(() => teardown, [teardown]);
 
@@ -112,19 +116,34 @@ export function useRecorder(onLevel?: (level: number) => void) {
       setState({ phase: "unsupported" });
       return;
     }
+    teardown();
+    const requestGeneration = generation.current;
     setState({ phase: "requesting" });
     let stream: MediaStream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
-      setState({ phase: "denied" });
+      if (generation.current === requestGeneration) setState({ phase: "denied" });
       return;
     }
-    const recorder = new MediaRecorder(stream, { mimeType: mime.recorder });
+    // Permission can resolve after navigation/unmount. Never leave that microphone running.
+    if (generation.current !== requestGeneration) {
+      stream.getTracks().forEach((track) => track.stop());
+      return;
+    }
+    let recorder: MediaRecorder;
+    try {
+      recorder = new MediaRecorder(stream, { mimeType: mime.recorder });
+    } catch {
+      stream.getTracks().forEach((track) => track.stop());
+      setState({ phase: "error", message: "Recording could not start. Try again or type instead." });
+      return;
+    }
     const chunks: Blob[] = [];
     const startedAt = Date.now();
     recorder.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     recorder.onstop = () => {
+      if (generation.current !== requestGeneration) return;
       const durationMs = Math.min(Date.now() - startedAt, MEDIA_LIMITS.maxDurationMs);
       teardown();
       if (discardNext.current) {
@@ -165,8 +184,14 @@ export function useRecorder(onLevel?: (level: number) => void) {
     } catch {
       /* level meter is optional */
     }
-    recorder.start(250);
-    media.current.timer = setTimeout(() => recorder.state !== "inactive" && recorder.stop(), MEDIA_LIMITS.maxDurationMs - 250);
+    try {
+      recorder.start(250);
+      media.current.timer = setTimeout(() => recorder.state !== "inactive" && recorder.stop(), MEDIA_LIMITS.maxDurationMs - 250);
+    } catch {
+      teardown();
+      setState({ phase: "error", message: "Recording could not start. Try again or type instead." });
+      return;
+    }
     setState({ phase: "recording", startedAt });
   }, [onLevel, teardown]);
 

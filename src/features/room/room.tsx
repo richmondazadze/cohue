@@ -28,7 +28,8 @@ export function MissionRoom({ missionId }: { missionId: string }) {
         <Skeleton className="h-64 w-full rounded-panel" />
       </div>
     );
-  if (room.isError && !room.data)
+  const denied = isApiError(room.error) && ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "SCOPE_MISMATCH"].includes(room.error.code);
+  if (denied || (room.isError && !room.data))
     return (
       <div className="flex max-w-[680px] flex-col gap-4">
         <h1 className="type-experience">Mission Room</h1>

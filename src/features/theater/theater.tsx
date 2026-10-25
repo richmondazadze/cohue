@@ -44,18 +44,24 @@ import { Avatar, ProposalCard } from "./proposals";
 import { CueEntrance, CueProvider, DUR, EASE, Emphasis, cuesOf, liveEvents, useCue } from "./motion";
 
 export function MissionTheater({ missionId }: { missionId: string }) {
+  // Next navigation can preserve this component between mission URLs. Reset streams and cursors
+  // with the authorized object instead of carrying another mission’s event history into it.
+  return <MissionTheaterSession key={missionId} missionId={missionId} />;
+}
+
+function MissionTheaterSession({ missionId }: { missionId: string }) {
   const snapshot = useSnapshot(missionId);
   const client = useQueryClient();
   const denied =
     isApiError(snapshot.error) &&
-    ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED"].includes(snapshot.error.code);
+    ["FORBIDDEN", "NOT_FOUND", "UNAUTHENTICATED", "SCOPE_MISMATCH"].includes(snapshot.error.code);
   const unavailable = isApiError(snapshot.error) && snapshot.error.code === "UNAVAILABLE";
   const events = useMissionEvents(missionId, { enabled: !denied && !unavailable });
 
   // Access revocation: purge every cached projection for this mission immediately.
   useEffect(() => {
-    if (events.revoked) client.removeQueries({ queryKey: ["mission", missionId] });
-  }, [events.revoked, client, missionId]);
+    if (events.revoked || denied) client.removeQueries({ queryKey: ["mission", missionId] });
+  }, [events.revoked, denied, client, missionId]);
 
   if (events.revoked)
     return (
@@ -71,7 +77,7 @@ export function MissionTheater({ missionId }: { missionId: string }) {
         <Skeleton className="h-[420px] w-full rounded-panel" />
       </div>
     );
-  if (snapshot.isError && !snapshot.data)
+  if (denied || (snapshot.isError && !snapshot.data))
     return (
       <div className="flex max-w-[680px] flex-col gap-4">
         <h1 className="type-experience">Mission Theater</h1>

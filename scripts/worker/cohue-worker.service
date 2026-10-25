@@ -1,0 +1,28 @@
+[Unit]
+Description=COHUE durable PostgreSQL job worker
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=cohue
+Group=cohue
+WorkingDirectory=/opt/cohue
+EnvironmentFile=/etc/cohue/worker.env
+Environment=NODE_ENV=production
+Environment=DISPATCHER_MODE=worker
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/env npm run worker
+Restart=always
+RestartSec=5
+TimeoutStopSec=35
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

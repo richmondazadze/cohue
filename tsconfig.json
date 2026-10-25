@@ -23,5 +23,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "docs/research"]
+  "exclude": ["node_modules", "docs/research", "artifacts", "test-results", "playwright-report", "blob-report"]
 }

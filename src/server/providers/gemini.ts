@@ -1,8 +1,8 @@
 import "server-only";
-import type { z } from "zod";
+import { z } from "zod";
 import { env } from "../config/env";
 import { fail } from "../http/errors";
-import { providerFetch } from "./http";
+import { providerFetch, providerJson } from "./http";
 
 export const geminiConfigured = () => Boolean(env().GEMINI_API_KEY && env().GEMINI_MODEL);
 
@@ -20,7 +20,10 @@ export async function generateJson<T>(input: {
   const model = env().GEMINI_MODEL;
   if (!key || !model) fail("PROVIDER_UNAVAILABLE", "Language model is not configured; use the manual form.");
   const attempts = input.attempts ?? 2;
+  const deadline = Date.now() + 35_000;
   for (let attempt = 1; attempt <= attempts; attempt++) {
+    const remaining = deadline - Date.now();
+    if (remaining < 500) break;
     const response = await providerFetch(
       "Gemini",
       `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model!)}:generateContent`,
@@ -35,11 +38,17 @@ export async function generateJson<T>(input: {
             responseSchema: input.responseSchema,
             temperature: 0.2,
             maxOutputTokens: 2048,
+            // Reviewed extraction/translation needs low latency, not extended hidden reasoning.
+            ...(model!.startsWith("gemini-3") || model!.startsWith("gemini-4")
+              ? { thinkingConfig: { thinkingLevel: "low" } } : {}),
           },
         }),
       },
+      Math.min(20_000, remaining),
     );
-    const body = (await response.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
+    const body = await providerJson(response, z.object({
+      candidates: z.array(z.object({ content: z.object({ parts: z.array(z.object({ text: z.string().optional() })).max(100) }).optional() })).max(10).optional(),
+    }), "Gemini");
     const text = body.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
     let raw: unknown;
     try {

@@ -11,7 +11,7 @@ import {
   type MissionRow,
   type ParticipantRow,
 } from "../domain/store";
-import { claimCommit, enqueueJob, leaseJob, recordFailure, type JobRow } from "./jobs";
+import { claimCommit, enqueueJob, leaseJob, recordFailure, reserveSearchAttempt, type JobRow } from "./jobs";
 import { serpConfigured, webSearch, type SearchHit } from "../providers/serpapi";
 import { iso } from "../auth/sessions";
 import { sweep } from "./sweeper";
@@ -240,8 +240,7 @@ export async function runOne(owner: string): Promise<"IDLE" | "DONE" | "STALE" |
   const prefetch: Prefetch = { hits: [], searchFailed: false };
   if (job.checkpoint.kind === "SCOUT" && serpConfigured()) {
     const [m] = await query<MissionRow>("SELECT * FROM missions WHERE id=$1", [job.mission_id]);
-    const searches = await query<{ n: number }>("SELECT COUNT(DISTINCT doc->>'providerSearchId')::int AS n FROM external_opportunities WHERE mission_id=$1", [job.mission_id]);
-    if (m && (searches[0]?.n ?? 0) < 3) {
+    if (m && await reserveSearchAttempt(job)) {
       const reqs = await query<{ doc: { kind: string; normalizedSkillId: string; outcome: string | null } }>("SELECT doc FROM mission_requirements WHERE mission_id=$1", [m.id]);
       const resources = reqs.filter((r) => r.doc.kind === "RESOURCE").map((r) => r.doc.outcome ?? r.doc.normalizedSkillId);
       const q = `${m.doc.objective} ${resources.length ? resources.join(" ") : "free tools guide"}`;
@@ -267,16 +266,24 @@ export async function runOne(owner: string): Promise<"IDLE" | "DONE" | "STALE" |
   } catch (error) {
     if (error instanceof StaleFence) return "STALE";
     const outcome = await recordFailure(job, error instanceof Error ? error.message : "step failed");
-    if (outcome === "EXHAUSTED") await failMission(job);
+    if (outcome === "EXHAUSTED") await failExhaustedMission(job);
     return "FAILED";
   }
 }
 class StaleFence extends Error {}
 
-async function failMission(job: JobRow): Promise<void> {
+export async function failExhaustedMission(job: JobRow): Promise<void> {
   await transaction(async (tx) => {
     const [mission] = await query<MissionRow>("SELECT * FROM missions WHERE id=$1 FOR UPDATE", [job.mission_id], tx);
-    if (!mission || ["ACTIVATED", "CANCELLED", "EXPIRED", "FAILED"].includes(mission.state)) return;
+    if (!mission || mission.version !== job.input_version || !ALLOWED_STATES[job.checkpoint.kind]?.includes(mission.state)) return;
+    // Failure recording and mission failure are separate transactions: a replacement lease or
+    // a human correction between them must never let this obsolete job fail newer work.
+    const [failed] = await query(
+      "SELECT id FROM jobs WHERE id=$1 AND fence=$2 AND status='FAILED' FOR UPDATE",
+      [job.id, job.fence],
+      tx,
+    );
+    if (!failed) return;
     const next = await bumpMission(tx, mission, { state: "FAILED" });
     await tx.query("UPDATE agent_runs SET status='FAILED', ended_at=now() WHERE id=$1", [job.checkpoint.runId]);
     await appendEvent(tx, next, "AGENT_FAILED", { code: "RETRY_EXHAUSTED", retryable: false }, { runId: job.checkpoint.runId, agent: job.agent, correlationId: randomUUID(), status: "FAILED" });

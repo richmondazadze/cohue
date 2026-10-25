@@ -1,9 +1,35 @@
 name: COHUE foundation and integration
 on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: cohue
+          POSTGRES_PASSWORD: ci-only-disposable-password
+          POSTGRES_DB: cohue_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cohue -d cohue_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    # Disposable CI databases only. No production/provider credentials are available to this job.
+    env:
+      DATABASE_URL: postgresql://cohue:ci-only-disposable-password@127.0.0.1:5432/cohue_ci
+      COHUE_TEST_DATABASE_URL: postgresql://cohue:ci-only-disposable-password@127.0.0.1:5432/cohue_ci_unit
+      SESSION_SECRET: ci-only-session-secret-not-for-any-deployment
+      DISPATCHER_SECRET: ci-only-dispatcher-secret-not-for-any-deployment
+      DISPATCHER_MODE: worker
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3100
+      COHUE_REQUIRE_INTEGRATION: "1"
+      COHUE_FRONTEND_BASE_URL: http://127.0.0.1:3100
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -11,14 +37,35 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npm run check
+      - name: Create isolated unit database and apply migrations
+        run: |
+          node --input-type=module <<'JS'
+          import pg from "pg";
+          const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
+          await client.connect();
+          try { await client.query("CREATE DATABASE cohue_ci_unit"); }
+          finally { await client.end(); }
+          JS
+          npm run db:migrate
+          DATABASE_URL="$COHUE_TEST_DATABASE_URL" npm run db:migrate
+      - name: Foundation, lint, types, actual PostgreSQL unit tests and production build
+        run: npm run check
       - run: npm audit --audit-level=high
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - name: Seed synthetic showcase in disposable integration database
+        run: npm run seed:showcase
+      - name: Production integration and frontend journeys with independent worker
+        run: |
+          mkdir -p artifacts
+          node --import tsx --conditions=react-server scripts/worker/run.ts > artifacts/ci-worker.log 2>&1 &
+          worker_pid=$!
+          trap 'kill "$worker_pid" 2>/dev/null || true' EXIT
+          npm run test:e2e -- --workers=1
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-failure-evidence
+          name: integration-failure-evidence
           path: |
             playwright-report/
             test-results/
+            artifacts/ci-worker.log

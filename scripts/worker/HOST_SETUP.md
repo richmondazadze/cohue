@@ -1,0 +1,13 @@
+# Existing-host worker setup
+
+Use an already-authorized Vultr host/credits; do not purchase a new plan implicitly. Install official Node24/npm and Git. The service requires outbound verified-TLS PostgreSQL and SerpApi HTTPS; no public inbound app port is necessary for this worker. Web UI stays on Vercel.
+
+Create dedicated unprivileged system user/group `cohue`, checkout source into `/opt/cohue`, and install locked dependencies using `npm ci` on Node24. Do not run the application as root. Keep checkout and node_modules readable by `cohue`, with deployment writes restricted to the deployment administrator. Use the exact reviewed main commit, no unreviewed repository scripts from another source.
+
+Create root-owned `/etc/cohue` mode0750/groupcohue and `/etc/cohue/worker.env` mode0600. Systemd reads the root-only environment file before dropping privileges. Populate secrets through a secure session/file transfer without echoing values or shell history. Required runtime database is the least-privilege pooled DATABASE_URL, plus SESSION_SECRET, SERPAPI_API_KEY and the nonsecret DISPATCHER_MODE=worker. Include the application’s provider/model/voice settings if subsequently required by worker steps. Do not install DATABASE_MIGRATION_URL or administrator credentials on the persistent worker. Do not copy `.env.local` with migration administrator credentials wholesale.
+
+Copy `scripts/worker/cohue-worker.service` into `/etc/systemd/system/cohue-worker.service`, run `systemctl daemon-reload`, `systemctl enable --now cohue-worker`, and inspect `systemctl status cohue-worker`. The unit restarts automatically, runs without filesystem writes, and uses a new lease-owner UUID after each process restart. `/usr/bin/env npm` resolves installed official Node24/npm through the declared PATH; confirm `node --version` as the service user before activation.
+
+For an update: fetch origin in the checkout, check out the exact reviewed commit, run `npm ci`, then restart the service. Do not use reset/clean or embed tokens in the Git remote. Secrets are supplied by the environment file, never committed. Verify logs contain only redacted processing diagnostics.
+
+D7 release proof remains mandatory: launch a labeled synthetic mission in an isolated SHOWCASE scope on the deployed app, close clients, wait for worker-only progress, restart/kill the process while a lease is held, let30second lease expiry recover, and verify stale fence rejection, strictly increasing event sequences, one activation event and unique memberships/tasks. Record actual deployment/worker commit, timestamps and safe trace in operations status. Local PostgreSQL tests alone cannot satisfy this proof. Restarting a service without an in-flight job also cannot prove lease recovery.

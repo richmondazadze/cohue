@@ -1,6 +1,7 @@
 import "server-only";
+import { z } from "zod";
 import { env } from "../config/env";
-import { providerFetch } from "./http";
+import { providerFetch, providerJson } from "./http";
 
 export type SearchHit = { title: string; link: string; snippet: string; searchId: string };
 export const serpConfigured = () => Boolean(env().SERPAPI_API_KEY);
@@ -17,10 +18,14 @@ export async function webSearch(query: string, language: string): Promise<Search
     api_key: key,
   });
   const response = await providerFetch("SerpApi", `https://serpapi.com/search.json?${params}`, { method: "GET" }, 12_000);
-  const body = (await response.json()) as {
-    search_metadata?: { id?: string };
-    organic_results?: { title?: string; link?: string; snippet?: string }[];
-  };
+  const body = await providerJson(response, z.object({
+    search_metadata: z.object({ id: z.string().min(1).max(200) }).optional(),
+    organic_results: z.array(z.object({
+      title: z.string().max(10_000).optional(),
+      link: z.string().url().max(10_000).optional(),
+      snippet: z.string().max(100_000).optional(),
+    })).max(100).optional(),
+  }), "SerpApi");
   const searchId = body.search_metadata?.id ?? "unknown";
   return (body.organic_results ?? [])
     .filter((r) => r.title && r.link && /^https?:\/\//.test(r.link))

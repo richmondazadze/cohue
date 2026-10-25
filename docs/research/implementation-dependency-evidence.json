@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-24T23:10:04.034Z",
+  "checkedAt": "2026-10-25T02:10:01.967Z",
   "localRuntime": "v26.4.0",
   "targetRuntime": "Node24",
   "overrides": {
@@ -9,103 +9,15 @@
   },
   "packages": [
     {
-      "name": "next",
-      "version": "16.4.3",
-      "kind": "runtime",
-      "license": "MIT",
-      "engines": {
-        "node": ">=20.9.0"
-      },
-      "peerDependencies": {
-        "@opentelemetry/api": "^1.1.0",
-        "@playwright/test": "^1.51.1",
-        "babel-plugin-react-compiler": "*",
-        "react": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
-        "react-dom": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
-        "sass": "^1.3.0"
-      }
-    },
-    {
-      "name": "react",
-      "version": "19.3.1",
-      "kind": "runtime",
-      "license": "MIT",
-      "engines": {
-        "node": ">=0.10.0"
-      }
-    },
-    {
-      "name": "react-dom",
-      "version": "19.3.1",
+      "name": "@radix-ui/react-checkbox",
+      "version": "1.4.1",
       "kind": "runtime",
       "license": "MIT",
       "peerDependencies": {
-        "react": "^19.3.1"
-      }
-    },
-    {
-      "name": "zod",
-      "version": "4.6.7",
-      "kind": "runtime",
-      "license": "MIT"
-    },
-    {
-      "name": "tailwindcss",
-      "version": "4.3.3",
-      "kind": "runtime",
-      "license": "MIT"
-    },
-    {
-      "name": "@xyflow/react",
-      "version": "12.12.0",
-      "kind": "runtime",
-      "license": "MIT",
-      "peerDependencies": {
-        "@types/react": ">=17",
-        "@types/react-dom": ">=17",
-        "react": ">=17",
-        "react-dom": ">=17"
-      }
-    },
-    {
-      "name": "elkjs",
-      "version": "0.12.0",
-      "kind": "runtime",
-      "license": "EPL-2.0 OR GPL-3.0-or-later"
-    },
-    {
-      "name": "motion",
-      "version": "14.6.0",
-      "kind": "runtime",
-      "license": "MIT",
-      "peerDependencies": {
-        "react": "^18.0.0 || ^19.0.0",
-        "react-dom": "^18.0.0 || ^19.0.0"
-      }
-    },
-    {
-      "name": "zustand",
-      "version": "5.0.16",
-      "kind": "runtime",
-      "license": "MIT",
-      "engines": {
-        "node": ">=12.20.0"
-      },
-      "peerDependencies": {
-        "@types/react": ">=18.0.0",
-        "immer": ">=9.0.6",
-        "react": ">=18.0.0",
-        "use-sync-external-store": ">=1.2.0"
-      }
-    },
-    {
-      "name": "@tanstack/react-query",
-      "version": "5.104.5",
-      "kind": "runtime",
-      "license": "MIT",
-      "peerDependencies": {
-        "@types/react": "^18 || ^19",
-        "react": "^18 || ^19"
+        "@types/react": "*",
+        "@types/react-dom": "*",
+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
       }
     },
     {
@@ -121,8 +33,8 @@
       }
     },
     {
-      "name": "@radix-ui/react-tabs",
-      "version": "1.2.1",
+      "name": "@radix-ui/react-label",
+      "version": "2.1.17",
       "kind": "runtime",
       "license": "MIT",
       "peerDependencies": {
@@ -145,6 +57,18 @@
       }
     },
     {
+      "name": "@radix-ui/react-tabs",
+      "version": "1.2.1",
+      "kind": "runtime",
+      "license": "MIT",
+      "peerDependencies": {
+        "@types/react": "*",
+        "@types/react-dom": "*",
+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
+      }
+    },
+    {
       "name": "@radix-ui/react-tooltip",
       "version": "1.4.1",
       "kind": "runtime",
@@ -157,27 +81,25 @@
       }
     },
     {
-      "name": "@radix-ui/react-checkbox",
-      "version": "1.4.1",
+      "name": "@tanstack/react-query",
+      "version": "5.104.5",
       "kind": "runtime",
       "license": "MIT",
       "peerDependencies": {
-        "@types/react": "*",
-        "@types/react-dom": "*",
-        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
+        "@types/react": "^18 || ^19",
+        "react": "^18 || ^19"
       }
     },
     {
-      "name": "@radix-ui/react-label",
-      "version": "2.1.17",
+      "name": "@xyflow/react",
+      "version": "12.12.0",
       "kind": "runtime",
       "license": "MIT",
       "peerDependencies": {
-        "@types/react": "*",
-        "@types/react-dom": "*",
-        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
+        "@types/react": ">=17",
+        "@types/react-dom": ">=17",
+        "react": ">=17",
+        "react-dom": ">=17"
       }
     },
     {
@@ -218,6 +140,48 @@
       }
     },
     {
+      "name": "elkjs",
+      "version": "0.12.0",
+      "kind": "runtime",
+      "license": "EPL-2.0 OR GPL-3.0-or-later"
+    },
+    {
+      "name": "motion",
+      "version": "14.6.0",
+      "kind": "runtime",
+      "license": "MIT",
+      "peerDependencies": {
+        "react": "^18.0.0 || ^19.0.0",
+        "react-dom": "^18.0.0 || ^19.0.0"
+      }
+    },
+    {
+      "name": "music-metadata",
+      "version": "12.3.0",
+      "kind": "runtime",
+      "license": "MIT",
+      "engines": {
+        "node": ">=22"
+      }
+    },
+    {
+      "name": "next",
+      "version": "16.4.3",
+      "kind": "runtime",
+      "license": "MIT",
+      "engines": {
+        "node": ">=20.9.0"
+      },
+      "peerDependencies": {
+        "@opentelemetry/api": "^1.1.0",
+        "@playwright/test": "^1.51.1",
+        "babel-plugin-react-compiler": "*",
+        "react": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+        "react-dom": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+        "sass": "^1.3.0"
+      }
+    },
+    {
       "name": "pg",
       "version": "8.23.1",
       "kind": "runtime",
@@ -230,23 +194,81 @@
       }
     },
     {
+      "name": "react",
+      "version": "19.3.1",
+      "kind": "runtime",
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    {
+      "name": "react-dom",
+      "version": "19.3.1",
+      "kind": "runtime",
+      "license": "MIT",
+      "peerDependencies": {
+        "react": "^19.3.1"
+      }
+    },
+    {
       "name": "server-only",
       "version": "0.0.1",
       "kind": "runtime",
       "license": "MIT"
     },
     {
-      "name": "typescript",
-      "version": "5.9.3",
+      "name": "tailwindcss",
+      "version": "4.3.3",
+      "kind": "runtime",
+      "license": "MIT"
+    },
+    {
+      "name": "zod",
+      "version": "4.6.7",
+      "kind": "runtime",
+      "license": "MIT"
+    },
+    {
+      "name": "zustand",
+      "version": "5.0.16",
+      "kind": "runtime",
+      "license": "MIT",
+      "engines": {
+        "node": ">=12.20.0"
+      },
+      "peerDependencies": {
+        "@types/react": ">=18.0.0",
+        "immer": ">=9.0.6",
+        "react": ">=18.0.0",
+        "use-sync-external-store": ">=1.2.0"
+      }
+    },
+    {
+      "name": "@playwright/test",
+      "version": "1.64.1",
       "kind": "development",
       "license": "Apache-2.0",
       "engines": {
-        "node": ">=14.17"
+        "node": ">=20"
       }
+    },
+    {
+      "name": "@tailwindcss/postcss",
+      "version": "4.3.3",
+      "kind": "development",
+      "license": "MIT"
     },
     {
       "name": "@types/node",
       "version": "24.10.1",
+      "kind": "development",
+      "license": "MIT",
+      "peerDependencies": {}
+    },
+    {
+      "name": "@types/pg",
+      "version": "8.23.1",
       "kind": "development",
       "license": "MIT",
       "peerDependencies": {}
@@ -268,49 +290,10 @@
       }
     },
     {
-      "name": "@types/pg",
-      "version": "8.23.1",
-      "kind": "development",
-      "license": "MIT",
-      "peerDependencies": {}
-    },
-    {
-      "name": "@tailwindcss/postcss",
-      "version": "4.3.3",
+      "name": "drizzle-kit",
+      "version": "0.31.11",
       "kind": "development",
       "license": "MIT"
-    },
-    {
-      "name": "vitest",
-      "version": "5.0.5",
-      "kind": "development",
-      "license": "MIT",
-      "engines": {
-        "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
-      },
-      "peerDependencies": {
-        "@edge-runtime/vm": "*",
-        "@opentelemetry/api": "^1.9.0",
-        "@types/node": "^22.0.0 || >=24.0.0",
-        "@vitest/browser-playwright": "5.0.5",
-        "@vitest/browser-preview": "5.0.5",
-        "@vitest/browser-webdriverio": "^5.0.0-beta.5 || >=5.0.0",
-        "@vitest/coverage-istanbul": "5.0.5",
-        "@vitest/coverage-v8": "5.0.5",
-        "@vitest/ui": "5.0.5",
-        "happy-dom": "*",
-        "jsdom": "*",
-        "vite": "^6.4.0 || ^7.0.0 || ^8.0.0"
-      }
-    },
-    {
-      "name": "@playwright/test",
-      "version": "1.64.1",
-      "kind": "development",
-      "license": "Apache-2.0",
-      "engines": {
-        "node": ">=20"
-      }
     },
     {
       "name": "eslint",
@@ -335,18 +318,44 @@
       }
     },
     {
-      "name": "drizzle-kit",
-      "version": "0.31.11",
-      "kind": "development",
-      "license": "MIT"
-    },
-    {
       "name": "tsx",
       "version": "4.23.15",
       "kind": "development",
       "license": "MIT",
       "engines": {
         "node": ">=18.0.0"
+      }
+    },
+    {
+      "name": "typescript",
+      "version": "5.9.3",
+      "kind": "development",
+      "license": "Apache-2.0",
+      "engines": {
+        "node": ">=14.17"
+      }
+    },
+    {
+      "name": "vitest",
+      "version": "5.0.5",
+      "kind": "development",
+      "license": "MIT",
+      "engines": {
+        "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
+      },
+      "peerDependencies": {
+        "@edge-runtime/vm": "*",
+        "@opentelemetry/api": "^1.9.0",
+        "@types/node": "^22.0.0 || >=24.0.0",
+        "@vitest/browser-playwright": "5.0.5",
+        "@vitest/browser-preview": "5.0.5",
+        "@vitest/browser-webdriverio": "^5.0.0-beta.5 || >=5.0.0",
+        "@vitest/coverage-istanbul": "5.0.5",
+        "@vitest/coverage-v8": "5.0.5",
+        "@vitest/ui": "5.0.5",
+        "happy-dom": "*",
+        "jsdom": "*",
+        "vite": "^6.4.0 || ^7.0.0 || ^8.0.0"
       }
     }
   ]

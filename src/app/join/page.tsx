@@ -13,7 +13,7 @@ export default function JoinPage() {
       </h1>
       <p className="mb-8 max-w-[60ch] text-muted">
         Your profile is used only to propose you for missions you can then accept
-        or decline. Typed text works everywhere; voice input arrives later.
+        or decline. Type your profile or record a draft, then review it before saving.
       </p>
       <Onboarding />
     </PageFrame>

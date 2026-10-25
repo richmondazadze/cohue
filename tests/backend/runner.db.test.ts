@@ -81,5 +81,27 @@ describe.skipIf(!url)("leased runner on PostgreSQL", () => {
     expect(events.filter((e) => e.type === "PROPOSAL_CREATED").length).toBeGreaterThanOrEqual(1);
     const succeeded = await db.query<{ n: number }>("SELECT COUNT(*)::int AS n FROM jobs WHERE mission_id=$1 AND status='SUCCEEDED'", [missionId]);
     expect(succeeded[0].n).toBe(3);
+
+    // A late exhaustion handler cannot fail a human-corrected mission revision.
+    await db.query("UPDATE missions SET state='PLANNING', version=version+1 WHERE id=$1", [missionId]);
+    await db.query("UPDATE jobs SET status='FAILED' WHERE id=$1", [stale!.id]);
+    await steps.failExhaustedMission(stale!);
+    const [corrected] = await db.query<{ state: string; version: number }>("SELECT state, version FROM missions WHERE id=$1", [missionId]);
+    expect(corrected.state).toBe("PLANNING");
+    // Even the same input version cannot let an older fence fail the mission.
+    await steps.failExhaustedMission({ ...stale!, input_version: corrected.version });
+    const [fenced] = await db.query<{ state: string }>("SELECT state FROM missions WHERE id=$1", [missionId]);
+    expect(fenced.state).toBe("PLANNING");
+
+    // Reserve real provider attempts before I/O, not only successful persisted hits.
+    await db.query("UPDATE missions SET state='DISCOVERING' WHERE id=$1", [missionId]);
+    await db.query("UPDATE jobs SET status='LEASED', lease_owner=$2 WHERE id=$1", [stale!.id, stale!.lease_owner]);
+    const [currentJob] = await db.query<import("@/server/runner/jobs").JobRow>("SELECT * FROM jobs WHERE id=$1", [stale!.id]);
+    currentJob.input_version = corrected.version;
+    const reservations = await Promise.all(Array.from({ length: 10 }, () => jobs.reserveSearchAttempt(currentJob)));
+    expect(reservations.filter(Boolean)).toHaveLength(3);
+    const [budget] = await db.query<{ used: number }>("SELECT (checkpoint->>'searchAttempts')::int AS used FROM jobs WHERE id=$1", [stale!.id]);
+    expect(budget.used).toBe(3);
+    expect(await jobs.reserveSearchAttempt({ ...currentJob, fence: currentJob.fence - 1 })).toBe(false);
   });
 });
