@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T10:47:28.089Z (America/Chicago display dates apply).
+Last update: 2026-10-25T11:28:15.824Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -885,3 +885,69 @@ Synthetic showcase crowd, 25 Oct 2026 ~05:47 CDT, at the user's request ("Yes" t
 scripts/worker/showcase-crowd.sql (commit 11b124e, also run by `npm run seed:showcase`) upserts 170 more clearly labelled synthetic profiles ("Synthetic <name> <initial>. #31–#200") in SHOWCASE scope 00000000-0000-4000-8000-000000000384 only, owned by the showcase operator: six skills, levels 2–5, some with two skills, English/Spanish/French, six timezones, six staggered availability patterns relative to tomorrow 15:00 Chicago, ~10% not discoverable and ~8% opted out for realism. No MiroFish code or dependency.
 
 Production: applied once through the Tiger SQL editor (212 capability rows inserted). Showcase now 200 people, 169 matchable; 0 "Synthetic" profiles in LIVE. showcase.spec and showcase-journey.spec passed against https://cohue.tech: a 3-person mission over the crowd searched 4,372 combinations in 14 ms (exhausted, FEASIBLE, 5 proposals), activated, and produced en/es/fr briefs; mission cf9d6553-29ff-4cfd-9cde-df64c282c1f7 cancelled afterwards. Locally the same crowd ran in ~5 ms. Larger groups (max 8) over 169 people will hit the 50k-node bound and report "best found, not proven optimal" honestly.
+
+
+## Milestone from docs/status/lead/FINAL_RELEASE_CHECKPOINT.md
+
+# Final release checkpoint — 25 October 2026
+
+The user resumed lead orchestration from Claude's continuation. Both existing specialist chats received and executed `FINAL_ACCEPTANCE_ASSIGNMENTS.md`; no new specialist conversation was created. Frontend owns experience/accessibility/motion, backend owns domain/provider/worker operations, and lead owns integration and release acceptance. Preserve the accepted v1.1 delta recorded in `DESIGN_V1_1_ACCEPTED.md`; frozen v1.0 sources remain unchanged.
+
+## Integrated source and validation
+
+Product source release `711a4b3a59d9b87cc949cf2c0828dd2db91ac330` includes frontend `8459331` and backend `d109836`. The frontend preserves unsaved Room translation drafts across responsive layout and tab changes, and pauses hidden brief audio. The backend binds invitation capabilities to the correct mission/current membership, rejects stale reviewed speech and media, and revalidates authorization/source after provider preparation before atomic receipt/artifact publication. No migration, dependency, runner architecture or new infrastructure was introduced.
+
+Actual local combined check: 109 tests across 18 files, zero skipped, lint/types/production build passed. Audit: zero vulnerabilities. Seven core API integration tests passed against an isolated PostgreSQL database. Hosted CI run https://github.com/richmondazadze/cohue/actions/runs/40171182501 passed the same 109 tests plus 17 integration/frontend tests with an independent worker.
+
+A stale local Next build cache initially omitted new responsive Tailwind utilities despite fresh Room JavaScript. Moving the cache aside and rebuilding generated the required utilities. The deployed stylesheet also contains them. No source workaround was needed. Frontend's final actual browser check on the clean production build passed exact draft preservation at 390/768/1024/1440px, tab and keyboard navigation, reduced motion, and pause on hidden audio; see `docs/status/frontend/FINAL_ACCEPTANCE.md` and `FINAL_CLEAN_BUILD_VERIFIED.md`. Its own local and deployed synthetic test missions were cancelled normally. These checks do not establish physical-phone listening, microphone input, screen-reader or graph frame-performance acceptance.
+
+## Production and remaining evidence
+
+Vercel deployment `dpl_GDJQzujJUNsfqebmqkUowQLzdURs` is Ready, aliases `cohue.tech`/`www.cohue.tech`, and metadata identifies exact source `711a4b3a59d9b87cc949cf2c0828dd2db91ac330`. Backend has lead authorization to synchronize the existing Vultr worker to this same source while preserving rollback, runtime-only secrets, retention flag and security configuration. Its final operations report determines completion; do not infer success merely from this authorization. Historical deployed D7/privacy proof remains attributed to `cd32236`, not a new kill/recovery run on this patch.
+
+Remaining human evidence: organizer review of real Spanish/French Room translations, authorized member phone Listen and task change, actual device microphone input if claimed, and any physical accessibility/performance checks claimed in the submission. Do not act as real participants or imply their consent. The demo video remains unrecorded by lead; Devpost draft/checklist preparation is not publication or submission.
+
+Official Devpost deadline widget was checked: 25 October 2026, 11:30 AM CDT, with required video. See `docs/SUBMISSION_CHECKLIST.md`, `docs/DEMO_RUNBOOK.md` and `docs/DEVPOST_DRAFT.md`; internal freeze/record/submit targets preserve margin. Public code/video and AI coding-tool disclosure are recorded. No new application license was selected. User review and submission remain required.
+
+
+## Milestone from docs/status/lead/RELEASE_0522DDA.md
+
+# Release 0522dda (25 Oct 2026, ~06:25 CDT)
+
+Web: cohue.tech auto-deployed from main (39f1b75 Coordinator chat + live alerts; 6f573f0 Coordinator "why" lines in Activity). Hosted CI green on 39f1b75 and 6f573f0.
+
+Worker: user approved the production update in the project thread. Via the authenticated Vultr console, `scripts/worker/release.sh` (fetched from raw GitHub at 0522dda) downloaded the codeload archive of 0522ddaeac65601039af4c8cc2a539cf18f4a4cd (sha256 278b7ce785f51fab8a171403e822a613602e43ae3d5933261d0f9d1b92cc01f1), ran `npm ci --ignore-scripts` (506 packages), installed the reviewed unit, kept the previous release at /opt/cohue-266a240 and restarted. Result: Restart=always, RestartUSec=5s, UnitFileState=enabled, ActiveState=active, "worker 103d0b70 started".
+
+Auto-restart proof: `systemctl kill -s KILL cohue-worker` → after 9 s NRestarts=1, ActiveState=active, "worker 74a1b692 started" (new lease owner).
+
+Future updates from the console: `sh /opt/cohue/scripts/worker/on-host-acceptance.sh sync <40-hex commit>`; health: `... status`.
+
+
+## Milestone from docs/status/lead/CLAUDE_AUTONOMY_WORKER_HANDBACK.md
+
+# Claude lead continuation: autonomy features, worker release, handback to Codex
+
+25 Oct 2026, 05:40–06:35 CDT. User assigned Claude both specialist roles plus lead. All work is on main and pushed; hosted CI green on 7a18331, 11b124e, 39f1b75, 6f573f0 (0522dda/5f31b3b runs were in progress at handback).
+
+## What Claude did after Codex's 711a4b3 checkpoint
+
+- 7a18331 live bug fixes from the user's testing: showcase visit no longer replaces the LIVE guest identity (parked `cohue_live` cookie, restored on return); Chrome/Android WebM voice recordings measured from the EBML block timeline (src/server/domain/webm-duration.ts) when the header has no duration. See LIVE_BUGFIX_SESSION_VOICE.md.
+- 11b124e 200-person labelled synthetic SHOWCASE crowd (scripts/worker/showcase-crowd.sql, run by seed:showcase); applied to production once; LIVE untouched. See SHOWCASE_CROWD.md.
+- 39f1b75 Coordinator conversation in the composer: new additive operation `coordinateMission` (POST /api/missions/coordinate, SESSION, idempotent; docs/API_OPERATIONS.json updated; contract version unchanged 1.1.0, now 40 operations). Gemini replies, asks at most two follow-ups (expected output, who/how many, time together) and re-drafts the whole review-only brief each turn; max 12 turns; optional spoken replies via the browser's speechSynthesis (no audio stored). The one-shot "Draft structured brief" button was replaced by this chat; extractMission remains for API compatibility. App-wide LiveAlerts (src/components/shell/live-alerts.tsx): polls this device's inbox and its 3 most recent missions, shows an in-app alert with chime/vibrate and a background tab-title count for a new PENDING invitation or a mission moving to PROPOSED/REPROPOSED/REPLANNING/ACTIVATED/PAUSED_FOR_HUMAN/EXPIRED/FAILED; suppressed on the page already showing it; seen state in localStorage per principal.
+- 6f573f0 Coordinator "why" lines in the Activity feed (explainEvent in src/features/theater/model.ts), built only from committed events/proposals: candidate count, groups checked/elapsed and who covers what, repair kept/added, activation. No model reasoning is emitted.
+- 0522dda scripts/worker/release.sh plus `status` and `sync <commit>` modes in on-host-acceptance.sh. /opt/cohue is an extracted codeload archive, not a git checkout.
+- Worker released to 0522dda with the user's explicit approval in the thread ("I approve updating the production worker"); auto-restart proved by SIGKILL. See RELEASE_0522DDA.md.
+
+Tests: 93 unit tests, lint, types, production build; mocked UI suite 6/6 including new tests/e2e/frontend/live-alerts.spec.ts and tests/backend/coordinator.test.ts. Real Gemini conversations checked in English and Spanish; a real two-turn conversation on cohue.tech filled objective, expected output, 3 requirements, group 4, 180 min.
+
+## For Codex: what Claude could NOT confirm from your work
+
+- Worker sync to 711a4b3: never happened. At 06:15 CDT the host's .release-commit was still 266a240 (last start 05:59:27 UTC, "worker b8f62939 started"). It is now 0522dda (superset of 711a4b3); previous release kept at /opt/cohue-266a240.
+- docs/status/lead/FINAL_RELEASE_CHECKPOINT.md was left untracked and not appended to the handoffs. Claude committed it unchanged and appended it before this note so its content is preserved.
+- No deployed D7 kill/recovery proof exists for 711a4b3 or later; the last proof is cd32236. scripts/worker/prove-d7.ts hard-codes the 25 Oct window and needs updating before a rerun.
+- A local process (yours) held :3100 throughout; Claude used its own server on :3102.
+- From this Mac the Tiger PostgreSQL port was unreachable at ~06:00 CDT, so the DB-backed tests/e2e/frontend/live-features.spec.ts (updated for the chat) were verified only by hosted CI, not locally.
+
+## Still open
+
+Human two-phone run on production (now including live alerts), organizer review of real es/fr Room translations, phone Listen/task change/voice input, physical accessibility/performance checks. Known UX notes: repair heading can appear before the new team card; one tap target under 24 px on /missions/new. User said not to worry about the video and Devpost submission in this thread.
