@@ -21,3 +21,11 @@ With every browser closed: start a mission, confirm progress to PROPOSED via the
 ## Retention
 
 Deletion revokes sessions, invitations and holds immediately; the sweeper scrubs personal profile fields after purge_by (24 h) and keeps the opaque row for integrity. Raw audio is never written to storage (processed in memory only). Synthesized audio bytes are nulled at expiry (≤24 h). Receipts expire at 48 h. Backups: whatever the database provider retains must age out within its own policy; document the chosen provider's backup window here once known.
+
+## Tiger Data provisioned — 24 October 2026
+
+Service `cohue-prod`, ID `rje03je7u3`, project `b4ybdovx63`, AWS us-east-1, Production, 0.5 CPU / 2 GiB, one async HA replica and PgBouncer. Console verified Ready and replica caught up. Trial showed $1000 credits; wizard estimate $0.1149/hour plus storage. Automatic same-region backup verified with three-day PITR; cross-region backup not enabled (Enterprise-only in this account).
+
+Both migrations 0000_init.sql and 0001_mission_history.sql applied, then rerun idempotently. Ignored owner-only .env.local now holds certificate-verifying `sslmode=verify-full` URLs: runtime uses observed transaction pooler port39478/database tsdb_transaction, migrations use direct port35959/database tsdb. Runtime role cohue_app has application-table SELECT/INSERT/UPDATE/DELETE and sequence access, no superuser/role/database creation; administrator URI reserved for migration. Credentials are never recorded here or in Git. Both direct and pooled endpoints passed TLS, transactional temporary write/read/rollback checks before privilege separation; application-role read verified separately. No sample live participants seeded by this setup.
+
+Cloud database setup does not imply a Vercel deployment or D7 proof. Runtime scheduler/worker, provider API credentials and production two-device checks remain outstanding. Do not run destructive test suites against this production service; use isolated test data/database for further integration tests.
