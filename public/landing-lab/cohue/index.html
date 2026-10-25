@@ -87,9 +87,12 @@ h2{font-size:clamp(36px,4.5vw,62px);font-weight:500;line-height:1.06;letter-spac
 .footer a{min-height:44px;display:inline-flex;align-items:center}
 .skip{position:absolute;top:-100px;padding:15px;background:white;z-index:20}
 .skip:focus{top:10px}
-.reveal{opacity:1;transform:none}
-.reveal.pending{opacity:0;transform:translateY(8px)}
-.reveal{transition:opacity 500ms var(--ease-out),transform 500ms var(--ease-out)}
+.icon-arrow{display:inline-block;width:16px;height:16px;flex:none;vertical-align:middle}
+.footer a{gap:8px}
+.reveal{opacity:1;transform:none;filter:blur(0)}
+.reveal.pending{opacity:0;transform:translateY(6px);filter:blur(4px)}
+.reveal.pending:focus-within{opacity:1;transform:none;filter:none}
+.reveal{transition:opacity 500ms var(--ease-out),transform 500ms var(--ease-out),filter 500ms var(--ease-out)}
 
 @media(hover:hover) and (pointer:fine){.button:hover{background:#e3e6e5;transform:translateY(-1px)}
 .button.primary:hover{background:#244cae}
@@ -143,7 +146,7 @@ h2{font-size:39px}
 }
 
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}
-.reveal,.reveal.pending{opacity:1;transform:none;transition:opacity 160ms ease}
+.reveal,.reveal.pending{opacity:1;transform:none;filter:none;transition:none}
 .button{transition:background 160ms ease,color 160ms ease}
 .button:hover{transform:none}
 }
@@ -166,7 +169,7 @@ COHUE</a>
 <a class="section-link" href="#how">How it works</a>
 <a class="section-link" href="#principles">Our principles</a>
 <a class="optional" href="https://cohue.tech/me">My space</a>
-<a class="button primary" href="https://cohue.tech/missions/new">Start a mission <span aria-hidden="true">↗</span>
+<a class="button primary" href="https://cohue.tech/missions/new">Start a mission <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg>
 </a>
 </div>
 </div>
@@ -183,8 +186,8 @@ COHUE</a>
 <div class="hero-bottom">
 <p class="hero-copy">Your idea deserves the right people. Bring the ambition. COHUE helps you find the skills, shared time, and clear commitments to make it real.</p>
 <div class="actions">
-<a class="button primary" href="https://cohue.tech/missions/new">Start a mission ↗</a>
-<a class="button" href="https://cohue.tech/join">Bring your skills ↗</a>
+<a class="button primary" href="https://cohue.tech/missions/new">Start a mission <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
+<a class="button" href="https://cohue.tech/join">Bring your skills <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
 </div>
 </div>
 <div class="workspace" aria-label="Illustrative mission workflow">
@@ -223,7 +226,7 @@ COHUE</a>
 </div>
 <p class="caption">A simple illustration of the journey. Actual groups, availability and decisions depend on each mission.</p>
 </header>
-<section class="section reveal">
+<section class="section">
 <div class="section-head">
 <div>
 <span class="eyebrow">Less maybe. More momentum.</span>
@@ -255,7 +258,7 @@ COHUE</a>
 </article>
 </div>
 </section>
-<section class="section reveal" id="how">
+<section class="section" id="how">
 <div class="section-head">
 <div>
 <span class="eyebrow">How it happens</span>
@@ -291,7 +294,7 @@ COHUE</a>
 </li>
 </ol>
 </section>
-<section class="section reveal" id="principles">
+<section class="section" id="principles">
 <div class="section-head">
 <div>
 <span class="eyebrow">Built around people</span>
@@ -316,7 +319,7 @@ COHUE</a>
 </article>
 </div>
 </section>
-<section class="section reveal">
+<section class="section">
 <div class="section-head">
 <div>
 <span class="eyebrow">Explore the possibilities</span>
@@ -324,11 +327,11 @@ COHUE</a>
 </div>
 <div>
 <p style="color:var(--muted);font-size:15px">The synthetic showcase lets you explore with clearly labeled fictional people, using the real matching and decision workflow.</p>
-<a class="button" href="https://cohue.tech/">Explore the showcase ↗</a>
+<a class="button" href="https://cohue.tech/">Explore the showcase <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
 </div>
 </div>
 </section>
-<section class="section reveal" id="questions">
+<section class="section" id="questions">
 <div class="section-head">
 <div>
 <span class="eyebrow">A few clear answers</span>
@@ -363,21 +366,21 @@ COHUE</a>
 </article>
 </div>
 </section>
-<section class="closing reveal">
+<section class="closing">
 <span class="eyebrow">Your next move</span>
 <h2>Good things<br>
 <em>take people.</em>
 </h2>
 <p>Start with an idea. Or start with what you can offer.</p>
 <div class="actions">
-<a class="button primary" href="https://cohue.tech/missions/new">Start a mission ↗</a>
-<a class="button" href="https://cohue.tech/join">Bring your skills ↗</a>
+<a class="button primary" href="https://cohue.tech/missions/new">Start a mission <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
+<a class="button" href="https://cohue.tech/join">Bring your skills <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
 </div>
 </section>
 <footer class="footer">
 <span>© 2026 COHUE · Common ground. Real possibilities.</span>
-<a href="https://cohue.tech/me">My space ↗</a>
-<a href="https://github.com/richmondazadze/cohue">Explore the source ↗</a>
+<a href="https://cohue.tech/me">My space <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
+<a href="https://github.com/richmondazadze/cohue">Explore the source <svg class="icon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 19 19 5M5 5h14v14"/></svg></a>
 </footer>
 </main>
 <script>
@@ -385,6 +388,8 @@ COHUE</a>
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 if('IntersectionObserver' in window && !reduced.matches){
  const observer=new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){entry.target.classList.remove('pending');observer.unobserve(entry.target)}}},{threshold:0,rootMargin:'0px 0px -24px 0px'});
+ // Reveal bounded content blocks, never a full long section or the sticky navigation.
+ document.querySelectorAll('.section-head,.usecase,.read-steps>li,.principles>article,.read-faq>article,.closing').forEach(el=>{el.classList.add('reveal')});
  document.querySelectorAll('.reveal').forEach(el=>{if(el.getBoundingClientRect().top>innerHeight){el.classList.add('pending');observer.observe(el)}});
  reduced.addEventListener('change',()=>{if(reduced.matches){document.querySelectorAll('.pending').forEach(el=>el.classList.remove('pending'));observer.disconnect()}});
 }

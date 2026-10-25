@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T13:00:28.451Z (America/Chicago display dates apply).
+Last update: 2026-10-25T13:03:56.652Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1029,3 +1029,14 @@ Motion uses CSS opacity/8px translateY section entrances, 500ms existing ease-ou
 Verified actual CUA desktop and mobile (433 CSS-pixel observed viewport, no horizontal overflow), settled How it works anchor below sticky header, all five steps/six FAQs and automatic reduced-motion parity (zero pending sections, scroll behavior auto). Production next start smoke on8796/landing-lab/cohue/index.html: title/content correct, zero canvas, no overflow, zero console warning/error entries. npm run check PASS (foundation/lint/types/93 tests passed,22 skipped/build); npm audit --audit-level=high zero vulnerabilities. Static script syntax, unique IDs, anchor targets and absence of WebGL/requestAnimationFrame checks pass. Screenshots in landing-overhaul/artifacts/cohue-refined-{desktop,mobile,process}.png. No physical-device or sustained-frame-rate certification claimed.
 
 Review http://127.0.0.1:8795/cohue/. Both handoffs appended identically. This remains a local landing preview, not a live-home deployment or application-wide redesign.
+
+
+## Milestone from docs/status/frontend/COHUE_LANDING_LOCKED.md
+
+# Approved landing locked; SVG arrows and blur reveal
+
+25 October 2026. Preceding baseline66dd06b. User approves refined landing as the landing page and design lookup, with SVG arrows and blur reveal. Recorded canonical source/checksum/approval in docs/status/frontend/landing-overhaul/APPROVED_LANDING.json and DESIGN_LOOKUP.md. This supersedes earlier exploration status for this landing. Preserve selected layout/type/colors/mark/spacing; future design work should consult this lookup. Historical frozen docs/design sources untouched. No other chats contacted, no deploy or production-home replacement.
+
+All eight arrow glyphs replaced with decorative inline currentColor SVGs; consistent16px rendering, no emoji font dependency or extra accessible-name noise. Scroll reveals now use bounded headings/cards/list items rather than entire long sections, with4px blur/6px lift/opacity at500ms existing ease-out, once only. Reduced-motion disables blur/translation and smooth scroll; keyboard focus inside pending blocks makes them visible. No libraries or continuous animation loops added.
+
+Validation: npm run check PASS (foundation/lint/types/tests/build); audit zero vulnerabilities; SVG count/no-arrow-glyph/script syntax pass. Actual mobile browser observed433 CSS pixels, all arrows16px and no overflow; screenshot artifacts/cohue-locked-mobile.png. Reduced-motion emulation: zero pending elements, filter none, scroll auto. Production next start smoke at8796 static landing rendered semantic content and SVG actions. No physical-device/FPS claim. Both handoffs synchronized via serialized append. Review remains http://127.0.0.1:8795/cohue/.

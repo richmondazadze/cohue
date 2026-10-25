@@ -1,0 +1,10 @@
+{
+  "status": "APPROVED_LOCKED",
+  "version": "1.0",
+  "approved_date": "2026-10-25",
+  "authority": "User: lock this in as our landing page and as our design lookup, with SVG arrows and blur reveal",
+  "source": "public/landing-lab/cohue/index.html",
+  "sha256": "397d958942ee8415b6bb408bf42b68c1ad81d689dfeaacd4ab2c306834e16067",
+  "lookup": "docs/status/frontend/landing-overhaul/DESIGN_LOOKUP.md",
+  "deployment": "local preview; production home not yet replaced"
+}
