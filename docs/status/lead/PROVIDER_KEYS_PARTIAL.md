@@ -1,0 +1,13 @@
+# Provider credential verification — 24 October 2026
+
+Existing user-configured ElevenLabs and SerpApi keys are present only in ignored owner-only .env.local. No key values recorded here. Real authenticated requests: ElevenLabs models and voices HTTP200; SerpApi account HTTP200, 1,250 searches available. Selected available Sarah voice EXAVITQu4vr4xnSDxMaL and eleven_multilingual_v2 for TTS. Synthetic English TTS returned HTTP200 audio/mpeg; feeding that in-memory audio into scribe_v2 STT returned HTTP200 and recognized “common ground”. Initial connection timeout resolved on retry. This proves direct provider connectivity, not application end-to-end or Spanish/French validation.
+
+Created dedicated Google AI Studio project COHUE HackTX 2026. Named-key form is prepared against that project; no Gemini key created yet. Action-time approval requested before creating persistent credential. Billing not enabled. Resume from existing project/form rather than creating duplicates. Gemini remains unconfigured pending that step.
+
+No product modules changed, no deployment or D7 evidence claimed. .env.local mode0600 and ignored; screenshot artifacts ignored. Foundation integrity check passed. Full application tests not rerun for local secret/config-only changes. Remaining: Gemini credential/model and synthetic structured-output verification; three-language application provider QA; Vercel/worker secret configuration, deployment and deployed D7 proof. Both handoffs synchronized by append script.
+
+## Completion (supersedes Google pending status above)
+
+User approved Gemini credential creation at action time. Dedicated project gen-lang-client-0252269051 (project number407404753204) and COHUE HackTX2026 key created; free tier, no billing enabled. Credential saved directly from visible key field into ignored .env.local; clipboard copy did not yield usable text and was corrected before verification. Authenticated models request HTTP200. gemini-2.5-flash was listed but generation returned404 (unavailable to new users); provider response recommended gemini-3.8-flash. Configured that model and actual generateContent JSON-schema request returned HTTP200 with nonempty English/Spanish/French fields. This is a small synthetic structured-output probe, not the full product extraction/translation acceptance suite.
+
+All three required provider credentials and model/voice identifiers are now configured locally. No further vendor keys required for the planned core. Hosting secret installation and deployed QA/D7 remain outstanding. Secret values excluded from tracked milestone/screenshots. No claim of complete application provider acceptance or deployment.
