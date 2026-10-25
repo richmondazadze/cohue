@@ -15,7 +15,7 @@ import { generateJson, geminiConfigured } from "../providers/gemini";
 import { synthesizeSpeech, transcribeAudio } from "../providers/elevenlabs";
 import type { InvitationRow, MissionRow } from "./store";
 import { validateAudioDuration } from "./audio-duration";
-import { assertBriefLocalization, authorizedBriefMission, isBriefSource, synthesizeBrief } from "./briefs";
+import { assertBriefLocalization, isBriefSource, synthesizeBrief, prepareBriefSpeech, assertBriefAudio } from "./briefs";
 
 type LocalizedText = z.infer<typeof LocalizedTextSchema>;
 const sha = (text: string) => createHash("sha256").update(text.normalize("NFC"), "utf8").digest("hex");
@@ -152,25 +152,42 @@ export async function approveLocalization(tx: Tx, session: SessionRecord, id: st
 }
 
 // TTS speaks only authorized text: canonical text in the mission language, or an APPROVED translation of it.
-export async function synthesize(tx: Tx, principal: SessionRecord, input: { sourceId: string; sourceKind: "INVITATION" | "BRIEF"; sourceVersion: number; canonicalTextHash: string; language: string }) {
-  if (input.sourceKind === "BRIEF") return synthesizeBrief(tx, principal, input);
-  const row = await authorizedInvitationSource(principal, input.sourceId, tx);
+export async function prepareSpeech(principal: SessionRecord, input: { sourceId: string; sourceKind: "INVITATION" | "BRIEF"; sourceVersion: number; canonicalTextHash: string; language: string }) {
+  if (input.sourceKind === "BRIEF") return prepareBriefSpeech(principal, input);
+  const row = await authorizedInvitationSource(principal, input.sourceId);
   if (row.proposal_revision !== input.sourceVersion) fail("STALE_VERSION", "The invitation changed.");
   const canonical = canonicalInvitationText(row);
   if (sha(canonical) !== input.canonicalTextHash) fail("STALE_VERSION", "The invitation text changed.");
   let text = canonical;
   if (base(input.language) !== base(row.doc.language)) {
     const [approved] = await query<LocalizationRow>(
-      "SELECT id, version, doc FROM localizations WHERE source_id=$1 AND doc->>'canonicalTextHash'=$2 AND doc->>'language'=$3 AND doc->>'status'='APPROVED' AND scope_mode=$4 AND showcase_id=$5 AND (doc->>'sourceVersion')::int=$6",
+      "SELECT id, version, doc FROM localizations WHERE source_id=$1 AND doc->>'canonicalTextHash'=$2 AND doc->>'language'=$3 AND doc->>'status'='APPROVED' AND scope_mode=$4 AND showcase_id=$5 AND (doc->>'sourceVersion')::int=$6 FOR SHARE",
       [row.id, input.canonicalTextHash, input.language, row.scope_mode, row.showcase_id, row.proposal_revision],
-      tx,
     );
     if (!approved) fail("INVALID_INPUT", "This translation needs creator review before it can be spoken.", { language: ["Translation not approved"] });
     text = approved.doc.text;
   }
-  const audio = await synthesizeSpeech(text);
+  return { ...await synthesizeSpeech(text), reviewedTextHash: sha(text) };
+}
+
+export async function synthesize(tx: Tx, principal: SessionRecord, input: { sourceId: string; sourceKind: "INVITATION" | "BRIEF"; sourceVersion: number; canonicalTextHash: string; language: string }, audio?: Awaited<ReturnType<typeof prepareSpeech>>) {
+  // Recheck authority even when a caller omits preparation; no provider runs under this transaction.
+  if (input.sourceKind === "BRIEF") {
+    if (!audio) fail("INTERNAL_ERROR", "Speech preparation required.");
+    return synthesizeBrief(tx, principal, input, audio!);
+  }
+  const row = await authorizedInvitationSource(principal, input.sourceId, tx);
   await tx.query("SELECT id FROM missions WHERE id=$1 FOR SHARE", [row.mission_id]);
-  await authorizedInvitationSource(principal, row.id, tx);
+  const current = await authorizedInvitationSource(principal, input.sourceId, tx);
+  if (current.proposal_revision !== input.sourceVersion || sha(canonicalInvitationText(current)) !== input.canonicalTextHash) fail("STALE_VERSION", "The invitation changed.");
+  if (!audio) fail("INTERNAL_ERROR", "Speech preparation required.");
+  let text = canonicalInvitationText(current);
+  if (base(input.language) !== base(current.doc.language)) {
+    const [approved] = await query<LocalizationRow>("SELECT id,version,doc FROM localizations WHERE source_id=$1 AND scope_mode=$2 AND showcase_id=$3 AND doc->>'canonicalTextHash'=$4 AND doc->>'language'=$5 AND doc->>'status'='APPROVED' AND (doc->>'sourceVersion')::int=$6 FOR SHARE", [current.id,current.scope_mode,current.showcase_id,input.canonicalTextHash,input.language,input.sourceVersion], tx);
+    if (!approved) fail("STALE_VERSION", "The reviewed translation changed.");
+    text = approved.doc.text;
+  }
+  if (sha(text) !== audio!.reviewedTextHash) fail("STALE_VERSION", "The reviewed speech source changed.");
   const id = randomUUID();
   const expiresAt = new Date(Math.min(Date.now() + MEDIA_LIMITS.synthesizedTtlSeconds * 1000, row.expires_at.getTime()));
   const doc = AudioArtifactSchema.parse({
@@ -186,7 +203,7 @@ export async function synthesize(tx: Tx, principal: SessionRecord, input: { sour
   });
   await tx.query(
     "INSERT INTO audio_artifacts(id, owner_principal_id, scope_mode, showcase_id, status, mime_type, bytes_base64, doc, expires_at) VALUES ($1,$2,$3,$4,'READY',$5,$6,$7,$8)",
-    [id, principal.principalId, row.scope_mode, row.showcase_id, audio.mimeType, audio.bytes.toString("base64"), JSON.stringify({ ...doc, sourceInvitationId: row.id }), expiresAt],
+    [id, principal.principalId, row.scope_mode, row.showcase_id, audio!.mimeType, audio!.bytes.toString("base64"), JSON.stringify({ ...doc, sourceInvitationId: row.id, reviewedTextHash: audio!.reviewedTextHash }), expiresAt],
   );
   return doc;
 }
@@ -199,16 +216,23 @@ export async function mediaFor(principal: SessionRecord, id: string) {
   );
   if (!row || row.owner_principal_id !== principal.principalId || row.expires_at < new Date() || !row.bytes_base64) fail("NOT_FOUND", "Media not found.");
   const stored = z
-    .object({ sourceInvitationId: z.string().uuid().optional(), sourceMissionId: z.string().uuid().optional() })
+    .object({ sourceInvitationId: z.string().uuid().optional(), sourceMissionId: z.string().uuid().optional(), briefVersion: z.number().int().positive().optional(), reviewedTextHash: z.string().regex(/^[a-f0-9]{64}$/).optional() })
     .passthrough()
     .refine((v) => Boolean(v.sourceInvitationId) !== Boolean(v.sourceMissionId))
     .safeParse(row.doc);
   if (!stored.success) return fail("NOT_FOUND", "Media source not found.");
-  const { sourceInvitationId, sourceMissionId, ...publicDoc } = stored.data;
+  const { sourceInvitationId, sourceMissionId, briefVersion, reviewedTextHash, ...publicDoc } = stored.data;
   const doc = AudioArtifactSchema.parse(publicDoc);
   // Source identity is private persistence metadata, never part of the public media DTO.
-  if (sourceInvitationId) await authorizedInvitationSource(principal, sourceInvitationId);
-  else await authorizedBriefMission(principal, sourceMissionId!);
+  if (sourceInvitationId) {
+    const source = await authorizedInvitationSource(principal, sourceInvitationId);
+    const canonical = canonicalInvitationText(source);
+    if (sha(canonical) !== doc.canonicalTextHash) fail("STALE_VERSION", "The invitation changed.");
+    if (base(doc.language) !== base(source.doc.language)) {
+      const [approved] = await query<LocalizationRow>("SELECT id,version,doc FROM localizations WHERE source_id=$1 AND scope_mode=$2 AND showcase_id=$3 AND doc->>'canonicalTextHash'=$4 AND doc->>'language'=$5 AND doc->>'status'='APPROVED'", [source.id,mode,showcase,doc.canonicalTextHash,doc.language]);
+      if (!approved || !reviewedTextHash || sha(approved.doc.text) !== reviewedTextHash) fail("STALE_VERSION", "The reviewed translation changed; request current audio.");
+    }
+  } else await assertBriefAudio(principal, sourceMissionId!, doc, briefVersion, reviewedTextHash);
   return { doc, bytes: Buffer.from(row.bytes_base64!, "base64"), mimeType: row.mime_type };
 }
 

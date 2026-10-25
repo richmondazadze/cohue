@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T06:54:53.719Z (America/Chicago display dates apply).
+Last update: 2026-10-25T06:56:32.506Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -792,3 +792,44 @@ User supplied continuation transcript and requestsresume+specialistallocation. R
 Ownedfix: Room singleRadixTabs tree, forceMountcontents; inactivephonepanelsdisplaynone, desktopallpanelsretainexistingtwo-columnappearance. Reviewstate survivesorientation/tabnavigation. Hiddenbriefplaybackbecomesinactive; Listenpauses. Briefkey includescanonicalhash/sourceVersion/version/status toretireoldeditor/mediaonsourcechange. Existingfont/radii/palette/logo/motionpreserved. AddedboundedsyntheticE2E exactdraft390/1024/1440/768+tabhide/reviewedListen assertions; harnessRoombriefs useexistinglocalizedrecords. E2Eauthoredpendingleadexecution, notpass.
 
 Actualownedlint/tsc/38frontendunitchecks recordedbeforecommit; fullcombinedbuild/audit/browserfixverificationreservedlead. ProductionCUAbeforefix: composer5widths nooverflow/nounder24visiblecontrol; invitation+creatorreview390/1024/1440withreducedmotionon/off exactdraft/focus/terms pass, SpanishinvitationTTSactualprogress; syntheticdecline→realrev2repair→renewedacceptance→activation3members4tasks; creatorTaskIN_PROGRESS persistedversion2. Original+SpanishRoombriefpresent, originalbindingretained. Detailedfinalmatrixandremaininghumansteps followsinFINAL_ACCEPTANCE.md. Ownmission4403db99-22ea-41d1-a41d-e452774eca25 cancellationpendingendofmediaobservation. Noindependentbuild/push/deploy.
+
+
+## Milestone from docs/status/backend/FINAL_ACCEPTANCE.md
+
+# Backend final acceptance — 25 October 2026
+
+Resumed from clean main7c246ea under FINAL_ACCEPTANCE_ASSIGNMENTS.md. Read current rules, both matching handoffs through latestClaude milestones, contract/resolution/checkpoint authorities, BRIEF/266a240/D7/live-phone notes and docs/DEMO_RUNBOOK.md. HistoricalSTOP/BRIEFpending/oldworker labels are superseded. No provisioning, migration, worker restart, retentionflag change, LIVE mutation, seed reset, consent action, push or deployment performed by this lane.
+
+## Fresh read-only runtime evidence
+
+- ExistingVultr155.138.162.102, strictpinnedSSH: `.release-commit`266a24083e283138f348fb3d77d04f9b7d23a224; cohue-worker active/bootenabled, Nodev24.22.1, EVENT_RETENTION_READY=1, root0600runtimefile. No secretvalues printed. Runtime role/coarse hosting settings were observed without expanding access.
+- VercelGET deploymentmetadata: https://cohue.tech aliases Ready deploymentdpl_FK8u4A3se2bvu9maPFuizDJhZByL, cohue-e4anhn5ld, Gitb0db29edbbf40b108c039660143cc16ca179707e. `git diff 266a240..HEAD -- src/server src/app/api scripts/worker drizzle` was empty BEFORE this acceptance patch. Thus runtime application sources were compatible at inspection; this new security patch is not yet deployed.
+- 06:48:37Z runtimeDB read-onlytransaction: LIVE mission30cb16c0-d5ec-4d03-816f-a62c83cc9744 remains ACTIVATED/revision1,3members/4tasks/27events;4taskstatuses nonTODO. Spanish/Frenchbriefs still REVIEW_REQUIRED;0briefaudioartifacts. Aggregateonly; no participantnames/terms/tokens exported. These observations do not identify who changed tasks or prove phoneListen/microphone use.
+- Actual leastprivilege rolecohue_app: notsuperuser, noCREATEROLE/CREATEDB; privacy_auditSELECT/INSERT/DELETE andmissionsUPDATE privileges true. MigrationledgerSELECT denied42501; did NOT grant it. Catalogconfirms privacy_audit andsequencebridgetrigger exist; sequencecounterbehindcommittedevents count0. Repository still has0000/0001/0002, no newmigration. Complete freshledgerlisting unavailable to this runtime; earlierClaudeledger/proof remains historical evidence.
+- InstalledSHOWCASE read-only:30nondeletedprofiles, earliest firstavailability26Oct20:00Z, latest firstintervalend27Oct01:00Z. No re-anchor necessary; no fixturecapacityreserved by backend. Frontend independently owns its installedSHOWCASE journey.
+- Hosted operatorGET /api/providers/health HTTP200: databaseREADY, dispatcherUNVERIFIED, vendorsDEGRADED. This endpoint reports configuration/coarsehealth; it does NOT invalidate recorded deployedD7 or certify activeprovider readiness. D7/privacy last actual deployedpasscd32236; laterbrief-awareworker266a240 is verifiedactive, not a newkill/recoveryproof.
+
+## Confirmed critical fixes in this owned slice
+
+Actual isolatedPostgreSQL regressions first reproduced foreign-invitation brief access and stale speech publication. Fixed existingcontracts only:
+
+1. Invitation capabilities must bind exact invitationId/mission/participant, ACCEPTED status and current nondeleted membership in scope for bothRoom andBRIEF reads. Regular guest/memberauthorization unchanged.
+2. OnlyTTS uses an optional internalroute preparehook: authenticate/receipt-digest lookup first; close transaction; performboundedprovider work; reopen receipttransaction, freshchecksessionkind/invitation/scope/expiry/revocation/access-epoch BEFORE replay, then serialize receipt and publish. Existing command wire/status/metadata unchanged. Concurrentexternalattempts may repeat; exactly-oncevendorcalls are NOT promised.
+3. Publication locks currentmission afterprovider work, revalidates creator/member authority/sourceversion/canonicalhash and currentapprovedwording. Cancel/deletion/task/source/translation changes discard stale output without artifact/receipt.
+4. Private reviewedTextHash/briefVersion persist with audio and are stripped before strictpublicDTO. GET andreceipt replay reject stalecanonical or edited/unreviewedtranslation wording. Legacytranslatedartifacts lacking reviewedtextbinding failclosed; currentcanonicallegacy audio remains hashchecked. Reviewedtranslation row held only for shortpublishphase.
+
+Changedownedcode: src/server/domain/briefs.ts, media.ts, missions/service.ts; src/server/http/route.ts internalpreparehook; src/app/api/voice/synthesize/route.ts; tests/backend/privacy-retention.db.test.ts. No sharedschema/rootdependencies/frontend/frozenvisual edits, migrations or runner changes. Lead must review routehelperdiff and integrate/deploy the patch before claiming these fixes live. ExistingrunnerD7 proof is not reattributed to new code.
+
+## Actual targeted checks
+
+- `COHUE_TEST_DATABASE_URL=postgresql://cohue@127.0.0.1:54329/cohue_backend_release npx vitest run tests/backend`:38passed/8files/0skips, disposableactualPostgreSQL only. Added foreigninvite/scope denial, staleprovideroutput/mediahash, exactreplay skipsvendor, changedpayloadconflict, concurrent samekey onepersistedartifact+receipt, in-flight revoke/epoch/cancel/delete/translationedit, andcachedBRIEF/INVITATION media afteredit/reviewrevocation/legacyunboundmetadata. Vendorbytes in race tests are mocked; no providerproof inferred from them. Initial2redregressions verified defects, then passed afterfix.
+- `npx tsc --noEmit`, targetedESLint `--max-warnings=0`, `git diff --check`:passed after nullablehash/unusedimport corrections. `npm audit --audit-level=high`:0vulnerabilities. Foundation/handoffcheck performed beforecommit. No independent.nextbuild/fullcheck/browser suite: lead owns serializedintegration window.
+- 06:52:56–58Z bounded real ElevenLabs adapterprobe: one shortsynthetic TTS→servermeasuredMP3→Scribe roundtrip each en/es/fr;21776/22821/23239bytes. Expected language-specific words recognized; providerreportedeng/spa/fra; REVIEW_REQUIRED andrawAudioDeletedtrue all3. Bufferszeroed afterward; no rawaudiofiles retained. These are actualaccountcalls throughlocaladapters, NOT hostedHTTP/microphone/physicalphone or listening-comprehension proof. ExistingGemini multilingualextraction/brieftranslation/SerpApi evidence retained fromClaude/provider reports; not redundantly rerun here.
+
+## Remaining human and release steps
+
+Lead: reviewthepreparehook andsourcelocks, runserializedcombinedcheck/build/API/browser smoke, deployreviewedwebpatch and decidecompatibleworkeridentityrefresh. No newinfrastructure/migration needed. Do not rerun datedD7harness withoutparameterizedvalidwindow; no unnecessarykill/reproof in this assignment. No finalallgatescompleteclaim.
+
+Human2minutecheck: organizeropens the existingLIVE MissionRoom, reviewsSpanish (andFrench) brief againstbindingoriginal andexplicitlyapproves translation; participantphone refreshes and tapsListen, recordsdevicemodel/browser/language/time andactualaudioheard; authorizedtaskowner demonstrates a taskstatuschange (records alreadyshow nonTODO tasks, but device/action attribution remains human evidence). Actualmicrophone→editabletranscript/reviewstill requiresconsenteddevicecapture if finalvoiceinputgate is claimed. Never approve realparticipants' commitments on their behalf. Frontend owns exactUI checklist/screenshots and its synthetic task/review journey.
+
+Finalproof limits: nofreshphysicalphone/screenreader/frameprofiling, recording/video/submission, or organizerdeadline confirmation by backend. No realparticipant outreach. Migrationledgerread restriction retained. Operationalcost remains existingapprovedhost only; no newspend/credentialrotation. Bothhandoffs updated via serializedappend; only ownedpaths committed. Immediate next: leadintegrates securitypatch, frontend completes boundedacceptance/humanstep guidance, user suppliesactualphoneListen/voice/video evidence and submissiondecision.

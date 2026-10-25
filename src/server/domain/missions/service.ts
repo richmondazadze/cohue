@@ -490,7 +490,7 @@ export async function memberAccess(session: SessionRecord | null, invite: Sessio
   let participantIds: string[] = [];
   if (session && session.scope.executionMode === principal.scope.executionMode) participantIds = await principalParticipantIds(session.principalId, session.scope, client);
   if (invite && JSON.stringify(invite.scope) === JSON.stringify(principal.scope)) {
-    const [current] = await query("SELECT id FROM participants WHERE id=$1 AND scope_mode=$2 AND showcase_id=$3 AND deleted_at IS NULL", [invite.principalId,...scopeColumns(principal.scope)], client);
+    const [current] = await query(`SELECT p.id FROM participants p JOIN invitations i ON i.participant_id=p.id AND i.id=$4 AND i.mission_id=$5 AND i.status='ACCEPTED' AND i.scope_mode=p.scope_mode AND i.showcase_id=p.showcase_id WHERE p.id=$1 AND p.scope_mode=$2 AND p.showcase_id=$3 AND p.deleted_at IS NULL`, [invite.principalId,...scopeColumns(principal.scope),invite.invitationId,missionId], client);
     if (current) participantIds.push(invite.principalId);
   }
   const isCreator = session?.principalId === mission.owner_principal_id && (await principalParticipantIds(session.principalId, session.scope, client)).includes(mission.creator_id);

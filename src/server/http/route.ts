@@ -37,8 +37,11 @@ export type Ctx<K extends ApiOperation> = {
   cookies: CookieWrite[];
   request: NextRequest;
   file: File | null;
+  prepared?: unknown;
 };
 type Options<K extends ApiOperation> = {
+  // Two-phase external work: receipt lookup first, provider with no transaction, then receipt recheck + atomic publish.
+  prepare?: (ctx: Ctx<K>) => Promise<unknown>;
   // Replay hook: rebuild response data from the stored receipt (e.g. recompute a derived token).
   replay?: (stored: unknown, ctx: Ctx<K>) => Promise<Data<K>>;
   // What is stored in the receipt; defaults to the response data.
@@ -259,10 +262,20 @@ async function withReceipt<K extends ApiOperation>(
 ): Promise<Data<K>> {
   const digest = sha256(JSON.stringify({ params: ctx.params, input }));
   const [mode, showcase] = scopeColumns(principal.scope);
-  return transaction(async (tx) => {
+  const needsPreparation = Symbol("prepare");
+  let preparationEpoch: number | undefined;
+  const execute = (prepared: boolean): Promise<Data<K> | typeof needsPreparation> => transaction(async (tx) => {
     await tx.query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", [
       `${mode}:${showcase}:${principal.principalId}:${operation}:${key}`,
     ]);
+    if (options.prepare) {
+      const [active] = await query<{epoch:number}>(`SELECT COALESCE(a.epoch,1) AS epoch FROM sessions s LEFT JOIN access_epochs a ON a.principal_id=s.principal_id
+        WHERE s.id=$1 AND s.principal_id=$2 AND s.scope_mode=$3 AND s.showcase_id=$4 AND s.kind=$5
+        AND s.invitation_id IS NOT DISTINCT FROM $6::uuid AND s.revoked_at IS NULL AND s.expires_at>now()`,
+        [principal.id,principal.principalId,mode,showcase,principal.kind,principal.invitationId], tx);
+      if (!active || (preparationEpoch !== undefined && active.epoch !== preparationEpoch)) fail("UNAUTHENTICATED", "Session permissions changed; retry after reloading.");
+      preparationEpoch = active.epoch;
+    }
     const [existing] = await query<{ payload_digest: string; result: unknown; expires_at: Date }>(
       `SELECT payload_digest, result, expires_at FROM command_receipts
        WHERE scope_mode=$1 AND showcase_id=$2 AND principal_id=$3 AND operation=$4 AND idempotency_key=$5`,
@@ -282,6 +295,7 @@ async function withReceipt<K extends ApiOperation>(
         `DELETE FROM command_receipts WHERE scope_mode=$1 AND showcase_id=$2 AND principal_id=$3 AND operation=$4 AND idempotency_key=$5`,
         [mode, showcase, principal.principalId, operation, key],
       );
+    if (options.prepare && !prepared) return needsPreparation;
     const data = await handler(ctx);
     const now = new Date();
     await tx.query(
@@ -303,6 +317,13 @@ async function withReceipt<K extends ApiOperation>(
     );
     return data;
   });
+  const first = await execute(!options.prepare);
+  if (first !== needsPreparation) return first;
+  ctx.tx = null;
+  ctx.prepared = await options.prepare!(ctx);
+  const result = await execute(true);
+  if (result === needsPreparation) return fail("INTERNAL_ERROR", "Command preparation failed.");
+  return result;
 }
 
 function errorResponse(error: unknown, correlationId: string, operation: string): Response {

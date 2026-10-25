@@ -1,7 +1,8 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import pg from "pg";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { NextRequest } from "next/server";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import type { SessionRecord } from "@/server/auth/sessions";
 import type { InvitationRow, MissionRow } from "@/server/domain/store";
 
@@ -123,6 +124,122 @@ describe.skipIf(!url)("scoped deletion and bounded retention on actual PostgreSQ
     const sweeper=await import("@/server/runner/sweeper");
     await sweeper.sweep();await sweeper.sweep();
     expect(await db.query("SELECT id FROM localizations WHERE source_id=$1",[f.invite.id])).toHaveLength(0);
+  });
+
+  it("binds invitation brief and room access to the invitation's own mission",async()=>{
+    const f=await formation(true);
+    const briefs=await import("@/server/domain/briefs");
+    const valid:SessionRecord={...f.guest.session,kind:"INVITATION",principalId:f.guest.profile.id,invitationId:f.invite.id};
+    expect((await briefs.authorizedBriefMission(valid,f.missionId)).id).toBe(f.missionId);
+    const other={...valid,invitationId:randomUUID()};
+    await expect(briefs.authorizedBriefMission(other,f.missionId)).rejects.toMatchObject({code:"NOT_FOUND"});
+    await expect(missions.memberAccess(null,other,f.missionId)).rejects.toMatchObject({code:"NOT_FOUND"});
+    await expect(briefs.authorizedBriefMission({...f.guest.session,scope:{executionMode:"SHOWCASE",showcaseId:randomUUID()}},f.missionId)).rejects.toMatchObject({code:"NOT_FOUND"});
+  });
+
+  it("rejects stale brief audio and source changes while speech is generated",async()=>{
+    const f=await formation(true);
+    const briefs=await import("@/server/domain/briefs");
+    const provider=await import("@/server/providers/elevenlabs");
+    const [mission]=await db.query<MissionRow>("SELECT * FROM missions WHERE id=$1",[f.missionId]);
+    const source=await briefs.briefSource(mission);
+    let complete!:(audio:{bytes:Buffer;mimeType:string})=>void;
+    const speech=vi.spyOn(provider,"synthesizeSpeech").mockImplementation(()=>new Promise(resolve=>{complete=resolve;}));
+    try {
+      const input={sourceId:f.missionId,sourceVersion:source.sourceVersion,canonicalTextHash:source.hash,language:"en"};
+      const pending=briefs.prepareBriefSpeech(f.creator.session,input).then(audio=>db.transaction(tx=>briefs.synthesizeBrief(tx,f.creator.session,input,audio)));
+      // Attach immediately, avoiding an unhandled rejection while the database edit completes.
+      const outcome=pending.then(value=>({value,error:null}),error=>({value:null,error}));
+      await vi.waitFor(()=>expect(speech).toHaveBeenCalledOnce());
+      await db.query("UPDATE mission_tasks SET doc=jsonb_set(doc,'{description}','\"Updated committed task\"') WHERE mission_id=$1",[f.missionId]);
+      complete({bytes:Buffer.from([1,2,3]),mimeType:"audio/mpeg"});
+      expect((await outcome).error).toMatchObject({code:"STALE_VERSION"});
+      expect(await db.query("SELECT id FROM audio_artifacts WHERE doc->>'sourceMissionId'=$1",[f.missionId])).toHaveLength(0);
+      const audioId=randomUUID();
+      const doc={id:audioId,ownerId:f.creator.session.principalId,scope:f.scope,purpose:"BRIEF",language:"en",canonicalTextHash:source.hash,status:"READY",expiresAt:new Date(Date.now()+3600_000).toISOString(),accessPath:`/api/media/${audioId}`,sourceMissionId:f.missionId};
+      await db.query("INSERT INTO audio_artifacts(id,owner_principal_id,scope_mode,showcase_id,status,mime_type,bytes_base64,doc,expires_at) VALUES ($1,$2,'SHOWCASE',$3,'READY','audio/mpeg','AA==',$4,now()+interval '1 hour')",[audioId,f.creator.session.principalId,f.scope.showcaseId,JSON.stringify(doc)]);
+      await expect(media.mediaFor(f.creator.session,audioId)).rejects.toMatchObject({code:"STALE_VERSION"});
+    } finally { speech.mockRestore(); }
+  });
+
+  it("replays speech without provider calls, rejects changed keys, and commits one artifact under races",async()=>{
+    const f=await formation(true);
+    const briefs=await import("@/server/domain/briefs");
+    const provider=await import("@/server/providers/elevenlabs");
+    const {POST}=await import("@/app/api/voice/synthesize/route");
+    const [mission]=await db.query<MissionRow>("SELECT * FROM missions WHERE id=$1",[f.missionId]);
+    const source=await briefs.briefSource(mission);
+    const input={sourceKind:"BRIEF",sourceId:f.missionId,sourceVersion:source.sourceVersion,canonicalTextHash:source.hash,language:"en"};
+    const key=randomUUID();
+    const request=(body=input,receiptKey=key)=>POST(new NextRequest("https://cohue.test/api/voice/synthesize",{method:"POST",headers:{"content-type":"application/json","idempotency-key":receiptKey,cookie:`cohue_session=${f.creator.token}`},body:JSON.stringify(body)}),{params:Promise.resolve({})});
+    const speech=vi.spyOn(provider,"synthesizeSpeech").mockResolvedValue({bytes:Buffer.from([1,2,3]),mimeType:"audio/mpeg"});
+    try {
+      const first=await request();expect(first.status).toBe(202);const firstBody=await first.json();
+      expect((await (await request()).json()).data.id).toBe(firstBody.data.id);expect(speech).toHaveBeenCalledOnce();
+      const conflict=await request({...input,language:"es"});expect(conflict.status).toBe(409);expect((await conflict.json()).error.code).toBe("IDEMPOTENCY_CONFLICT");expect(speech).toHaveBeenCalledOnce();
+      const raceKey=randomUUID();
+      const raced=await Promise.all([request(input,raceKey),request(input,raceKey)]);
+      const docs=await Promise.all(raced.map(r=>r.json()));expect(docs[0].data.id).toBe(docs[1].data.id);
+      expect(await db.query("SELECT id FROM command_receipts WHERE idempotency_key=$1",[raceKey])).toHaveLength(1);
+      expect(await db.query("SELECT id FROM audio_artifacts WHERE id=$1",[docs[0].data.id])).toHaveLength(1);
+    } finally {speech.mockRestore();}
+  });
+
+  for(const change of ["revoke","epoch","cancel","delete","translation"] as const) it(`rejects ${change} during external speech preparation`,async()=>{
+    const f=await formation(true);
+    const briefs=await import("@/server/domain/briefs");
+    const provider=await import("@/server/providers/elevenlabs");
+    const {POST}=await import("@/app/api/voice/synthesize/route");
+    const [mission]=await db.query<MissionRow>("SELECT * FROM missions WHERE id=$1",[f.missionId]);
+    const source=await briefs.briefSource(mission);
+    let translationId:string|undefined;
+    if(change==='translation') {
+      translationId=randomUUID();
+      const doc={id:translationId,sourceId:f.missionId,sourceVersion:source.sourceVersion,version:1,canonicalTextHash:source.hash,language:"es",originalLanguage:"en",text:"Synthetic approved Spanish brief",status:"APPROVED",generatedAt:new Date().toISOString()};
+      await db.query("INSERT INTO localizations(id,source_id,scope_mode,showcase_id,version,doc) VALUES ($1,$2,'SHOWCASE',$3,1,$4)",[translationId,f.missionId,f.scope.showcaseId,JSON.stringify(doc)]);
+    }
+    let complete!:(audio:{bytes:Buffer;mimeType:string})=>void;
+    const speech=vi.spyOn(provider,"synthesizeSpeech").mockImplementation(()=>new Promise(resolve=>{complete=resolve;}));
+    const key=randomUUID();
+    try {
+      const pending=POST(new NextRequest("https://cohue.test/api/voice/synthesize",{method:"POST",headers:{"content-type":"application/json","idempotency-key":key,cookie:`cohue_session=${f.creator.token}`},body:JSON.stringify({sourceKind:"BRIEF",sourceId:f.missionId,sourceVersion:source.sourceVersion,canonicalTextHash:source.hash,language:change==='translation'?"es":"en"})}),{params:Promise.resolve({})});
+      await vi.waitFor(()=>expect(speech).toHaveBeenCalledOnce());
+      // Receipt transaction is closed while external work waits; unrelated source edits are not blocked.
+      if(change==='revoke') await db.query("UPDATE sessions SET revoked_at=now() WHERE id=$1",[f.creator.session.id]);
+      if(change==='epoch') await db.query("INSERT INTO access_epochs(principal_id,epoch) VALUES ($1,2)",[f.creator.session.principalId]);
+      if(change==='cancel') await db.transaction(tx=>missions.cancel(tx,f.creator.session,f.missionId,mission.version,randomUUID()));
+      if(change==='delete') await db.transaction(tx=>participants.deleteParticipant(tx,f.creator.session,f.creator.profile.id,1,randomUUID()));
+      if(change==='translation') await db.query("UPDATE localizations SET version=version+1,doc=jsonb_set(doc,'{text}','\"Changed reviewed text\"') WHERE id=$1",[translationId]);
+      complete({bytes:Buffer.from([1,2,3]),mimeType:"audio/mpeg"});
+      const result=await pending;const body=await result.json();
+      expect(body.error.code).toBe(change==='cancel'?"TERMINAL_MISSION":change==='translation'?"STALE_VERSION":"UNAUTHENTICATED");
+      expect(await db.query("SELECT id FROM command_receipts WHERE idempotency_key=$1",[key])).toHaveLength(0);
+      expect(await db.query("SELECT id FROM audio_artifacts WHERE doc->>'sourceMissionId'=$1",[f.missionId])).toHaveLength(0);
+    } finally {speech.mockRestore();}
+  });
+
+  for(const kind of ["BRIEF","INVITATION"] as const) it(`invalidates cached ${kind} audio after translation edit or review revocation`,async()=>{
+    const f=await formation(true);
+    const briefs=await import("@/server/domain/briefs");
+    const [mission]=await db.query<MissionRow>("SELECT * FROM missions WHERE id=$1",[f.missionId]);
+    const brief=await briefs.briefSource(mission);
+    const canonicalHash=kind==='BRIEF'?brief.hash:createHash("sha256").update(media.canonicalInvitationText(f.invite)).digest("hex");
+    const sourceId=kind==='BRIEF'?f.missionId:f.invite.id;
+    const text="Synthetic reviewed Spanish translation";
+    const localizationId=randomUUID(),audioId=randomUUID();
+    const localized={id:localizationId,sourceId,sourceVersion:1,version:1,canonicalTextHash:canonicalHash,language:"es",originalLanguage:"en",text,status:"APPROVED",generatedAt:new Date().toISOString()};
+    await db.query("INSERT INTO localizations(id,source_id,scope_mode,showcase_id,version,doc) VALUES ($1,$2,'SHOWCASE',$3,1,$4)",[localizationId,sourceId,f.scope.showcaseId,JSON.stringify(localized)]);
+    const privateSource=kind==='BRIEF'?{sourceMissionId:sourceId,briefVersion:1}:{sourceInvitationId:sourceId};
+    const doc={id:audioId,ownerId:f.creator.session.principalId,scope:f.scope,purpose:kind,language:"es",canonicalTextHash:canonicalHash,status:"READY",expiresAt:new Date(Date.now()+3600_000).toISOString(),accessPath:`/api/media/${audioId}`,...privateSource,reviewedTextHash:createHash("sha256").update(text).digest("hex")};
+    await db.query("INSERT INTO audio_artifacts(id,owner_principal_id,scope_mode,showcase_id,status,mime_type,bytes_base64,doc,expires_at) VALUES ($1,$2,'SHOWCASE',$3,'READY','audio/mpeg','AA==',$4,now()+interval '1 hour')",[audioId,f.creator.session.principalId,f.scope.showcaseId,JSON.stringify(doc)]);
+    const current=await media.mediaFor(f.creator.session,audioId);expect(current.doc).not.toHaveProperty("reviewedTextHash");expect(current.doc).not.toHaveProperty("briefVersion");
+    await db.query("UPDATE localizations SET version=2,doc=jsonb_set(doc,'{text}','\"Different approved wording\"') WHERE id=$1",[localizationId]);
+    await expect(media.mediaFor(f.creator.session,audioId)).rejects.toMatchObject({code:"STALE_VERSION"});
+    await db.query("UPDATE localizations SET doc=$2 WHERE id=$1",[localizationId,JSON.stringify({...localized,status:"REVIEW_REQUIRED"})]);
+    await expect(media.mediaFor(f.creator.session,audioId)).rejects.toMatchObject({code:"STALE_VERSION"});
+    await db.query("UPDATE localizations SET doc=$2 WHERE id=$1",[localizationId,JSON.stringify(localized)]);
+    await db.query("UPDATE audio_artifacts SET doc=doc-'reviewedTextHash' WHERE id=$1",[audioId]);
+    await expect(media.mediaFor(f.creator.session,audioId)).rejects.toMatchObject({code:"STALE_VERSION"});
   });
 
   it("prunes expired restricted audit and old events idempotently without resetting sequence",async()=>{

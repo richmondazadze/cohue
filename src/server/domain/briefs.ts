@@ -165,9 +165,12 @@ export async function authorizedBriefMission(principal: SessionRecord, missionId
   if (!allowed && !creatorOnly) {
     const member = await query(
       principal.kind === "INVITATION"
-        ? "SELECT 1 FROM mission_memberships m JOIN participants p ON p.id=m.participant_id AND p.deleted_at IS NULL WHERE m.mission_id=$1 AND m.participant_id=$2"
+        ? `SELECT 1 FROM mission_memberships m JOIN participants p ON p.id=m.participant_id AND p.deleted_at IS NULL
+           JOIN invitations i ON i.id=$3 AND i.mission_id=m.mission_id AND i.participant_id=m.participant_id
+             AND i.scope_mode=p.scope_mode AND i.showcase_id=p.showcase_id AND i.status='ACCEPTED'
+           WHERE m.mission_id=$1 AND m.participant_id=$2`
         : "SELECT 1 FROM mission_memberships m JOIN participants p ON p.id=m.participant_id AND p.deleted_at IS NULL WHERE m.mission_id=$1 AND p.owner_principal_id=$2",
-      [missionId, principal.principalId],
+      principal.kind === "INVITATION" ? [missionId, principal.principalId, principal.invitationId] : [missionId, principal.principalId],
       client,
     );
     allowed = member.length > 0;
@@ -191,22 +194,32 @@ export async function assertBriefLocalization(principal: SessionRecord, row: Loc
 }
 
 // TTS of the canonical brief or an APPROVED translation of the current brief.
-export async function synthesizeBrief(tx: Tx, principal: SessionRecord, input: { sourceId: string; sourceVersion: number; canonicalTextHash: string; language: string }) {
-  const mission = await authorizedBriefMission(principal, input.sourceId, tx);
-  const source = await briefSource(mission, tx);
+export async function prepareBriefSpeech(principal: SessionRecord, input: { sourceId: string; sourceVersion: number; canonicalTextHash: string; language: string }) {
+  const mission = await authorizedBriefMission(principal, input.sourceId);
+  const source = await briefSource(mission);
   if (source.sourceVersion !== input.sourceVersion || source.hash !== input.canonicalTextHash) fail("STALE_VERSION", "The brief changed.");
   let text = source.text;
   if (base(input.language) !== base(mission.doc.language)) {
     const [approved] = await query<LocalizationRow>(
       "SELECT id, version, doc FROM localizations WHERE source_id=$1 AND doc->>'canonicalTextHash'=$2 AND doc->>'language'=$3 AND doc->>'status'='APPROVED' AND scope_mode=$4 AND showcase_id=$5",
       [mission.id, source.hash, input.language, mission.scope_mode, mission.showcase_id],
-      tx,
     );
     if (!approved) fail("INVALID_INPUT", "This translation needs creator review before it can be spoken.", { language: ["Translation not approved"] });
     text = approved.doc.text;
   }
-  const audio = await synthesizeSpeech(text);
-  await authorizedBriefMission(principal, mission.id, tx);
+  return { ...await synthesizeSpeech(text), reviewedTextHash: sha(text) };
+}
+
+// Publish under a short lock after provider work; source edits/deletion cannot resurrect stale media.
+export async function synthesizeBrief(tx: Tx, principal: SessionRecord, input: { sourceId: string; sourceVersion: number; canonicalTextHash: string; language: string }, audio: Awaited<ReturnType<typeof prepareBriefSpeech>>) {
+  await tx.query("SELECT id FROM missions WHERE id=$1 FOR SHARE", [input.sourceId]);
+  const mission = await authorizedBriefMission(principal, input.sourceId, tx);
+  const source = await briefSource(mission, tx);
+  if (source.sourceVersion !== input.sourceVersion || source.hash !== input.canonicalTextHash) fail("STALE_VERSION", "The brief changed.");
+  if (base(input.language) !== base(mission.doc.language)) {
+    const [approved] = await query<LocalizationRow>("SELECT id,version,doc FROM localizations WHERE source_id=$1 AND scope_mode=$2 AND showcase_id=$3 AND doc->>'canonicalTextHash'=$4 AND doc->>'language'=$5 AND doc->>'status'='APPROVED' AND (doc->>'sourceVersion')::int=$6 FOR SHARE", [mission.id, mission.scope_mode, mission.showcase_id, source.hash, input.language, source.sourceVersion], tx);
+    if (!approved || sha(approved.doc.text) !== audio.reviewedTextHash) fail("STALE_VERSION", "The reviewed translation changed.");
+  } else if (source.hash !== audio.reviewedTextHash) fail("STALE_VERSION", "The brief changed.");
   const id = randomUUID();
   const expiresAt = new Date(Date.now() + MEDIA_LIMITS.synthesizedTtlSeconds * 1000);
   const doc = AudioArtifactSchema.parse({
@@ -222,7 +235,20 @@ export async function synthesizeBrief(tx: Tx, principal: SessionRecord, input: {
   });
   await tx.query(
     "INSERT INTO audio_artifacts(id, owner_principal_id, scope_mode, showcase_id, status, mime_type, bytes_base64, doc, expires_at) VALUES ($1,$2,$3,$4,'READY',$5,$6,$7,$8)",
-    [id, principal.principalId, mission.scope_mode, mission.showcase_id, audio.mimeType, audio.bytes.toString("base64"), JSON.stringify({ ...doc, sourceMissionId: mission.id }), expiresAt],
+    [id, principal.principalId, mission.scope_mode, mission.showcase_id, audio.mimeType, audio.bytes.toString("base64"), JSON.stringify({ ...doc, sourceMissionId: mission.id, briefVersion: source.sourceVersion, reviewedTextHash: audio.reviewedTextHash }), expiresAt],
   );
   return doc;
+}
+
+// Cached media remains bound to the currently reviewed wording, not just the mission's existence.
+export async function assertBriefAudio(principal: SessionRecord, missionId: string, audio: {canonicalTextHash:string|null;language:string}, version?:number, textHash?:string) {
+  const mission = await authorizedBriefMission(principal, missionId);
+  const source = await briefSource(mission);
+  if (source.hash !== audio.canonicalTextHash || (version !== undefined && version !== source.sourceVersion)) fail("STALE_VERSION", "The brief changed; request current audio.");
+  if (base(audio.language) === base(mission.doc.language)) {
+    if (textHash !== undefined && textHash !== source.hash) fail("STALE_VERSION", "The brief changed.");
+    return;
+  }
+  const [approved] = await query<LocalizationRow>("SELECT id,version,doc FROM localizations WHERE source_id=$1 AND scope_mode=$2 AND showcase_id=$3 AND doc->>'canonicalTextHash'=$4 AND doc->>'language'=$5 AND doc->>'status'='APPROVED' AND (doc->>'sourceVersion')::int=$6", [mission.id,mission.scope_mode,mission.showcase_id,source.hash,audio.language,source.sourceVersion]);
+  if (!approved || !textHash || sha(approved.doc.text) !== textHash) fail("STALE_VERSION", "The reviewed translation changed; request current audio.");
 }
