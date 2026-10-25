@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T05:12:55.799Z (America/Chicago display dates apply).
+Last update: 2026-10-25T05:26:16.489Z (America/Chicago display dates apply).
 Current milestone: USER STOPPED all work for credit conservation. Read docs/status/lead/STOP_STAGE_HANDOFF.md first. Local release implementation/tests saved; production migration0002 applied through Tiger SQL editor, runtime grant statement executed but runtime probe pending. New web/worker release NOT deployed; EVENT_RETENTION_READY NOT enabled. Vultr worker remains INACTIVE on old8385a34, production web remains available. Local test/dev/worker processes stopped. Resume only on new user instruction; no final readiness claim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -696,3 +696,16 @@ Done: accepted post-stop design changes committed as c70b745 (Switzer via Fontsh
 Worker: verified via authenticated Vultr web console (read-only): /opt/cohue/.release-commit 8385a347…, cohue-worker inactive, enabled at boot, Node v24.22.1. Update to c70b745 NOT performed: the automated attempt to type the update commands into the production console was blocked by the session's safety classifier pending explicit user approval. noVNC also drops shifted characters, so commands must avoid `_ > & | " '`. EVENT_RETENTION_READY remains 0 everywhere. Web (new) and stopped worker (old) are compatible while retention is off.
 
 Next: user approves or runs the worker update (download codeload archive of c70b745, extract to /opt/cohue-new, npm ci --ignore-scripts, write .release-commit via sed on a copied file, swap directories keeping /opt/cohue-8385a34, start service); then verify writers, set EVENT_RETENTION_READY=1 on Vercel and worker.env, redeploy/restart, and run the on-host D7 and SHOWCASE privacy proofs.
+
+
+## Milestone from docs/status/lead/RELEASE_ITEM1_COMPLETE.md
+
+Item 1 (paused release) completed 25 Oct 2026 ~00:25 CDT with the user's explicit approval ("do what is best, I agree").
+
+Worker: via authenticated Vultr web console, stopped cohue-worker, downloaded the codeload archive of c70b7453107dd14913cbf1656eea8cfb4ac8f21e (sha256 7ecb2177a646c1f15000c2f37f545303db2db422ccad7a81fb78c80aa4f72c18, matching an independent local download), extracted to /opt/cohue-new, `npm ci --ignore-scripts --no-fund --no-audit` (506 packages), wrote .release-commit, copied ownership from the old tree, swapped directories keeping the previous release at /opt/cohue-8385a34 for rollback, started the unchanged systemd unit (User=cohue, ProtectSystem=strict). journal: "worker … started"; is-active: active; .release-commit c70b745….
+
+Retention: EVENT_RETENTION_READY=1 added to Vercel production (redeployed as cohue-ijvi45jcs on commit 827bb79, Ready, cohue.tech 200) and prepended to /etc/cohue/worker.env (backup worker.env.bak-c70b745, root-only directory unchanged), then cohue-worker restarted (active, worker cf637fb9 started 05:25:15 UTC). Both runtime writers now use the counter allocator and pruning is enabled. Old unique Vercel deployment URLs still exist; they are MAX-based writers that would now fail on the unique sequence constraint rather than corrupt data if used — do not use them.
+
+Production smoke: showcase.spec against https://cohue.tech created a labeled SHOWCASE mission and the real pipeline ran to completion, but ended PAUSED_FOR_HUMAN (NO_SOLUTION) because production showcase availability was seeded on 24 Oct and anchored to 25 Oct 20:00Z, while the spec's window is now 26 Oct. Not a code regression; the synthetic showcase must be re-anchored (seed or equivalent SQL through the Tiger editor, since this machine cannot reach the database ports) before any showcase demo.
+
+Not yet done: new deployed D7 quiet proof and SHOWCASE privacy/sweeper proof on c70b745 (on-host harness scripts/worker/prove-d7.ts with COHUE_D7_ACCEPTANCE=1 COHUE_D7_ON_HOST=1, run through the console; typing there drops shifted characters, so commands must avoid them), showcase re-anchor, BRIEF localization gap, deployed two-phone multilingual journey, accessibility/device checks, video/Devpost.
