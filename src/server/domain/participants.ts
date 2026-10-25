@@ -98,6 +98,7 @@ export async function updateParticipant(
       c.level,
       JSON.stringify(c),
     ]);
+  await tx.query("INSERT INTO access_epochs(principal_id,epoch) VALUES ($1,2) ON CONFLICT (principal_id) DO UPDATE SET epoch=access_epochs.epoch+1", [session.principalId]);
   await notifyAffectedMissions(tx, id, updated.profile_version, correlationId);
   return participantDto(updated);
 }
@@ -144,6 +145,8 @@ export async function deleteParticipant(tx: Tx, session: SessionRecord, id: stri
     await appendEvent(tx, mission, "INVITATION_REVOKED", { invitationId: invite.id, participantId: id, invitationStatus: "REVOKED" }, { correlationId, proposalRevision: invite.proposal_revision });
     await appendEvent(tx, mission, "ACCESS_REVOKED", { reason: "DELETION" }, { correlationId });
   }
+  await tx.query("UPDATE sessions SET revoked_at=now() WHERE principal_id=$1 AND scope_mode=$2 AND showcase_id=$3", [session.principalId, ...scopeColumns(session.scope)]);
+  await tx.query("INSERT INTO access_epochs(principal_id,epoch) VALUES ($1,2) ON CONFLICT (principal_id) DO UPDATE SET epoch=access_epochs.epoch+1", [session.principalId]);
   await notifyAffectedMissions(tx, id, row.profile_version, correlationId);
   return { deletionId: randomUUID(), status: "ACCEPTED" as const, revokedAt: iso(now), purgeBy: iso(purgeBy) };
 }

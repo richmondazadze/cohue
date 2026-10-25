@@ -43,6 +43,8 @@ const TERMINAL = new Set(["CANCELLED", "EXPIRED"]);
 export async function loadOwnedMission(id: string, session: SessionRecord, tx?: Tx, lock = false): Promise<MissionRow> {
   const mission = await loadMission(id, session.scope, tx, lock);
   if (mission.owner_principal_id !== session.principalId) fail("NOT_FOUND", "Mission not found.");
+  const [creator] = await query("SELECT id FROM participants WHERE id=$1 AND deleted_at IS NULL", [mission.creator_id], tx);
+  if (!creator) fail("NOT_FOUND", "Mission not found.");
   return mission;
 }
 const assertVersion = (mission: MissionRow, expected: number) => {
@@ -233,12 +235,17 @@ export async function snapshot(session: SessionRecord, id: string) {
 }
 
 export async function eventsPage(scope: Scope, missionId: string, after: number, limit: number) {
+  const [mode, showcase] = scopeColumns(scope);
   const rows = await query<{ doc: AgentEvent }>(
-    "SELECT doc FROM agent_events WHERE mission_id=$1 AND sequence > $2 ORDER BY sequence LIMIT $3",
-    [missionId, after, limit + 1],
+    "SELECT doc FROM agent_events WHERE mission_id=$1 AND scope_mode=$2 AND showcase_id=$3 AND sequence > $4 ORDER BY sequence LIMIT $5",
+    [missionId, mode, showcase, after, limit + 1],
+  );
+  const [access] = await query<{ epoch: number }>(
+    "SELECT COALESCE(a.epoch,1) AS epoch FROM missions m LEFT JOIN access_epochs a ON a.principal_id=m.owner_principal_id WHERE m.id=$1 AND m.scope_mode=$2 AND m.showcase_id=$3",
+    [missionId, mode, showcase],
   );
   const events = rows.slice(0, limit).map((r) => r.doc);
-  return { scope, events, nextSequence: events.length ? events[events.length - 1].sequence : after, hasMore: rows.length > limit, accessEpoch: 1 };
+  return { scope, events, nextSequence: events.length ? events[events.length - 1].sequence : after, hasMore: rows.length > limit, accessEpoch: access?.epoch ?? 1 };
 }
 
 export async function proposals(session: SessionRecord, id: string) {

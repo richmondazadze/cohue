@@ -7,7 +7,7 @@ import { scopeFromRow } from "../http/scope";
 import { createSessionRecord, iso, INVITE_COOKIE, type SessionRecord } from "../auth/sessions";
 import { invitationDto, principalParticipantIds, type InvitationRow, type MissionRow } from "./store";
 import type { CookieWrite } from "../http/route";
-import { localizeInvitation } from "./media";
+import { localizeInvitation, authorizedInvitationSource } from "./media";
 
 const TERMINAL = new Set(["CANCELLED", "EXPIRED"]);
 // Token derived from (invitation, epoch) so replay recomputes it; only its keyed hash is stored.
@@ -79,8 +79,12 @@ export async function redeem(tx: Tx, token: string, cookies: CookieWrite[]) {
 
 export async function detail(invite: SessionRecord, invitationId: string) {
   if (invite.invitationId !== invitationId) fail("FORBIDDEN", "This session is bound to a different invitation.");
-  const [row] = await query<InvitationRow>("SELECT * FROM invitations WHERE id=$1", [invitationId]);
-  if (!row) fail("NOT_FOUND", "Invitation not found.");
-  const [mission] = await query<{ doc: { language: string } }>("SELECT doc FROM missions WHERE id=$1", [row.mission_id]);
-  return { invitation: invitationDto(row), localized: await localizeInvitation(row, mission.doc.language) };
+  const row = await authorizedInvitationSource(invite, invitationId);
+  return { invitation: invitationDto(row), localized: await localizeInvitation(row, row.doc.language) };
+}
+
+// Separate creator read; narrow bearer sessions never inherit this authority.
+export async function reviewDetail(session: SessionRecord, invitationId: string) {
+  const row = await authorizedInvitationSource(session, invitationId, undefined, true);
+  return { invitation: invitationDto(row), localized: await localizeInvitation(row, row.doc.language) };
 }

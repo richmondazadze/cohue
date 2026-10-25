@@ -9,7 +9,7 @@ import {
 } from "@/contracts";
 import { query, type Tx } from "../db/client";
 import { fail } from "../http/errors";
-import { scopeFromRow } from "../http/scope";
+import { scopeColumns, scopeFromRow } from "../http/scope";
 import { iso, type SessionRecord } from "../auth/sessions";
 import { generateJson, geminiConfigured } from "../providers/gemini";
 import { synthesizeSpeech, transcribeAudio } from "../providers/elevenlabs";
@@ -34,6 +34,26 @@ export function canonicalInvitationText(row: InvitationRow): string {
 }
 
 type LocalizationRow = { id: string; version: number; doc: LocalizedText };
+
+// Source authorization is shared by review, approval and playback; a matching UUID or hash is not authority.
+export async function authorizedInvitationSource(principal: SessionRecord, id: string, client?: Tx, creatorOnly = false) {
+  const [mode, showcase] = scopeColumns(principal.scope);
+  const [row] = await query<InvitationRow & { owner_principal_id: string; doc: MissionRow["doc"]; mission_state: string; selected_proposal_id: string | null }>(
+    `SELECT i.*, m.owner_principal_id, m.doc, m.state AS mission_state, m.selected_proposal_id
+     FROM invitations i JOIN missions m ON m.id=i.mission_id AND m.scope_mode=i.scope_mode AND m.showcase_id=i.showcase_id
+     JOIN participants p ON p.id=i.participant_id AND p.scope_mode=i.scope_mode AND p.showcase_id=i.showcase_id AND p.deleted_at IS NULL
+     WHERE i.id=$1 AND i.scope_mode=$2 AND i.showcase_id=$3`,
+    [id, mode, showcase], client,
+  );
+  const creator = row && principal.kind !== "INVITATION" && row.owner_principal_id === principal.principalId;
+  const invitee = row && principal.kind === "INVITATION" && principal.invitationId === row.id && principal.principalId === row.participant_id;
+  if (!row || !(creator || (!creatorOnly && invitee))) fail("NOT_FOUND", "Source not found.");
+  if (["CANCELLED", "EXPIRED"].includes(row.mission_state)) fail("TERMINAL_MISSION", "This mission has ended.");
+  if (row.status === "REVOKED") fail("INVITATION_REVOKED", "This invitation was replaced or withdrawn.");
+  if (row.status === "EXPIRED" || row.expires_at <= new Date()) fail("INVITATION_EXPIRED", "This invitation has expired.");
+  if (row.selected_proposal_id !== row.proposal_id) fail("STALE_VERSION", "This invitation is no longer current.");
+  return row;
+}
 
 // Machine translation is REVIEW_REQUIRED; it never changes the canonical terms or the consent hash.
 export async function localizeInvitation(row: InvitationRow, missionLanguage: string): Promise<LocalizedText[]> {
@@ -63,8 +83,8 @@ const uuidFromHash = (seed: string) => {
 
 async function translate(row: InvitationRow, missionLanguage: string, canonical: string, hash: string): Promise<LocalizedText[]> {
   const existing = await query<LocalizationRow>(
-    "SELECT id, version, doc FROM localizations WHERE source_id=$1 AND doc->>'canonicalTextHash'=$2 AND doc->>'language'=$3",
-    [row.id, hash, row.language],
+    "SELECT id, version, doc FROM localizations WHERE source_id=$1 AND doc->>'canonicalTextHash'=$2 AND doc->>'language'=$3 AND scope_mode=$4 AND showcase_id=$5",
+    [row.id, hash, row.language, row.scope_mode, row.showcase_id],
   );
   if (existing.length) return existing.map((e) => e.doc);
   try {
@@ -98,16 +118,19 @@ async function translate(row: InvitationRow, missionLanguage: string, canonical:
   }
 }
 
-// Source-authorized review: the mission creator approves (optionally edits) a translation of the current canonical text.
-export async function approveLocalization(tx: Tx, session: SessionRecord, id: string, input: { expectedVersion: number; canonicalTextHash: string; text: string }) {
-  const [row] = await query<LocalizationRow>("SELECT id, version, doc FROM localizations WHERE id=$1 FOR UPDATE", [id], tx);
+// Used before receipt replay as well as a new approval, so old results cannot restore revoked access.
+export async function assertLocalizationSource(session: SessionRecord, id: string, tx?: Tx) {
+  const [row] = await query<LocalizationRow>(`SELECT id, version, doc FROM localizations WHERE id=$1${tx ? " FOR UPDATE" : ""}`, [id], tx);
   if (!row) fail("NOT_FOUND", "Translation not found.");
-  const [owner] = await query<{ owner_principal_id: string }>(
-    "SELECT m.owner_principal_id FROM invitations i JOIN missions m ON m.id=i.mission_id WHERE i.id=$1",
-    [row.doc.sourceId],
-    tx,
-  );
-  if (owner?.owner_principal_id !== session.principalId) fail("NOT_FOUND", "Translation not found.");
+  const source = await authorizedInvitationSource(session, row.doc.sourceId, tx, true);
+  if (row.doc.sourceVersion !== source.proposal_revision || row.doc.canonicalTextHash !== sha(canonicalInvitationText(source)))
+    fail("STALE_VERSION", "The invitation text changed; review the new translation.");
+  return row;
+}
+
+// Source-authorized review: the mission creator approves a translation of the current canonical text.
+export async function approveLocalization(tx: Tx, session: SessionRecord, id: string, input: { expectedVersion: number; canonicalTextHash: string; text: string }) {
+  const row = await assertLocalizationSource(session, id, tx);
   if (row.version !== input.expectedVersion) fail("STALE_VERSION", "Translation changed since you loaded it.");
   if (row.doc.canonicalTextHash !== input.canonicalTextHash) fail("STALE_VERSION", "The invitation text changed; review the new translation.");
   const doc = LocalizedTextSchema.parse({ ...row.doc, text: input.text, status: "APPROVED", version: row.version + 1 });
@@ -118,27 +141,22 @@ export async function approveLocalization(tx: Tx, session: SessionRecord, id: st
 // TTS speaks only authorized text: canonical text in the mission language, or an APPROVED translation of it.
 export async function synthesize(tx: Tx, principal: SessionRecord, input: { sourceId: string; sourceKind: "INVITATION" | "BRIEF"; sourceVersion: number; canonicalTextHash: string; language: string }) {
   if (input.sourceKind !== "INVITATION") fail("NOT_FOUND", "Briefs are not available for playback yet.");
-  const [row] = await query<InvitationRow & { owner_principal_id: string; doc: MissionRow["doc"] }>(
-    "SELECT i.*, m.owner_principal_id, m.doc FROM invitations i JOIN missions m ON m.id=i.mission_id WHERE i.id=$1",
-    [input.sourceId],
-    tx,
-  );
-  const allowed = row && (principal.invitationId === row.id || row.owner_principal_id === principal.principalId);
-  if (!allowed) fail("NOT_FOUND", "Source not found.");
+  const row = await authorizedInvitationSource(principal, input.sourceId, tx);
   if (row.proposal_revision !== input.sourceVersion) fail("STALE_VERSION", "The invitation changed.");
   const canonical = canonicalInvitationText(row);
   if (sha(canonical) !== input.canonicalTextHash) fail("STALE_VERSION", "The invitation text changed.");
   let text = canonical;
   if (base(input.language) !== base(row.doc.language)) {
     const [approved] = await query<LocalizationRow>(
-      "SELECT id, version, doc FROM localizations WHERE source_id=$1 AND doc->>'canonicalTextHash'=$2 AND doc->>'language'=$3 AND doc->>'status'='APPROVED'",
-      [row.id, input.canonicalTextHash, input.language],
+      "SELECT id, version, doc FROM localizations WHERE source_id=$1 AND doc->>'canonicalTextHash'=$2 AND doc->>'language'=$3 AND doc->>'status'='APPROVED' AND scope_mode=$4 AND showcase_id=$5 AND (doc->>'sourceVersion')::int=$6",
+      [row.id, input.canonicalTextHash, input.language, row.scope_mode, row.showcase_id, row.proposal_revision],
       tx,
     );
     if (!approved) fail("INVALID_INPUT", "This translation needs creator review before it can be spoken.", { language: ["Translation not approved"] });
     text = approved.doc.text;
   }
   const audio = await synthesizeSpeech(text);
+  await authorizedInvitationSource(principal, row.id, tx);
   const id = randomUUID();
   const expiresAt = new Date(Math.min(Date.now() + MEDIA_LIMITS.synthesizedTtlSeconds * 1000, row.expires_at.getTime()));
   const doc = AudioArtifactSchema.parse({
@@ -154,18 +172,25 @@ export async function synthesize(tx: Tx, principal: SessionRecord, input: { sour
   });
   await tx.query(
     "INSERT INTO audio_artifacts(id, owner_principal_id, scope_mode, showcase_id, status, mime_type, bytes_base64, doc, expires_at) VALUES ($1,$2,$3,$4,'READY',$5,$6,$7,$8)",
-    [id, principal.principalId, row.scope_mode, row.showcase_id, audio.mimeType, audio.bytes.toString("base64"), JSON.stringify(doc), expiresAt],
+    [id, principal.principalId, row.scope_mode, row.showcase_id, audio.mimeType, audio.bytes.toString("base64"), JSON.stringify({ ...doc, sourceInvitationId: row.id }), expiresAt],
   );
   return doc;
 }
 
 export async function mediaFor(principal: SessionRecord, id: string) {
+  const [mode, showcase] = scopeColumns(principal.scope);
   const [row] = await query<{ owner_principal_id: string; status: string; mime_type: string; bytes_base64: string | null; doc: unknown; expires_at: Date }>(
-    "SELECT owner_principal_id, status, mime_type, bytes_base64, doc, expires_at FROM audio_artifacts WHERE id=$1",
-    [id],
+    "SELECT owner_principal_id, status, mime_type, bytes_base64, doc, expires_at FROM audio_artifacts WHERE id=$1 AND scope_mode=$2 AND showcase_id=$3",
+    [id, mode, showcase],
   );
   if (!row || row.owner_principal_id !== principal.principalId || row.expires_at < new Date() || !row.bytes_base64) fail("NOT_FOUND", "Media not found.");
-  return { doc: AudioArtifactSchema.parse(row.doc), bytes: Buffer.from(row.bytes_base64!, "base64"), mimeType: row.mime_type };
+  const stored = z.object({ sourceInvitationId: z.string().uuid() }).passthrough().safeParse(row.doc);
+  if (!stored.success) return fail("NOT_FOUND", "Media source not found.");
+  const { sourceInvitationId, ...publicDoc } = stored.data;
+  const doc = AudioArtifactSchema.parse(publicDoc);
+  // Source identity is private persistence metadata, never part of the public media DTO.
+  await authorizedInvitationSource(principal, sourceInvitationId);
+  return { doc, bytes: Buffer.from(row.bytes_base64!, "base64"), mimeType: row.mime_type };
 }
 
 const MAGIC: [z.infer<typeof AudioMimeSchema>, (b: Buffer) => boolean][] = [

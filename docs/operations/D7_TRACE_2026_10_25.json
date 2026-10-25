@@ -1,0 +1,176 @@
+[
+  {
+    "at": "2026-10-25T02:40:16.758Z",
+    "step": "queued_with_worker_held",
+    "missionId": "c56d4456-60bf-42a3-bd34-b537587ab6a9",
+    "scope": {
+      "executionMode": "SHOWCASE",
+      "showcaseId": "00000000-0000-4000-8000-000000000384"
+    },
+    "workerCommit": "8385a347d96eb0c0bca6abefd936fdbb9453f90b",
+    "node": "v24.22.1",
+    "origin": "https://cohue.tech",
+    "noHttp": true
+  },
+  {
+    "at": "2026-10-25T02:40:20.584Z",
+    "step": "actual_inflight_lease_held",
+    "jobId": "75d11af9-8285-4d83-adf4-cc349329e611",
+    "owner": "09893897-6f8e-4a47-9d89-aa71a05c1122",
+    "fence": "1",
+    "attempts": 1
+  },
+  {
+    "at": "2026-10-25T02:40:50.566Z",
+    "step": "resume_after_systemd_auxiliary_warning",
+    "actualKillAndRestartVerifiedInJournal": true
+  },
+  {
+    "at": "2026-10-25T02:41:49.608Z",
+    "step": "unattended_restart_recovery",
+    "state": "PROPOSED",
+    "jobs": [
+      {
+        "id": "75d11af9-8285-4d83-adf4-cc349329e611",
+        "fence": "2",
+        "attempts": 2,
+        "status": "SUCCEEDED"
+      },
+      {
+        "id": "0e247311-c056-4c2b-a0af-877798213bb3",
+        "fence": "1",
+        "attempts": 1,
+        "status": "SUCCEEDED"
+      },
+      {
+        "id": "bf3842d1-de6c-43a8-89a2-bf1d0058aecb",
+        "fence": "1",
+        "attempts": 1,
+        "status": "SUCCEEDED"
+      }
+    ],
+    "staleFenceRejected": true,
+    "service": "active",
+    "journal": "2026-10-25T02:40:18+00:00 cohue-worker env[2699]: > cohue@0.1.0 worker\n2026-10-25T02:40:18+00:00 cohue-worker env[2699]: > tsx --conditions=react-server scripts/worker/run.ts\n2026-10-25T02:40:19+00:00 cohue-worker env[2723]: worker 09893897 started\n2026-10-25T02:40:21+00:00 cohue-worker systemd[1]: cohue-worker.service: Sent signal SIGKILL to main process 2699 (npm run worker) on client request.\n2026-10-25T02:40:21+00:00 cohue-worker systemd[1]: cohue-worker.service: Sending signal SIGKILL to process 2711 (sh) on client request.\n2026-10-25T02:40:21+00:00 cohue-worker systemd[1]: cohue-worker.service: Sending signal SIGKILL to process 2712 (MainThread) on client request.\n2026-10-25T02:40:21+00:00 cohue-worker systemd[1]: cohue-worker.service: Sending signal SIGKILL to process 2723 (MainThread) on client request.\n2026-10-25T02:40:21+00:00 cohue-worker systemd[1]: cohue-worker.service: Sending signal SIGKILL to process 2731 (esbuild) on client request.\n2026-10-25T02:40:21+00:00 cohue-worker systemd[1]: cohue-worker.service: Failed to send signal SIGKILL to auxiliary processes on client request: Invalid argument\n2026-10-25T02:40:21+00:00 cohue-worker systemd[1]: cohue-worker.service: Main process exited, code=killed, status=9/KILL\n2026-10-25T02:40:21+00:00 cohue-worker systemd[1]: cohue-worker.service: Failed with result 'signal'.\n2026-10-25T02:40:21+00:00 cohue-worker systemd[1]: cohue-worker.service: Consumed 2.091s CPU time.\n2026-10-25T02:40:26+00:00 cohue-worker systemd[1]: cohue-worker.service: Scheduled restart job, restart counter is at 1.\n2026-10-25T02:40:26+00:00 cohue-worker systemd[1]: Started cohue-worker.service - COHUE durable PostgreSQL job worker.\n2026-10-25T02:40:27+00:00 cohue-worker env[2798]: > cohue@0.1.0 worker\n2026-10-25T02:40:27+00:00 cohue-worker env[2798]: > tsx --conditions=react-server scripts/worker/run.ts\n2026-10-25T02:40:28+00:00 cohue-worker env[2822]: worker 560aeffa started\n2026-10-25T02:40:53+00:00 cohue-worker env[2822]: 2026-10-25T02:40:53.565Z processed 3 job(s)"
+  },
+  {
+    "at": "2026-10-25T02:41:56.626Z",
+    "step": "unique_activation_and_ordered_effects",
+    "effects": {
+      "members": 2,
+      "distinct_members": 2,
+      "tasks": 3,
+      "distinct_tasks": 3,
+      "invites": 2,
+      "distinct_invites": 2
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "type": "MISSION_CREATED"
+      },
+      {
+        "sequence": 2,
+        "type": "REQUIREMENT_CREATED"
+      },
+      {
+        "sequence": 3,
+        "type": "REQUIREMENT_CREATED"
+      },
+      {
+        "sequence": 4,
+        "type": "AGENT_STARTED"
+      },
+      {
+        "sequence": 5,
+        "type": "REQUIREMENT_CONFIRMED"
+      },
+      {
+        "sequence": 6,
+        "type": "REQUIREMENT_CONFIRMED"
+      },
+      {
+        "sequence": 7,
+        "type": "AGENT_COMPLETED"
+      },
+      {
+        "sequence": 8,
+        "type": "SCOUT_SEARCH_STARTED"
+      },
+      {
+        "sequence": 9,
+        "type": "CANDIDATES_FOUND"
+      },
+      {
+        "sequence": 10,
+        "type": "OPPORTUNITIES_FOUND"
+      },
+      {
+        "sequence": 11,
+        "type": "TOOL_STARTED"
+      },
+      {
+        "sequence": 12,
+        "type": "TOOL_COMPLETED"
+      },
+      {
+        "sequence": 13,
+        "type": "PROPOSAL_CREATED"
+      },
+      {
+        "sequence": 14,
+        "type": "PROPOSAL_CREATED"
+      },
+      {
+        "sequence": 15,
+        "type": "PROPOSAL_CREATED"
+      },
+      {
+        "sequence": 16,
+        "type": "PROPOSAL_CREATED"
+      },
+      {
+        "sequence": 17,
+        "type": "INVITATION_ACCEPTED"
+      },
+      {
+        "sequence": 18,
+        "type": "INVITATION_SENT"
+      },
+      {
+        "sequence": 19,
+        "type": "INVITATION_ACCEPTED"
+      },
+      {
+        "sequence": 20,
+        "type": "MISSION_ACTIVATED"
+      },
+      {
+        "sequence": 21,
+        "type": "TASK_CREATED"
+      },
+      {
+        "sequence": 22,
+        "type": "TASK_CREATED"
+      },
+      {
+        "sequence": 23,
+        "type": "TASK_CREATED"
+      }
+    ],
+    "activationWinners": 1,
+    "syntheticResponses": true,
+    "externalCallsMayRepeat": true
+  },
+  {
+    "at": "2026-10-25T02:41:59.551Z",
+    "step": "proof_complete",
+    "service": "active",
+    "bootEnabled": "enabled"
+  },
+  {
+    "at": "2026-10-25T02:42:28.988Z",
+    "step": "synthetic_capacity_released",
+    "missionId": "c56d4456-60bf-42a3-bd34-b537587ab6a9"
+  }
+]

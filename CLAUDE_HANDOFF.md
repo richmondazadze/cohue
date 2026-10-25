@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T02:41:50.372Z (America/Chicago display dates apply).
+Last update: 2026-10-25T02:44:23.921Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -483,3 +483,32 @@ Initial local checks found one test expecting English “Spanish” rather than 
 Backend reports producer/auth tests independently; this frontend report does not claim its results. Contracts remain lead-owned1.1.0 with additive39-operation registry. No migrations, provider credentials, environment or deployed runtime changed. Product Engineer schedules combined npmcheck/build/production smoke, push/deploy. Quiet window respected: production app tab closed immediately on lead request; no production polling or requests while backend D7 proof runs.
 
 `RELEASE_ACCEPTANCE.md` tracks pending deployed/browser/device/provider/performance evidence. D7, actual English/Spanish/French media, two-session production consent/repair/room/replay, physical phone/screenreader and graph30/60profiling remain unverified in this milestone. No design changes or frozen-source edits. Immediate next action: lead integrates stable owned slice, runs reserved full checks/build and frontend E2E (including new spec), then provides final reviewed deployed commit for targeted CUA acceptance.
+
+
+## Milestone from docs/status/backend/RELEASE_ACCEPTANCE.md
+
+# Backend release acceptance — 25 October 2026 UTC
+
+Preceding baseline b197412, shared main. User-authorized specialist release assignment via Product Engineer; read current rules, paired handoffs, release/original work orders, contracts/resolutions/checkpoints and existing backend evidence. No competing architecture, design, schema, root dependency/config or web deployment changes. Lead approved additive creator review operation and owns its registry/manifest; backend implemented producer only.
+
+## Completed
+
+- Installed existing approved Vultr host only; official Node24.22.1/npm11.19.1, reviewed archive8385a34, locked dependencies, unprivileged systemd worker active/boot enabled; root0600 runtime-only environment, verified TLS pool3, SSH-only firewall. No administrator DB credential or new resource. SSH host fingerprint verified through authenticated console before credential use. No secrets in tracked outputs.
+- Actual deployed D7 passed on source8385a34: clients/request quiet, queued work, actual lease held, real SIGKILL/restart/natural expiry/fence2 recovery, stale commit rejected, ordered23events, single activation/unique2members/3tasks/2invites. Labeled synthetic scenario; ordinary domain cancellation releases capacity afterward. Exact timestamps, diagnostic caveats, identity and safe trace in docs/operations/D7_EVIDENCE.md and D7_TRACE_2026_10_25.json. Later final worker identity still needs lead-coordinated update; old proof is not reattributed to new code.
+- Creator-only GET invitation review follows approved registry, exact scope and creator principal; invitee detail stays narrow. Shared source guard rejects expired/revoked/replaced/cancelled/deleted sources. Translation approval checks canonical hash/sourceVersion/row version; approval and synthesis receipt replays reauthorize their source. Media has private persisted source identity, stripped before DTO serialization, and rechecks source access on each read. Historical audio without source metadata is denied rather than guessed.
+- Scoped event-page SQL, periodic SSE current-principal/exact-scope/object ownership recheck before each page; malformed/conflicting cursors rejected. Deleted creator loses mission reads; profile edits/deletion bump access epoch, deletion revokes owner sessions as well as invitee sessions. No synthetic persisted success events generated for transport.
+
+## Actual validation
+
+- Created new local disposable PostgreSQL database cohue_backend_release at127.0.0.1:54329; applied0000_init61statements and0001_mission_history3statements. No production migrations or destructive production suite.
+- `COHUE_TEST_DATABASE_URL=postgresql://cohue@127.0.0.1:54329/cohue_backend_release npx vitest run tests/backend`:21passed,6files,0skips after final fixes. New6actual-DB tests cover owner/bearer/foreignprincipal/scope, approval stale versions/hash, revoked/expired/replaced/cancelled/deleted source, private metadata/media denial. An intermediate repeated run exposed shared-test job leasing interference; new suite now creates its own UUID PostgreSQL schema and migrations with schema-local foreign keys, cleans only that owned schema. Final parallel run passed. Mock/generated media bytes in auth tests are explicitly not provider proof.
+- Targeted owned ESLint and `npx tsc --noEmit` passed before final note; full combined check/production browser smoke scheduled and owned by lead to prevent shared.next collisions. Local `npm audit --audit-level=high`:0vulnerabilities. Lead must run final combined checks on integrated commit.
+- Existing real Gemini en/es/fr extraction and Spanish/French timestamp-preserving domain localization, English speech and SerpApi evidence remain historical referenced results, not rerun by this milestone. Deployed D7 runner did retrieve public opportunities as distinct evidence; no public resource became a human member.
+
+## Remaining acceptance and operations
+
+Final compatible worker source update after lead review/web deployment; fresh final integrated check/audit/hostedCI/browser smoke. Full production en/es/fr invitation translation review/TTS/transcription, actual second-device phone/media/failure/retention/deletion expiry, screen-reader/mobile/performance and video/submission remain separate evidence gates, not complete from this report. No final release declaration by backend.
+
+Retention risk: existing sweeper handles expired media/receipts/sessions and deleted profile fields, but comprehensive historical canonical-text/localization/event/receipt scrubbing and30day restricted-audit pruning need further implementation/actual evidence; this is a mandatory privacy gap, not a pass. Current-source guards prevent deleted invitee content reads through media/localizations; broader historical projections still need explicit privacy review. Backup policy observed TigerData3day PITR; restore must reapply tombstones/revocations before exposing access. Vultr has no paid backup; source/runtime reconstruction uses reviewed Git and secret manager. Account credits previously observed expire2026-11-24; running instance continues billing afterward until user destroys it. See HOST_SETUP for secure update/restart; never copy admin env wholesale.
+
+Immediate next action: lead integrates committed owned changes, runs serialized combined checks, deploys reviewed release and supplies final immutable worker commit. Backend then updates existing host and validates service/source identity without claiming old D7 trace ran new source; continue mandatory provider/privacy acceptance with frontend. Ownership stays backend server/API/DB/worker/operations; frontend visuals and lead root/contracts unchanged. Paired handoffs updated exclusively through append script. No push or web deploy by backend.
