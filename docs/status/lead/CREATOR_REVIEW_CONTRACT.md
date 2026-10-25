@@ -1,0 +1,3 @@
+# Creator translation review contract
+
+Approved backend's narrow additivegetInvitationForReview, GET/api/invitations/:id/review OWNER, same validatedinvitation/localizeddata asinvite-onlydetail. ExistinggetInvitation unchanged. Exactmissioncreator+scope/current-source authorization mandatory; backend owns enforcementandnegativeDBtests;frontendownsconsumption/review/playback. Registry39operations, manifestexported. No persisted eventwireversionchange(1.1.0); additiveoperationdoesnotinvalidatehistoricalevents. Contractunit33passed. Bothengineerchatssentactualdefinitionandcoordinationmessage. Backendalsoauthorizedtohardenexistinglocalization/mediaexactscope/sourceexpiry/revocation/hashchecks. No producer/UIimplementationclaimfromcontractalone.

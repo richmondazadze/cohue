@@ -442,6 +442,18 @@ export const apiContracts = {
     }),
     200,
   ),
+  // Mission creator review only; invite-session detail access remains a separate operation.
+  getInvitationForReview: route(
+    "GET",
+    "/api/invitations/:id/review",
+    "OWNER",
+    empty,
+    z.strictObject({
+      invitation: InvitationSchema,
+      localized: z.array(LocalizedTextSchema).max(20),
+    }),
+    200,
+  ),
   respondInvitation: route(
     "POST",
     "/api/invitations/:id/respond",

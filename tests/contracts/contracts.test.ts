@@ -578,3 +578,15 @@ describe("replay query coercion", () => {
     ).toBe(false);
   });
 });
+
+
+describe("creator invitation translation review", () => {
+  it("adds a narrow owner read without widening invite-session detail", () => {
+    expect(apiContracts.getInvitationForReview.method).toBe("GET");
+    expect(apiContracts.getInvitationForReview.path).toBe("/api/invitations/:id/review");
+    expect(apiContracts.getInvitationForReview.auth).toBe("OWNER");
+    expect(apiContracts.getInvitation.auth).toBe("INVITATION");
+    expect(apiContracts.getInvitationForReview.input.safeParse({ token: "unexpected" }).success).toBe(false);
+    expect(apiContracts.getInvitationForReview.params.safeParse({ id: "invalid" }).success).toBe(false);
+  });
+});

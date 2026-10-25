@@ -194,6 +194,14 @@
       "idempotentCommand": false
     },
     {
+      "name": "getInvitationForReview",
+      "method": "GET",
+      "path": "/api/invitations/:id/review",
+      "auth": "OWNER",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
       "name": "respondInvitation",
       "method": "POST",
       "path": "/api/invitations/:id/respond",

@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T02:29:08.673Z (America/Chicago display dates apply).
+Last update: 2026-10-25T02:33:27.258Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -443,3 +443,10 @@ Instance creation is complete; application worker installation and D7 are NOT co
 # Specialist release dispatch
 
 User explicitly requests orchestrated remaining work in the two existing specialist chats. Restored separatefrontend/backendownership inAGENTS; created RELEASE_ORCHESTRATION.md, FRONTEND_RELEASE_SCOPE.md and BACKEND_RELEASE_SCOPE.md with orderedR0–R6gates, exactboundaries/dependencies/acceptance and evidence-basedcompletion. Baseline796042e; hostedCI for796042e andd01e5a2 bothsuccess. Weblive, VultrhostRunning butworkeruninstalled/D7unverified. No duplicateinstance orsecrettransfer claimed. Lead retainsconfig/contracts/CI/finalreview and serializedpush/deploy. Actualdispatch receipt follows tools; documentcreation alone doesnotactivatechats.
+
+
+## Milestone from docs/status/lead/CREATOR_REVIEW_CONTRACT.md
+
+# Creator translation review contract
+
+Approved backend's narrow additivegetInvitationForReview, GET/api/invitations/:id/review OWNER, same validatedinvitation/localizeddata asinvite-onlydetail. ExistinggetInvitation unchanged. Exactmissioncreator+scope/current-source authorization mandatory; backend owns enforcementandnegativeDBtests;frontendownsconsumption/review/playback. Registry39operations, manifestexported. No persisted eventwireversionchange(1.1.0); additiveoperationdoesnotinvalidatehistoricalevents. Contractunit33passed. Bothengineerchatssentactualdefinitionandcoordinationmessage. Backendalsoauthorizedtohardenexistinglocalization/mediaexactscope/sourceexpiry/revocation/hashchecks. No producer/UIimplementationclaimfromcontractalone.
