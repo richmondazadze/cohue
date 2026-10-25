@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import type { GroupProposal, MissionSnapshot } from "@/contracts";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status";
@@ -7,7 +8,7 @@ import { skillLabel } from "@/features/shared/skills";
 import { initialsOf, nameFor } from "./model";
 import { CueEntrance, useCue } from "./motion";
 
-export function Avatar({ name, tone = "neutral" }: { name: string; tone?: "neutral" | "approved" | "pending" | "declined" }) {
+export function Avatar({ name, avatarId, tone = "neutral" }: { name: string; avatarId?: MissionSnapshot["graph"]["nodes"][number]["avatarId"]; tone?: "neutral" | "approved" | "pending" | "declined" }) {
   const ring =
     tone === "approved"
       ? "border-approved bg-approved-bg text-approved"
@@ -21,7 +22,7 @@ export function Avatar({ name, tone = "neutral" }: { name: string; tone?: "neutr
       aria-hidden="true"
       className={`grid size-10 shrink-0 place-items-center rounded-full border-2 text-sm font-semibold ${ring}`}
     >
-      {initialsOf(name)}
+      {avatarId ? <Image src={`/avatars/${avatarId}.png`} alt="" width={36} height={36} className="rounded-full" /> : initialsOf(name)}
     </span>
   );
 }
@@ -84,6 +85,7 @@ export function ProposalCard({
       <ul className="m-0 list-none divide-y divide-line-subtle p-0">
         {proposal.members.map((m, i) => {
           const name = nameFor(names, m.participantId);
+          const identity = snapshot.graph.nodes.find(node => node.id === m.participantId && node.kind === "participant");
           return (
             <CueEntrance
               as="li"
@@ -92,9 +94,10 @@ export function ProposalCard({
               cueKey={entranceKey ? `${entranceKey}-${m.participantId}` : null}
               className="flex items-start gap-3 px-5 py-3"
             >
-              <Avatar name={name} />
+              <Avatar name={name} avatarId={identity?.avatarId} />
               <div className="min-w-0">
                 <p className="font-medium">{name}</p>
+                {identity?.username ? <p className="type-meta text-muted">@{identity.username}</p> : null}
                 <p className="text-sm text-muted">
                   {m.role}{m.coveredRequirementIds.length ? " · covers " : ""}
                   {m.coveredRequirementIds

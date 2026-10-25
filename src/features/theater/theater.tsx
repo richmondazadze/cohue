@@ -510,7 +510,7 @@ function CenterPanel({
 
   if (state === "ACTIVATED")
     blocks.push(
-      <section key="activated" className="flex flex-col gap-3 rounded-field border-2 border-activated bg-activated-bg p-5 outline-2 outline-offset-2 outline-activated">
+      <section key="activated" className="flex flex-col gap-3 rounded-field border border-activated bg-activated-bg p-5">
         <h2 className="type-section text-activated">◎ Activated</h2>
         <p>Every required person approved current terms. Memberships and first tasks are recorded.</p>
         <div>
@@ -593,15 +593,17 @@ function CenterPanel({
         <ul className="m-0 flex list-none flex-col gap-3 p-0">
           {members.map((m) => {
             const name = nameFor(names, m.participantId);
+            const identity = snapshot.graph.nodes.find(node => node.id === m.participantId && node.kind === "participant");
             const status = m.current ? m.track?.status : undefined;
             const invitationId = (m.current ? m.track?.invitationId : undefined) ?? issued.get(m.participantId);
             const tone = status === "ACCEPTED" ? "approved" : status === "DECLINED" ? "declined" : status ? "pending" : "neutral";
             return (
               <li key={m.participantId} className="rounded-field border border-line-panel bg-surface p-4">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Avatar name={name} tone={tone} />
+                  <Avatar name={name} avatarId={identity?.avatarId} tone={tone} />
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">{name}</p>
+                    {identity?.username ? <p className="type-meta text-muted">@{identity.username}</p> : null}
                     <p className="text-sm text-muted">{m.role}</p>
                   </div>
                   {status ? (

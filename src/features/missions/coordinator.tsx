@@ -4,7 +4,8 @@ import type { ApiData } from "@/client/http";
 import { useCommand } from "@/client/command";
 import { Button } from "@/components/ui/button";
 import { Checkbox, TextArea } from "@/components/ui/field";
-import { ErrorNotice } from "@/components/ui/notice";
+import { ErrorNotice, Notice } from "@/components/ui/notice";
+import { PlaybackMeter } from "@/components/voice/playback-meter";
 import { RecordControl } from "@/components/voice/record-control";
 import { cx } from "@/components/ui/cx";
 
@@ -19,37 +20,8 @@ export type CoordinatorDraft = ApiData<"coordinateMission">["draft"];
 
 const MAX_TURNS = 12;
 const SPEAK_KEY = "cohue.coordinator.speak";
-const VOICE_LANG: Record<string, string> = { en: "en-US", es: "es-ES", fr: "fr-FR" };
 
 const MODEL_NAME = { GEMINI: "Gemini", META: "Meta Muse Spark" } as const;
-
-let playing: HTMLAudioElement | null = null;
-let speechStatus: ((value: boolean) => void) | null = null;
-function stopSpeaking() {
-  speechStatus?.(false);
-  playing?.pause();
-  playing = null;
-  globalThis.speechSynthesis?.cancel();
-}
-/** The Coordinator's ElevenLabs voice; the browser's own speech engine only when that voice is unavailable. */
-function speak(text: string, language: string, audio: { mimeType: string; base64: string } | null) {
-  stopSpeaking();
-  if (audio) {
-    playing = new Audio(`data:${audio.mimeType};base64,${audio.base64}`);
-    playing.onplay=()=>speechStatus?.(true);playing.onpause=()=>speechStatus?.(false);playing.onended=()=>speechStatus?.(false);
-    void playing.play().catch(() => browserSpeak(text, language));
-    return;
-  }
-  browserSpeak(text, language);
-}
-function browserSpeak(text: string, language: string) {
-  const synth = globalThis.speechSynthesis;
-  if (!synth) return;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = VOICE_LANG[language] ?? language;
-  u.onstart=()=>speechStatus?.(true);u.onend=()=>speechStatus?.(false);u.onerror=()=>speechStatus?.(false);
-  synth.speak(u);
-}
 
 /**
  * A conversation with the Coordinator agent. Each turn re-drafts the whole brief from everything said so far
@@ -70,7 +42,29 @@ export function CoordinatorChat({
   const speakCmd = useCommand("speakCoordinator");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [speaking,setSpeaking]=useState(false);
-  useEffect(()=>{speechStatus=setSpeaking;return()=>{stopSpeaking();speechStatus=null}},[]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const voiceEpoch = useRef(0);
+  const voiceEnabled = useRef(false);
+  const [voiceUnavailable, setVoiceUnavailable] = useState(false);
+  const stopSpeaking = () => {
+    voiceEpoch.current += 1;
+    audioRef.current?.pause();
+    audioRef.current = null;
+    setSpeaking(false);
+    setVoiceUnavailable(false);
+  };
+  const speak = (audio: { mimeType: string; base64: string } | null, epoch: number) => {
+    if (!voiceEnabled.current || epoch !== voiceEpoch.current) return;
+    // Only playable audio can supply a truthful intensity signal. Provider failure keeps the full text.
+    if (!audio) { setVoiceUnavailable(true); return; }
+    const element = new Audio(`data:${audio.mimeType};base64,${audio.base64}`);
+    audioRef.current = element;
+    element.onplay = () => { if (epoch === voiceEpoch.current) setSpeaking(true); };
+    element.onpause = element.onended = () => { if (epoch === voiceEpoch.current) setSpeaking(false); };
+    const unavailable = () => { if (epoch === voiceEpoch.current) { setSpeaking(false); setVoiceUnavailable(true); } };
+    element.onerror = unavailable;
+    void element.play().catch(unavailable);
+  };
   const [text, setText] = useState("");
   // The composer renders only after hydration, so device storage can seed state directly.
   const [speakReplies, setSpeakReplies] = useState(() => {
@@ -78,14 +72,21 @@ export function CoordinatorChat({
   });
   const log = useRef<HTMLOListElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
-  const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window;
+  const canSpeak = typeof window !== "undefined" && "Audio" in window;
 
-  useEffect(() => stopSpeaking, []);
+  useEffect(() => {
+    voiceEnabled.current = speakReplies;
+  }, [speakReplies]);
+  useEffect(() => () => {
+    voiceEpoch.current += 1;
+    audioRef.current?.pause();
+  }, []);
   useEffect(() => {
     log.current?.lastElementChild?.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }, [turns, turnCmd.isPending]);
 
   const toggleSpeak = (v: boolean) => {
+    voiceEnabled.current = v;
     setSpeakReplies(v);
     if (!v) stopSpeaking();
     try { localStorage.setItem(SPEAK_KEY, v ? "1" : "0"); } catch { /* ignore */ }
@@ -100,6 +101,8 @@ export function CoordinatorChat({
       role,
       text: [text, ...(questions ?? [])].join(" ").slice(0, 2000),
     }));
+    stopSpeaking();
+    const epoch = voiceEpoch.current;
     setTurns([...turns, { role: "CREATOR", text: said }]);
     setText("");
     turnCmd.mutate(
@@ -111,13 +114,13 @@ export function CoordinatorChat({
             { role: "COORDINATOR", text: x.reply, questions: x.questions, drafter: x.drafter, strategist: x.strategist },
           ]);
           onDraft(x.draft);
-          if (speakReplies)
-            // Text is already on screen; the ElevenLabs voice follows, or the device voice if it can't.
+          if (voiceEnabled.current && epoch === voiceEpoch.current)
+            // Text is already on screen; an audio failure never hides the reply.
             speakCmd.mutate(
               { input: { speech: x.speech } },
               {
-                onSuccess: (audio) => speak(x.speech.text, language, audio),
-                onError: () => speak(x.speech.text, language, null),
+                onSuccess: (audio) => speak(audio, epoch),
+                onError: () => speak(null, epoch),
               },
             );
           requestAnimationFrame(() => input.current?.focus());
@@ -149,8 +152,9 @@ export function CoordinatorChat({
         </div>
       </div>
 
-      {speakCmd.isPending ? <p role="status" className="coordinator-speaking">Preparing the Coordinator’s voice…</p> : null}
-      {speaking ? <div className="coordinator-speaking" role="status"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m4 9 5 0 5-4v14l-5-4H4V9Zm13-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><span>Coordinator is speaking</span><Button size="sm" onClick={stopSpeaking}>Stop voice</Button></div> : null}
+      {speakReplies && speakCmd.isPending ? <p role="status" className="coordinator-speaking">Preparing the Coordinator’s voice…</p> : null}
+      {speaking ? <div className="coordinator-speaking" role="status"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m4 9 5 0 5-4v14l-5-4H4V9Zm13-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><PlaybackMeter audio={audioRef} playing={speaking} label="Coordinator is speaking" /><Button size="sm" onClick={stopSpeaking}>Stop voice</Button></div> : null}
+      {voiceUnavailable && speakReplies ? <Notice tone="info" title="Voice is unavailable">The full reply is in the conversation below. You can keep going by text.</Notice> : null}
       {turns.length ? (
         <ol ref={log} aria-live="polite" aria-label="Conversation with the Coordinator" className="m-0 flex max-h-[420px] list-none flex-col gap-3 overflow-y-auto p-0">
           {turns.map((t, i) => (

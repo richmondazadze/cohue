@@ -13,3 +13,7 @@
 9. Verify each slice with scoped checks and browser review; complete final check/audit/meaningful regression, document real versus fixture evidence. Avoid excessive duplicate testing. Synchronize both handoffs at meaningful milestones. No other-chat messaging until user authorizes it again; no spontaneous backend/shared-schema edits.
 
 Completion is unproven until all objective sections and identity/assets/voice/live-board requirements are implemented and verified. This plan is not a scope reduction.
+
+## Final audit
+
+The identity authorization/persistence and UI/voice verification noted above were subsequently resolved. See `COMPLETION_AUDIT.md` for requirement-by-requirement implementation evidence, browser artifacts, real isolated PostgreSQL results and the explicit production release boundary. Production migration/deployment still awaits the user's later go-ahead; local implementation completion does not imply live synchronization.

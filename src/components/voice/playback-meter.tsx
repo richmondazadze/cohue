@@ -3,7 +3,7 @@ import { useEffect, useRef, type RefObject } from "react";
 import "./voice-meter.css";
 
 /** Audio intensity is sampled only while the actual element plays; silence remains still. */
-export function PlaybackMeter({ audio, playing }: { audio: RefObject<HTMLAudioElement | null>; playing: boolean }) {
+export function PlaybackMeter({ audio, playing, label }: { audio: RefObject<HTMLAudioElement | null>; playing: boolean; label?: string }) {
   const bars = useRef<HTMLSpanElement>(null);
   const graph = useRef<{context:AudioContext;analyser:AnalyserNode;source:MediaElementAudioSourceNode; element:HTMLAudioElement} | null>(null);
   useEffect(() => () => { void graph.current?.context.close().catch(()=>undefined); }, []);
@@ -24,5 +24,5 @@ export function PlaybackMeter({ audio, playing }: { audio: RefObject<HTMLAudioEl
     const tick=()=>{graph.current?.analyser.getByteFrequencyData(data);visual?.querySelectorAll<HTMLElement>('span').forEach((bar,i)=>{bar.style.transform=`scaleY(${Math.max(.12,data[i*3]/255)})`});frame=requestAnimationFrame(tick)};tick();
     return ()=>{cancelAnimationFrame(frame);visual?.querySelectorAll<HTMLElement>('span').forEach(bar=>{bar.style.transform='scaleY(.12)'})};
   },[audio,playing]);
-  return <span className="playback-indicator" role="status"><span ref={bars} className="voice-intensity" aria-hidden="true">{Array.from({length:7},(_,i)=><span key={i}/>)}</span><span>{playing ? "Playing reviewed audio" : "Audio paused"}</span></span>;
+  return <span className="playback-indicator" role="status"><span ref={bars} className="voice-intensity" aria-hidden="true">{Array.from({length:7},(_,i)=><span key={i}/>)}</span><span>{label ?? (playing ? "Playing reviewed audio" : "Audio paused")}</span></span>;
 }

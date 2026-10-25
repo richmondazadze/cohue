@@ -1,6 +1,7 @@
 "use client";
 import type { MissionSnapshot } from "@/contracts";
 import { StatusBadge, type Tone } from "@/components/ui/status";
+import { Avatar } from "./proposals";
 
 type Graph = MissionSnapshot["graph"];
 type NodeStatus = Graph["nodes"][number]["status"];
@@ -49,7 +50,7 @@ export function NetworkList({ graph }: { graph: Graph }) {
               return (
                 <li key={n.id} className="flex flex-col gap-1 px-4 py-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-medium">{n.label}</span>
+                    <span className="flex items-center gap-3">{n.kind === "participant" ? <Avatar name={n.label} avatarId={n.avatarId} /> : null}<span><span className="block font-medium">{n.label}</span>{n.username ? <span className="block type-meta text-muted">@{n.username}</span> : null}</span></span>
                     <StatusBadge tone={s.tone} icon={s.icon}>
                       {s.label}
                     </StatusBadge>
@@ -61,7 +62,6 @@ export function NetworkList({ graph }: { graph: Graph }) {
                           const other = e.source === n.id ? e.target : e.source;
                           return `${e.kind.toLowerCase()} → ${label.get(other) ?? "item"} (${nodeStatusCopy[e.status as NodeStatus]?.label.toLowerCase() ?? e.status})`;
                         })
-                        .slice(0, 4)
                         .join(" · ")}
                     </p>
                   ) : null}

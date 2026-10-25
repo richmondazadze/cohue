@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T14:29:21.737Z (America/Chicago display dates apply).
+Last update: 2026-10-25T14:43:11.779Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1164,3 +1164,18 @@ Refined app entry into landing-style editorial layout with short gentle entrance
 Inspected the authenticated Tiger Cloud service `cohue-prod`: Ready, high availability enabled, application tables present. Ran the read-only query `SELECT name FROM public.cohue_migrations ORDER BY name;` through its SQL editor. Successful result contained exactly 0000_init.sql, 0001_mission_history.sql and 0002_privacy_retention.sql. Therefore repository migration 0003_profile_identity.sql is pending in production; local identity acceptance does not establish production synchronization.
 
 Release prerequisite: apply the repository migration through the normal migration runner before deploying the username/avatar consumers, then verify migration ledger and scoped unique index. Existing local PostgreSQL acceptance remains recorded in FULL_REDESIGN_DB_VISUAL_SLICE.md. Full redesign goal remains incomplete pending final UI/state and speaking-intensity audit. No other chats contacted.
+
+
+## Milestone from docs/status/frontend/FULL_REDESIGN_LOCAL_ACCEPTANCE.md
+
+# Full redesign — local implementation acceptance
+
+25 October 2026. Preceding baseline 7f0ab06. Full original objective audited in `full-redesign/COMPLETION_AUDIT.md`, including all routes/states, identity, licensed avatar assets, measured voice feedback and committed-event interactive board. This supersedes earlier slice-level pending UI/voice/final-audit status. No production release claim.
+
+Final changes: Coordinator audio uses actual analyser intensity, stops cleanly and fences late responses after opt-out/unmount/new turn; voice failure keeps full text with an explicit unavailable notice. Removed unmeasurable device speech fallback. Replay no longer retains a later historical snapshot under an earlier event heading while loading; retry refreshes events and live snapshot. Proposal cards, invitation tracking and equivalent network list now use authorized persisted avatar/username metadata. List no longer truncates relations. Agent work cards link visually and enter gently with reduced-motion parity; old start records no longer imply work is still running. Simplified activation border.
+
+Validation: final `npm run check` PASS (foundation/lint/types/build, 114 tests passed, 23 environment-dependent skipped); `npm audit --audit-level=high` zero vulnerabilities. Production-build contract-fixture frontend browser sweep 50/50 PASS; latest focused voice/board/replay 5/5 PASS (four overlap, 51 distinct cases total). Additional audio test plays an authored PCM tone through a real HTML audio element and asserts measured bars then Stop. 24 state cases render every Theater lifecycle at 390/1440 with no horizontal overflow. Rendered artifacts retained under `full-redesign/artifacts/`; visual inspection includes composer, invitation, Room, graph, activation and replay. Earlier actual isolated PostgreSQL 45-test acceptance remains authoritative for local identity persistence/concurrency only.
+
+No push/deploy/production migration or external-chat messages. Tiger production ledger remains 0000–0002; apply migration0003 before deploying identity consumers, then verify deployed browser behavior. User explicitly said a later go-ahead will authorize going live. D7, real provider, physical phone and production synchronization claims require their own release evidence. Current local production preview8796 uses the isolated PostgreSQL cluster55439; production environment configuration unchanged. Unrelated `.gitignore` edit was left unstaged and untouched.
+
+Both handoffs synchronized through the serialized append script. Containing commit is discoverable with `git log -1 -- CODEX_HANDOFF.md`.

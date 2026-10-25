@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useDeferredValue, useMemo, useState } from "react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { AgentEvent, MissionSnapshot } from "@/contracts";
 import { Button } from "@/components/ui/button";
 import { ErrorNotice, Notice } from "@/components/ui/notice";
@@ -44,7 +44,7 @@ export function ReplayAndImpact({ missionId }: { missionId: string }) {
   if (events.isPending || live.isPending)
     return <Skeleton className="h-96 w-full rounded-panel" label="Loading mission history" />;
   if (events.isError || live.isError)
-    return <ErrorNotice error={events.error ?? live.error} onRetry={() => void events.refetch()} />;
+    return <ErrorNotice error={events.error ?? live.error} onRetry={() => { void events.refetch(); void live.refetch(); }} />;
   return <ReplayView missionId={missionId} events={events.data} current={live.data} />;
 }
 
@@ -107,12 +107,10 @@ function ReplayView({
   const max = events.length ? events[events.length - 1].sequence : 0;
   const min = events.length ? events[0].sequence : 0;
   const [at, setAt] = useState(max);
-  const deferred = useDeferredValue(at);
   const historic = useQuery({
-    queryKey: ["mission", missionId, "replay", deferred],
-    queryFn: ({ signal }) => callApi("replay", { params: { id: missionId }, input: { atSequence: deferred }, signal }),
-    enabled: deferred > 0,
-    placeholderData: keepPreviousData,
+    queryKey: ["mission", missionId, "replay", at],
+    queryFn: ({ signal }) => callApi("replay", { params: { id: missionId }, input: { atSequence: at }, signal }),
+    enabled: at > 0,
     retry: queryRetry,
     staleTime: Infinity,
   });
