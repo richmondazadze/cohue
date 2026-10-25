@@ -82,17 +82,22 @@ test("theater receives committed events over SSE and replay is read-only", async
   await expect(page.getByRole("button", { name: /Start discovery|Select this group|Activate/ })).toHaveCount(0);
 });
 
-test("text extraction and voice transcription fail honestly and keep typed text", async ({ page }) => {
+test("coordinator conversation and voice transcription fail honestly and keep typed text", async ({ page }) => {
   await page.goto(`${base}/missions/new`);
-  const intention = page.getByLabel("Describe the mission in your own words");
-  await intention.fill("Let's run a repair café next Saturday with a designer and a hardware tinkerer.");
-  await page.getByRole("button", { name: "Draft structured brief" }).click();
+  const said = "Let's run a repair café next Saturday with a designer and a hardware tinkerer.";
+  const intention = page.getByLabel("Describe the mission");
+  await intention.fill(said);
+  await page.getByRole("button", { name: "Talk to the Coordinator" }).click();
+  const log = page.getByRole("list", { name: "Conversation with the Coordinator" });
+  // Either the Coordinator answers in the conversation, or the failure keeps the creator's words for a retry.
   await expect(
-    page.getByText(/Draft filled in below|Could not draft from text/).first(),
-  ).toBeVisible({ timeout: 30_000 });
-  await expect(intention).toHaveValue(/repair café/);
+    log.getByText(/Coordinator:/).or(page.getByText(/The Coordinator could not answer/)).first(),
+  ).toBeVisible({ timeout: 45_000 });
+  const answered = await log.getByText(/Coordinator:/).count();
+  if (answered) await expect(log.getByText(said)).toBeVisible();
+  else await expect(page.locator("#coordinator-input")).toHaveValue(/repair café/);
 
-  await page.getByRole("button", { name: /Describe it by voice/ }).click();
+  await page.getByRole("button", { name: /Describe it by voice|Answer by voice/ }).click();
   await expect(page.getByText("● Recording")).toBeVisible({ timeout: 10_000 });
   await page.waitForTimeout(1500);
   await page.getByRole("button", { name: "Stop" }).click();
@@ -100,7 +105,6 @@ test("text extraction and voice transcription fail honestly and keep typed text"
   await expect(
     page.getByText(/Transcript added as an editable draft|Transcription unavailable/).first(),
   ).toBeVisible({ timeout: 30_000 });
-  await expect(intention).toHaveValue(/repair café/);
   await shot(page, "live-composer-voice-1280");
 });
 

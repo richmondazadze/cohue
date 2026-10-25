@@ -4,6 +4,7 @@ import "./globals.css";
 import { Stage } from "@/components/motion/stage";
 import { Providers } from "@/components/providers";
 import { AppHeader } from "@/components/shell/app-shell";
+import { LiveAlerts } from "@/components/shell/live-alerts";
 
 export const metadata: Metadata = {
   title: { default: "COHUE", template: "%s · COHUE" },
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Providers>
           <AppHeader />
           <Stage>{children}</Stage>
+          <LiveAlerts />
         </Providers>
       </body>
     </html>

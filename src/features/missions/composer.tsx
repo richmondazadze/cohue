@@ -5,7 +5,6 @@ import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CreateMissionSchema, type ApiInput } from "@/contracts";
 import { Button } from "@/components/ui/button";
-import { RecordControl } from "@/components/voice/record-control";
 import { Checkbox, Field, Select, TextArea, TextInput } from "@/components/ui/field";
 import { ErrorNotice, Notice } from "@/components/ui/notice";
 import { KeyValue, Panel, Skeleton } from "@/components/ui/surface";
@@ -25,11 +24,11 @@ import {
   newIntervalDraft,
   type IntervalDraft,
 } from "@/features/shared/availability";
+import { CoordinatorChat, type CoordinatorDraft } from "@/features/missions/coordinator";
 import { LANGUAGES, skillHint, skillLabel, type TaxonomySkill } from "@/features/shared/skills";
 
 type Req = ApiInput<"createMission">["requirements"][number] & { key: string };
 type Draft = {
-  intention: string;
   objective: string;
   expectedOutput: string;
   language: string;
@@ -119,11 +118,9 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
   const [phase, setPhase] = useState<"compose" | "review">("compose");
   const [showErrors, setShowErrors] = useState(false);
   const [sessionError, setSessionError] = useState<unknown>(null);
-  const [unknowns, setUnknowns] = useState<string[]>([]);
   const [created, setCreated] = useState<{ id: string; version: number } | null>(null);
   const reviewRef = useRef<HTMLHeadingElement>(null);
   const [draft, setDraft] = useState<Draft>(() => ({
-    intention: "",
     objective: "",
     expectedOutput: "",
     language: ["en", "es", "fr"].find((l) => navigator.language?.startsWith(l)) ?? "en",
@@ -139,7 +136,6 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
   const setReq = (key: string, patch: Partial<Req>) =>
     set({ requirements: draft.requirements.map((r) => (r.key === key ? { ...r, ...patch } : r)) });
 
-  const extract = useCommand("extractMission");
   const createMission = useCommand("createMission");
   const startMission = useCommand("startMission");
   const { input, errors, valid } = buildInput(draft);
@@ -155,31 +151,31 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
     }
   };
 
-  const runExtract = () =>
-    withSession(() =>
-      extract.mutate(
-        { input: { text: draft.intention.trim(), language: draft.language } },
-        {
-          onSuccess: (x) => {
-            setUnknowns(x.unknowns);
-            setDraft((d) => ({
-              ...d,
-              objective: x.objective,
-              expectedOutput: x.expectedOutput ?? d.expectedOutput,
-              requirements: x.requirements.length
-                ? x.requirements.map((r) => ({ ...r, key: globalThis.crypto.randomUUID() }))
-                : d.requirements,
-              minGroupSize: x.constraintsDraft.minGroupSize ?? d.minGroupSize,
-              maxGroupSize: x.constraintsDraft.maxGroupSize ?? d.maxGroupSize,
-              minOverlapMinutes: x.constraintsDraft.minOverlapMinutes ?? d.minOverlapMinutes,
-              window: x.constraintsDraft.window ? draftFromInterval(x.constraintsDraft.window) : d.window,
-              preferences: x.constraintsDraft.preferences ?? d.preferences,
-              // Creator participation is never inferred from text.
-            }));
-          },
-        },
-      ),
-    );
+  // The Coordinator's draft fills the form; creator participation is never inferred from text.
+  const applyDraft = (x: CoordinatorDraft) =>
+    setDraft((d) => ({
+      ...d,
+      objective: x.objective,
+      expectedOutput: x.expectedOutput ?? d.expectedOutput,
+      requirements: x.requirements.length
+        ? x.requirements.map((r) => ({ ...r, key: globalThis.crypto.randomUUID() }))
+        : d.requirements,
+      minGroupSize: x.constraintsDraft.minGroupSize ?? d.minGroupSize,
+      maxGroupSize: x.constraintsDraft.maxGroupSize ?? d.maxGroupSize,
+      minOverlapMinutes: x.constraintsDraft.minOverlapMinutes ?? d.minOverlapMinutes,
+      window: x.constraintsDraft.window ? draftFromInterval(x.constraintsDraft.window) : d.window,
+      preferences: x.constraintsDraft.preferences ?? d.preferences,
+    }));
+  const coordinatorSession = async () => {
+    setSessionError(null);
+    try {
+      await ensureLiveSession(client);
+      return true;
+    } catch (e) {
+      setSessionError(e);
+      return false;
+    }
+  };
 
   const toReview = () => {
     if (!valid) {
@@ -300,59 +296,13 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
           </Notice>
         ) : null}
         <Panel className="p-5 md:p-6">
-          <Field
-            label="Describe the mission in your own words"
-            helper="Optional. COHUE drafts a structured brief for you to review; nothing is saved or started yet."
-          >
-            {(f) => (
-              <TextArea
-                id={f.id}
-                aria-describedby={f.describedBy}
-                rows={3}
-                className="text-lg"
-                placeholder="Let's bring a repair café to our neighborhood…"
-                value={draft.intention}
-                maxLength={2000}
-                onChange={(e) => set({ intention: e.target.value })}
-              />
-            )}
-          </Field>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <Button
-              size="sm"
-              onClick={runExtract}
-              disabled={!draft.intention.trim()}
-              pending={extract.isPending}
-              pendingLabel="Drafting brief…"
-            >
-              Draft structured brief
-            </Button>
-            <span className="type-meta text-muted">Or fill in the fields below directly.</span>
-          </div>
-          <div className="mt-3">
-            <RecordControl
-              purpose="MISSION"
-              language={draft.language}
-              label="Describe it by voice"
-              onTranscript={(t) => set({ intention: [draft.intention.trim(), t].filter(Boolean).join("\n").slice(0, 2000) })}
-            />
-          </div>
-          {extract.isError ? (
-            <ErrorNotice className="mt-4" error={extract.error} title="Could not draft from text. Your text is kept; fill the fields below." />
-          ) : null}
-          {extract.isSuccess ? (
-            <Notice tone="pending" className="mt-4" title="Draft filled in below. Review every field.">
-              {unknowns.length ? (
-                <ul className="mt-1 list-disc pl-5">
-                  {unknowns.map((u) => (
-                    <li key={u}>{u}</li>
-                  ))}
-                </ul>
-              ) : (
-                "No open questions were reported."
-              )}
-            </Notice>
-          ) : null}
+          <CoordinatorChat
+            language={draft.language}
+            ensureSession={coordinatorSession}
+            onDraft={applyDraft}
+            onReady={toReview}
+          />
+          {sessionError ? <ErrorNotice className="mt-4" error={sessionError} title="Could not start a session" /> : null}
         </Panel>
 
         <section className="flex flex-col gap-5" aria-labelledby="brief-h">

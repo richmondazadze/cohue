@@ -26,6 +26,14 @@
       "idempotentCommand": true
     },
     {
+      "name": "coordinateMission",
+      "method": "POST",
+      "path": "/api/missions/coordinate",
+      "auth": "SESSION",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
       "name": "approveLocalization",
       "method": "POST",
       "path": "/api/localizations/:id/approve",

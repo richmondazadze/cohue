@@ -1,6 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import {
+  CoordinatorTurnSchema,
   DirectorOutputSchema,
   INITIAL_TAXONOMY,
   MissionExtractionSchema,
@@ -102,40 +103,33 @@ export async function extractProfile(text: string, language: string) {
   });
 }
 
-export async function extractMissionDraft(text: string, language: string) {
-  const raw = await generateJson({
-    system: SYSTEM,
-    prompt: `Language: ${language}\nMission text:\n${text}`,
-    responseSchema: {
-      type: "OBJECT",
-      properties: {
-        objective: S,
-        expectedOutput: { ...S, nullable: true },
-        requirements: arr(requirementSchema),
-        minGroupSize: { ...N, nullable: true },
-        maxGroupSize: { ...N, nullable: true },
-        minOverlapMinutes: { ...N, nullable: true },
-        creatorParticipates: { type: "BOOLEAN", nullable: true },
-        preferences: arr(skillEnum),
-        unknowns: arr(S),
-      },
-      required: ["objective", "requirements", "preferences", "unknowns"],
-    },
-    validate: z.object({
-      objective: z.string().min(1).max(2000),
-      expectedOutput: z.string().max(2000).nullable().optional(),
-      requirements: z.array(RawRequirement).max(30),
-      minGroupSize: z.number().int().min(1).max(8).nullable().optional(),
-      maxGroupSize: z.number().int().min(1).max(8).nullable().optional(),
-      minOverlapMinutes: z.number().int().min(1).max(1440).nullable().optional(),
-      creatorParticipates: z.boolean().nullable().optional(),
-      preferences: z.array(z.string()).max(20),
-      unknowns: z.array(z.string().min(1).max(2000)).max(19),
-    }),
-    semantic: (v) =>
-      unknownSkills([...v.requirements.map((r) => r.skill), ...v.preferences]) ??
-      (v.minGroupSize && v.maxGroupSize && v.minGroupSize > v.maxGroupSize ? "bounds" : null),
-  });
+const missionProperties = {
+  objective: S,
+  expectedOutput: { ...S, nullable: true },
+  requirements: arr(requirementSchema),
+  minGroupSize: { ...N, nullable: true },
+  maxGroupSize: { ...N, nullable: true },
+  minOverlapMinutes: { ...N, nullable: true },
+  creatorParticipates: { type: "BOOLEAN", nullable: true },
+  preferences: arr(skillEnum),
+  unknowns: arr(S),
+};
+const RawMission = z.object({
+  objective: z.string().min(1).max(2000),
+  expectedOutput: z.string().max(2000).nullable().optional(),
+  requirements: z.array(RawRequirement).max(30),
+  minGroupSize: z.number().int().min(1).max(8).nullable().optional(),
+  maxGroupSize: z.number().int().min(1).max(8).nullable().optional(),
+  minOverlapMinutes: z.number().int().min(1).max(1440).nullable().optional(),
+  creatorParticipates: z.boolean().nullable().optional(),
+  preferences: z.array(z.string()).max(20),
+  unknowns: z.array(z.string().min(1).max(2000)).max(19),
+});
+const missionSemantic = (v: z.infer<typeof RawMission>) =>
+  unknownSkills([...v.requirements.map((r) => r.skill), ...v.preferences]) ??
+  (v.minGroupSize && v.maxGroupSize && v.minGroupSize > v.maxGroupSize ? "bounds" : null);
+
+function toMissionExtraction(raw: z.infer<typeof RawMission>) {
   const draft: Record<string, unknown> = { preferences: [...new Set(raw.preferences)] };
   if (raw.minGroupSize) draft.minGroupSize = raw.minGroupSize;
   if (raw.maxGroupSize) draft.maxGroupSize = raw.maxGroupSize;
@@ -149,6 +143,40 @@ export async function extractMissionDraft(text: string, language: string) {
     unknowns: [...raw.unknowns, "Time window: choose when the team meets"].slice(0, 20),
     requiresConfirmation: true,
   });
+}
+
+export async function extractMissionDraft(text: string, language: string) {
+  const raw = await generateJson({
+    system: SYSTEM,
+    prompt: `Language: ${language}\nMission text:\n${text}`,
+    responseSchema: { type: "OBJECT", properties: missionProperties, required: ["objective", "requirements", "preferences", "unknowns"] },
+    validate: RawMission,
+    semantic: missionSemantic,
+  });
+  return toMissionExtraction(raw);
+}
+
+const COORDINATOR = `${SYSTEM}
+You are also the COHUE Coordinator talking with the mission creator. From the whole conversation, draft the mission and write:
+- "reply": one or two short, warm sentences in the user's language saying what you understood and who you will look for once they review the brief and start discovery. Plain words, no lists, no promises about who will join. Nothing has been searched or sent yet.
+- "questions": at most two short questions about the most important missing details, in this order: what exists when the mission succeeds (the expected output), who is needed and how many, how long they work together. Ask nothing the conversation already answers. Return no questions only when the objective, expected output and needed skills are all known.
+Never ask for or repeat contact details, and never say anyone was invited.`;
+
+export async function coordinatorTurn(turns: { role: "CREATOR" | "COORDINATOR"; text: string }[], language: string) {
+  const transcript = turns.map((t) => `${t.role === "CREATOR" ? "Creator" : "Coordinator"}: ${t.text}`).join("\n");
+  const raw = await generateJson({
+    system: COORDINATOR,
+    prompt: `Language: ${language}\nConversation:\n${transcript}`,
+    responseSchema: {
+      type: "OBJECT",
+      properties: { ...missionProperties, reply: S, questions: arr(S) },
+      required: ["objective", "requirements", "preferences", "unknowns", "reply", "questions"],
+    },
+    validate: RawMission.extend({ reply: z.string().trim().min(1).max(600), questions: z.array(z.string().trim().min(1).max(300)).max(2) }),
+    semantic: missionSemantic,
+  });
+  const { reply, questions, ...mission } = raw;
+  return CoordinatorTurnSchema.parse({ reply, questions, draft: toMissionExtraction(mission) });
 }
 
 export async function directorRequirements(text: string, language: string) {

@@ -224,6 +224,19 @@ export const MissionExtractionSchema = z.strictObject({
   unknowns: z.array(TextSchema).max(20),
   requiresConfirmation: z.literal(true),
 });
+// Conversational drafting: the Coordinator replies and asks follow-ups; the draft is still review-only.
+export const CoordinatorTurnInputSchema = z.strictObject({
+  language: LanguageSchema,
+  turns: z
+    .array(z.strictObject({ role: z.enum(["CREATOR", "COORDINATOR"]), text: TextSchema }))
+    .min(1)
+    .max(12),
+});
+export const CoordinatorTurnSchema = z.strictObject({
+  reply: z.string().trim().min(1).max(600),
+  questions: z.array(z.string().trim().min(1).max(300)).max(2),
+  draft: MissionExtractionSchema,
+});
 export const apiContracts = {
   taxonomy: route("GET", "/api/taxonomy", "PUBLIC", empty, TaxonomySchema, 200),
   parseProfile: route(
@@ -241,6 +254,15 @@ export const apiContracts = {
     "SESSION",
     z.strictObject({ text: TextSchema, language: LanguageSchema }),
     MissionExtractionSchema,
+    200,
+    true,
+  ),
+  coordinateMission: route(
+    "POST",
+    "/api/missions/coordinate",
+    "SESSION",
+    CoordinatorTurnInputSchema,
+    CoordinatorTurnSchema,
     200,
     true,
   ),
