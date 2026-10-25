@@ -32,6 +32,7 @@ import {
   coverageSummary,
   currentProposal,
   describeEvent,
+  explainEvent,
   memberStatuses,
   nameFor,
   openStep,
@@ -218,7 +219,12 @@ function TheaterView({
       proposal={proposal}
     />
   );
-  const activity = <ActivityList events={events} names={names} liveFrom={baseline} />;
+  const known = [...(proposals.data?.proposals ?? []), ...snapshot.proposals].filter(
+    (p, i, all) => all.findIndex((q) => q.id === p.id) === i,
+  );
+  const activity = (
+    <ActivityList events={events} names={names} liveFrom={baseline} explain={{ names, rows, proposals: known }} />
+  );
   const network = <NetworkView snapshot={snapshot} />;
 
   return (
@@ -304,14 +310,31 @@ function RequirementRail({ rows, names }: { rows: CoverageRow[]; names: Map<stri
   );
 }
 
+function Why({ text }: { text: string | null }) {
+  if (!text) return null;
+  return (
+    <p className="mt-1.5 flex gap-2 text-sm leading-5 text-muted">
+      <span aria-hidden className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-action text-[11px] font-semibold text-white">
+        C
+      </span>
+      <span>
+        <span className="sr-only">Coordinator: </span>
+        {text}
+      </span>
+    </p>
+  );
+}
+
 function ActivityList({
   events,
   names,
   liveFrom,
+  explain,
 }: {
   events: AgentEvent[];
   names: Map<string, string>;
   liveFrom: number | null;
+  explain: Parameters<typeof explainEvent>[1];
 }) {
   const recent = [...events].reverse().slice(0, 60);
   if (!recent.length)
@@ -343,6 +366,7 @@ function ActivityList({
               <span className="type-meta text-muted">#{e.sequence}</span>
             </div>
             <p className={cx("mt-1", failed && "text-declined")}>{describeEvent(e, names)}</p>
+            <Why text={explainEvent(e, explain)} />
             </Emphasis>
           </li>
         );

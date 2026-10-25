@@ -28,4 +28,9 @@ test("creator hears about new teams while on another page", async ({ page }) => 
   await expect(page).toHaveURL(missionUrl);
   await expect(page.getByRole("heading", { name: "Review proposed groups" })).toBeVisible({ timeout: 10_000 });
   await expect(alert).toHaveCount(0);
+  // The Activity feed explains the pick from committed proposal facts.
+  const activityTab = page.getByRole("tab", { name: "Activity" });
+  if (await activityTab.isVisible()) await activityTab.click();
+  await expect(page.getByText(/I checked (all )?[\d,]+ possible groups/).filter({ visible: true }).first()).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath("activity-why.png"), fullPage: true });
 });

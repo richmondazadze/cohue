@@ -242,6 +242,62 @@ export function describeEvent(e: AgentEvent, names: Map<string, string>): string
   }
 }
 
+const listJoin = (xs: string[]) =>
+  xs.length <= 1 ? (xs[0] ?? "") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`;
+
+/**
+ * The Coordinator's plain-language "why" for a committed event, built only from committed facts
+ * (events, proposals, requirements). It never claims reasoning the system did not record.
+ */
+export function explainEvent(
+  e: AgentEvent,
+  ctx: { names: Map<string, string>; rows: CoverageRow[]; proposals: GroupProposal[] },
+): string | null {
+  const who = (id: string) => nameFor(ctx.names, id);
+  const label = (id: string) => ctx.rows.find((r) => r.id === id)?.label ?? "a need";
+  const proposal = ctx.proposals.find((p) => p.revision === e.proposalRevision);
+  const picks = (p: GroupProposal, ids?: Set<string>) =>
+    listJoin(
+      p.members
+        .filter((m) => !ids || ids.has(m.participantId))
+        .map((m) => `${who(m.participantId)} for ${listJoin(m.coveredRequirementIds.map(label)) || m.role}`),
+    );
+  const together = (p: GroupProposal) =>
+    Math.round((Date.parse(p.commonWindow.end) - Date.parse(p.commonWindow.start)) / 60000);
+  switch (e.type) {
+    case "CANDIDATES_FOUND": {
+      const n = e.payload.candidateIds.length;
+      return n
+        ? `${n} opted-in ${n === 1 ? "person has" : "people have"} a confirmed skill this mission needs. Next I look for the group whose time overlaps.`
+        : "Nobody who opted in has a confirmed skill this mission needs yet.";
+    }
+    case "PROPOSAL_CREATED":
+      if (!proposal) return null;
+      return `I checked ${proposal.search.complete ? "all " : ""}${proposal.search.visitedNodes.toLocaleString("en-US")} possible groups in ${Math.round(proposal.search.elapsedMs)} ms${proposal.search.complete ? "" : " before the search limit"}. I picked ${picks(proposal)}, because they share ${together(proposal)} minutes.`;
+    case "REPLAN_STARTED": {
+      const lost = listJoin(e.payload.uncoveredRequirementIds.map(label));
+      return `${lost || "A need"} lost ${e.payload.uncoveredRequirementIds.length === 1 ? "its" : "their"} cover, so I'm searching again and keeping everyone who already agreed where I can.`;
+    }
+    case "REPLAN_COMPLETED": {
+      if (!proposal) return null;
+      const kept = new Set(proposal.score.stableParticipantIds);
+      const added = new Set(proposal.members.map((m) => m.participantId).filter((id) => !kept.has(id)));
+      const keptNames = listJoin(proposal.members.filter((m) => kept.has(m.participantId)).map((m) => who(m.participantId)));
+      return added.size
+        ? `${keptNames ? `I kept ${keptNames} and ` : "I "}added ${picks(proposal, added)}. Only the people whose terms changed are asked again.`
+        : `I kept the same people${keptNames ? ` (${keptNames})` : ""} with updated terms for them to review.`;
+    }
+    case "INVITATION_COUNTERPROPOSED":
+      return "A counter is not a yes. If it can't be met, I plan around it instead of waiting.";
+    case "INVITATION_DECLINED":
+      return "I'll look for someone else who covers the same need.";
+    case "MISSION_ACTIVATED":
+      return "Everyone approved the same terms, so I opened the Mission Room with a task for each person.";
+    default:
+      return null;
+  }
+}
+
 /** The step currently open (STARTED without a later completion/failure for the same run+agent). */
 export function openStep(events: AgentEvent[]): AgentEvent | null {
   for (let i = events.length - 1; i >= 0; i--) {
