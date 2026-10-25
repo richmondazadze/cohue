@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T01:18:15.958Z (America/Chicago display dates apply).
+Last update: 2026-10-25T01:26:51.084Z (America/Chicago display dates apply).
 Current milestone: the user assigned BOTH frontend and backend roles to the Claude Code lead continuation (2026-10-24T23:45:54Z). Working product on local PostgreSQL: full backend (38 contract 1.1.0 routes, matcher, consent/repair/reconsent/activation, events/SSE/replay, sweeper, worker) and full frontend (approved design, theater, invitations, room, replay, voice screens, showcase). Combined checks and real-UI two-device e2e pass locally. Provider calls unproven (no keys), not deployed, deployed D7 UNVERIFIED. Complete log: docs/status/lead/CLAUDE_SESSION_LOG.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -268,3 +268,14 @@ Actual Tiger Data migration:0000_init.sql(61statements) and0001_mission_history.
 GitHub: CLI device flow opened in signed-in richmondazadze account; final authorization screen requests public/private repository and workflow access plus gist/write and org/read. User explicitly asked at action time to click Authorize github if approved. Still waiting for that approval/authentication before private repository creation/push; no push or GitHub repo claimed. .gitignore cleanup committed earlier0e06d46; secret heuristic scan had no findings. Provider key locations in docs/operations/API_KEYS.md. Deployment/D7 not executed; cloud DB readiness is distinct from dispatcher reliability.
 
 Next: complete GitHub authorization, create private richmondazadze/cohue if absent, set origin and push main without force; verify remote commit. Configure remaining Gemini/ElevenLabs/SerpApi credentials through ignored env or hosting secrets, not chat. User's Vercel login exists but no deployment was requested/executed in this database milestone. Both handoffs synchronized through append protocol; no product source/design modified.
+
+
+## Milestone from docs/status/lead/GITHUB_PUBLIC_PUSH.md
+
+GitHub authentication verified after user's action-time approval. Active account richmondazadze; Git HTTPS credentials configured through GitHub CLI/keyring. User explicitly changed requested repository visibility from private to PUBLIC. Checked repository did not already exist, created https://github.com/richmondazadze/cohue as PUBLIC and pushed existing committed history/main through ba602d4. Origin HTTPS remote and main tracking origin/main established; no force push or history rewrite.
+
+Before publication, scanned all reasonably sized text blobs in reachable Git history for private keys, likely GitHub/Google provider tokens and credential-bearing remote PostgreSQL URLs: no heuristic findings. .env.local is ignored, no tracked ignored files, credential values and local generated artifacts excluded. Scan is not an unconditional security guarantee. Approved design sources, migrations, lockfiles and continuity docs retained in source. Application redistribution license remains unspecified; public visibility alone is not a license grant.
+
+GitHub API verified repository visibility PUBLIC and default branch main; remote main matched local ba602d4 after initial push. This milestone is committed and pushed afterward, with final remote/local identity checked at delivery. Both handoffs updated identically with append protocol and foundation integrity/whitespace checks run; no product source changes or unnecessary full test rerun for publication-only docs.
+
+Tiger Data setup from preceding ba602d4 remains verified: cohue-prod Ready, pooled/runtime least-privilege cohue_app and separate direct migration credentials in ignored owner-only env; both migrations applied, verified TLS and transaction/read tests, three-day PITR and HA. Provider credentials/model/voice IDs still needed; docs/operations/API_KEYS.md lists sources. Deployment/Vercel hosting and deployed D7 remain unverified; no publication of live site or secret configuration implied by GitHub push.
