@@ -3,6 +3,7 @@ import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { queryRetry } from "@/client/queries";
+import { ErrorToastProvider } from "@/components/ui/error-toasts";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [client] = useState(
@@ -21,7 +22,7 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={client}>
       <TooltipProvider delayDuration={400} skipDelayDuration={0}>
-        {children}
+        <ErrorToastProvider>{children}</ErrorToastProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

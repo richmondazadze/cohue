@@ -7,8 +7,8 @@ const COPY: Record<string, { title: string; body: string }> = {
     body: "Start again from this device to continue.",
   },
   FORBIDDEN: {
-    title: "Not available to this session",
-    body: "This view belongs to someone else, or your access changed.",
+    title: "You can’t open this right now",
+    body: "Your access may have changed, or this belongs to another person. Open your own invitation link or return to your space.",
   },
   NOT_FOUND: {
     title: "Not found",
@@ -23,8 +23,8 @@ const COPY: Record<string, { title: string; body: string }> = {
     body: "Your entries are kept. Review the current version before sending again.",
   },
   IDEMPOTENCY_CONFLICT: {
-    title: "A different request already used this submission",
-    body: "Review the current state, then submit your decision again.",
+    title: "Please check before sending again",
+    body: "We could not confirm this submission. Check the latest details before trying again.",
   },
   INVITATION_EXPIRED: {
     title: "This invitation has expired",
@@ -39,36 +39,36 @@ const COPY: Record<string, { title: string; body: string }> = {
     body: "It was cancelled or expired, so no further changes are possible.",
   },
   RATE_LIMITED: {
-    title: "Too many requests",
+    title: "Let’s pause for a moment",
     body: "Wait a moment, then try again.",
   },
   PROVIDER_UNAVAILABLE: {
-    title: "A connected service is unavailable",
-    body: "Nothing was changed. You can retry, or continue with typed text.",
+    title: "This feature needs a moment",
+    body: "One of the services this feature uses is not responding. Try again shortly. If you were using voice, you can type instead.",
   },
   CAPACITY_CONFLICT: {
     title: "This time is already committed elsewhere",
     body: "You have an overlapping commitment, so this could not be accepted.",
   },
   SCOPE_MISMATCH: {
-    title: "Different mode",
-    body: "This belongs to a different live or showcase scope.",
+    title: "This belongs to a different workspace",
+    body: "Live activity and the synthetic showcase are kept separate. Return to the workspace where you opened this.",
   },
   INTERNAL_ERROR: {
     title: "Something went wrong on our side",
-    body: "Nothing was confirmed. Try again shortly.",
+    body: "We could not finish this request. If you were saving or responding, check the latest status before trying again.",
   },
   NETWORK: {
-    title: "You appear to be offline",
-    body: "Nothing was confirmed. Your entries are kept; retry when connected.",
+    title: "We couldn’t connect",
+    body: "Check your connection. If you were saving a change, check its current status before trying again.",
   },
   UNAVAILABLE: {
-    title: "Service not available yet",
-    body: "COHUE could not reach this part of the service. Nothing was confirmed.",
+    title: "We couldn’t reach the service",
+    body: "This part of COHUE is temporarily unavailable. Try again in a moment. If you were saving, check whether it went through first.",
   },
   CONTRACT: {
-    title: "Unexpected response",
-    body: "The server's answer did not match the agreed format, so it was not used.",
+    title: "We couldn’t confirm the result",
+    body: "We received a reply we could not use. Check the latest details before sending your change again.",
   },
 };
 
@@ -82,10 +82,9 @@ export function describeError(error: unknown): {
 } {
   if (isApiError(error)) {
     const copy = COPY[error.code] ?? COPY.INTERNAL_ERROR;
-    const fromServer = error.correlationId !== null;
     return {
       ...copy,
-      detail: fromServer && error.message !== copy.body ? error.message : null,
+      detail: null,
       code: error.code,
       correlationId: error.correlationId,
       retryable: error.retryable,

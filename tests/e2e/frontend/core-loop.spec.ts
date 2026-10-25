@@ -101,7 +101,7 @@ for (const width of [390, 1280]) {
 test("API unavailable shows an honest error, never fixture data", async ({ page }) => {
   await page.route("**/api/**", (r) => r.fulfill({ status: 503, body: "upstream down" }));
   await page.goto(`${base}/missions/00000000-0000-4000-8000-000000000064`);
-  await expect(page.getByText("Service not available yet")).toBeVisible();
+  await expect(page.getByRole("alert").filter({ hasText: "We couldn’t reach the service" })).toBeVisible();
   await page.goto(`${base}/join`);
   await expect(page.getByText("Skill list unavailable")).toBeVisible();
 });

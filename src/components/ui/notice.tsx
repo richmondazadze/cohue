@@ -1,5 +1,6 @@
 "use client";
-import type { ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useErrorToast } from "./error-toasts";
 import { describeError } from "@/client/errors";
 import { Button } from "./button";
 import { cx } from "./cx";
@@ -56,7 +57,21 @@ export function ErrorNotice({
   title?: string;
 }) {
   const d = describeError(error);
+  const id = useId();
+  const notice = useRef<HTMLDivElement>(null);
+  const push = useErrorToast();
+  useEffect(() => {
+    // A modal's inline alert stays inside its focus scope; no competing toast controls outside it.
+    if (!push || notice.current?.closest('[role="dialog"]')) return;
+    push({ key: `${d.code}:${d.title}`, title: d.title, body: d.body, review: () => {
+      const element = notice.current;
+      if (!element?.isConnected) return;
+      element.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? "auto" : "smooth", block: "center" });
+      element.focus({ preventScroll: true });
+    }});
+  }, [error, push, d.code, d.title, d.body]);
   return (
+    <div ref={notice} id={id} tabIndex={-1} className="error-notice-anchor">
     <Notice
       tone="declined"
       role="alert"
@@ -75,14 +90,8 @@ export function ErrorNotice({
       }
     >
       <p>{d.body}</p>
-      {d.detail ? <p className="mt-1 text-ink">{d.detail}</p> : null}
-      {d.correlationId ? (
-        <p className="type-meta mt-1 text-muted">
-          Reference {d.correlationId.slice(0, 8)} · {d.code}
-        </p>
-      ) : (
-        <p className="type-meta mt-1 text-muted">{d.code}</p>
-      )}
+      <details className="mt-3 text-xs text-muted"><summary className="cursor-pointer py-2">Support details</summary><p>Reference: {d.correlationId?.slice(0, 8) ?? "Not available"}</p><p>Code: {d.code}</p></details>
     </Notice>
+    </div>
   );
 }
