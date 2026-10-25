@@ -1,11 +1,12 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import type { MissionSnapshot } from "@/contracts";
+import type { AgentEvent, MissionSnapshot } from "@/contracts";
 import { Skeleton } from "@/components/ui/surface";
 import { cx } from "@/components/ui/cx";
 import { useMediaQuery } from "@/client/media";
 import { NetworkList } from "./network-list";
+import { AgentBoard } from "./agent-board";
 
 const GraphCanvas = dynamic(() => import("./graph"), {
   ssr: false,
@@ -13,13 +14,14 @@ const GraphCanvas = dynamic(() => import("./graph"), {
 });
 
 /** Network section: the list is always available; the spatial graph is an optional enhancement. */
-export function NetworkView({ snapshot }: { snapshot: MissionSnapshot }) {
+export function NetworkView({ snapshot, events = [], historical = false }: { snapshot: MissionSnapshot; events?: AgentEvent[]; historical?: boolean }) {
   const phone = useMediaQuery("(max-width: 389px)");
   const compact = useMediaQuery("(max-width: 767px)");
   const [mode, setMode] = useState<"graph" | "list" | null>(null);
   const view = mode ?? (phone ? "list" : "graph");
   return (
-    <div className="flex flex-col gap-3">
+    <div className="network-workspace flex flex-col gap-3">
+      <AgentBoard events={events} sequence={snapshot.snapshotSequence} historical={historical}/>
       <div role="group" aria-label="Network display" className="flex gap-2">
         {(["graph", "list"] as const).map((m) => (
           <button

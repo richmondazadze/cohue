@@ -148,8 +148,8 @@ function TheaterView({
         if (context.conditions?.reduce) return;
         gsap.fromTo(
           el,
-          { rotationX: -6, y: 8, transformOrigin: "50% 0%" },
-          { rotationX: 0, y: 0, duration: DUR.activation, ease: "power3.out", clearProps: "transform" },
+          { y: 6, opacity: .8 },
+          { opacity: 1, y: 0, duration: DUR.activation, ease: "power3.out", clearProps: "transform" },
         );
       });
       return () => mm.revert();
@@ -169,7 +169,7 @@ function TheaterView({
         <p className="eyebrow flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand/cohue-symbol.svg" alt="" width={20} height={20} />
-          Mission Theater · Live
+          Mission Theater · {mission.scope.executionMode === "SHOWCASE" ? "Synthetic showcase" : "Live"}
         </p>
         <h1 className="type-experience mt-2 break-words">{mission.objective}</h1>
         <p className="mt-2 max-w-[65ch] text-sm text-muted">{missionStateCopy[state].explain}</p>
@@ -225,7 +225,7 @@ function TheaterView({
   const activity = (
     <ActivityList events={events} names={names} liveFrom={baseline} explain={{ names, rows, proposals: known }} />
   );
-  const network = <NetworkView snapshot={snapshot} />;
+  const network = <NetworkView snapshot={snapshot} events={events} />;
 
   return (
     <CueProvider value={cues}>

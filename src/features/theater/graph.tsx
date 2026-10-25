@@ -108,7 +108,7 @@ const RequirementNode = memo(function RequirementNode({ data, selected }: NodePr
 const ParticipantNode = memo(function ParticipantNode({ data, selected }: NodeProps<Node<NodeData>>) {
   const s = nodeStatusCopy[data.status];
   return (
-    <div className="flex h-14 w-[190px] items-center gap-2">
+    <div className="talent-board-node flex h-14 w-[190px] items-center gap-2 rounded-panel border border-line-panel bg-surface px-2">
       {handles}
       <span
         className={cx(
@@ -174,6 +174,7 @@ function Canvas({ graph, compact }: { graph: Graph; compact: boolean }) {
   const idKey = useMemo(() => [...ids].sort().join(","), [ids]);
   const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
   const generation = useRef(0);
+  const [manualPositions, setManualPositions] = useState<Record<string, {x:number;y:number}>>({});
 
   // Layout reruns only when the visible node/edge set changes; stale results are dropped by generation.
   const edgeKey = graph.edges.map((e) => `${e.source}>${e.target}`).sort().join(",");
@@ -192,13 +193,13 @@ function Canvas({ graph, compact }: { graph: Graph; compact: boolean }) {
         .map((n) => ({
           id: n.id,
           type: n.kind,
-          position: positions.get(n.id) as { x: number; y: number },
+          position: manualPositions[n.id] ?? positions.get(n.id) as { x: number; y: number },
           data: { label: n.label, status: n.status, kind: n.kind },
           ariaLabel: `${n.kind} ${n.label}: ${nodeStatusCopy[n.status].label}`,
-          draggable: false,
+          draggable: true,
           className: reduced ? undefined : "cohue-node-enter",
         })),
-    [graph.nodes, ids, positions, reduced],
+    [graph.nodes, ids, positions, reduced, manualPositions],
   );
   const edges: Edge[] = useMemo(
     () =>
@@ -220,7 +221,8 @@ function Canvas({ graph, compact }: { graph: Graph; compact: boolean }) {
           fitViewOptions={{ padding: 0.2 }}
           minZoom={0.4}
           maxZoom={1.6}
-          nodesDraggable={false}
+          nodesDraggable
+          onNodeDrag={(_,node) => setManualPositions(current => ({...current,[node.id]:node.position}))}
           nodesConnectable={false}
           panOnScroll={false}
           zoomOnScroll={false}

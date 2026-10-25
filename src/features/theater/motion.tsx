@@ -58,7 +58,7 @@ export function CueEntrance({
           el,
           reduce
             ? { autoAlpha: 0 }
-            : { autoAlpha: 0, y: 10, rotationX: -12, transformOrigin: "50% 100%" },
+            : { autoAlpha: 0, y: 6 },
           {
             autoAlpha: 1,
             y: 0,

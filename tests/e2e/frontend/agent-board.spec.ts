@@ -1,0 +1,24 @@
+import { test, expect } from "@playwright/test";
+import { MockBackend } from "./support/mock-backend";
+const base = process.env.COHUE_FRONTEND_BASE_URL ?? "";
+test("network board projects committed worker events and supports local arrangement", async ({page}) => {
+ const mock = new MockBackend(); await mock.install(page);
+ await page.goto(`${base}/missions/new`);
+ await page.getByLabel("Objective").fill("Synthetic connected skills board");
+ await page.getByLabel("Expected output").fill("A reviewed group");
+ await page.getByLabel("Skill",{exact:true}).selectOption("design");
+ await page.getByRole("button",{name:"Review requirements"}).click();
+ await page.getByRole("button",{name:"Start discovery"}).click();
+ await expect(page).toHaveURL(/\/missions\/[0-9a-f-]{36}$/);
+ mock.completeDiscovery();
+ await expect(page.getByRole("heading",{name:"Review proposed groups"})).toBeVisible({timeout:10000});
+ await page.getByRole("tab",{name:/map/i}).click();
+ const board=page.getByRole("region",{name:"Live agent work"});
+ await expect(board).toContainText("Recorded event");
+ await expect(board).toContainText("People approve their own terms");
+ await expect(page.locator('.react-flow__node')).toHaveCount(6);
+ const node=page.locator('.react-flow__node').first();
+ const box=await node.boundingBox(); if(!box)throw new Error('Missing node');
+ await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.mouse.move(box.x+box.width/2+40,box.y+box.height/2+30,{steps:5});await page.mouse.up();
+ expect(mock.commands.filter(c=>c.op==='selectProposal')).toHaveLength(0);
+});

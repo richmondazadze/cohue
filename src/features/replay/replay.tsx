@@ -188,7 +188,7 @@ function ReplayView({
                           Approvals {historic.data.approvals.accepted}/{historic.data.approvals.required}
                         </span>
                       </div>
-                      <NetworkView snapshot={historic.data} />
+                      <NetworkView snapshot={historic.data} events={upTo} historical />
                     </>
                   )}
                 </div>

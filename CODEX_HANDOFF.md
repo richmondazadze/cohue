@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T14:08:21.108Z (America/Chicago display dates apply).
+Last update: 2026-10-25T14:10:59.544Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1109,3 +1109,12 @@ Both handoffs synchronized. Documentation-only follow-up commit pushed after suc
 Extended approved App Shell2/landing fonts/colors/component language across all non-home product routes. Removed old route-level3D Stage from those routes; route breadcrumbs now identify Composer/Theater/invitation/Room/replay/app entry. Restored explicit server-command Return to live mode in new showcase banner. Composer heading, brief/requirements/time sections and review surfaces translated; all existing logic kept. Added measured recording-intensity microphone/waveform visual with reduced-motion static parity. Five3D avatar PNGs scouted/downloaded from alohe/avatars with MIT license/source manifest. Shared username/avatar persistence remains unresolved, detailed in IDENTITY_INTEGRATION.md; no fake local-only identity or competing contract added.
 
 npm run check PASS for shell/voice/composer code (foundation/lint/types/tests/build); avatar asset additions are static and source/license retained. Browser verification of this slice, remaining bespoke route treatments, live board/voice playback states, identity integration and full requirement audit remain pending. No push/deploy/other-chat contact. This milestone supersedes no full-release acceptance gate. Both handoffs appended through serialized script.
+
+
+## Milestone from docs/status/frontend/FULL_REDESIGN_BOARD_SLICE.md
+
+# Full redesign — committed agent board slice
+
+25 October2026, preceding baselinedc2cbde. Full objective remains active and incomplete. Network view now pairs a committed agent/tool event chain with the canvas/list. Only events up to snapshotSequence render; historical replay passes bounded upTo events and explicit historical wording. No thoughts, success or consent invented. Theater scope label corrected to Live versus Synthetic showcase. Reduced3D cue transforms to small translation/fade. Talent nodes now have bordered reading surfaces and can be dragged to local positions; this layout action does not call mutation endpoints or edit relationships. Existing zoom/fit and list remain.
+
+npm run check PASS, audit zero vulnerabilities. New contract-fixture agent-board browser test PASS: mission creation/discovery, committed event projection, graph nodes and dragging without proposal selection. Existing core-loop suite PASS at390/1280 plus API-unavailable case:4/4 total. Local production server8796 used. No real DB/provider/deployed acceptance claim. Shared-shell screenshot review and full remaining route refinement/identity persistence/voice playback still pending per implementation plan. No push/deploy or other-chat messages. Both handoffs appended via serialized script.
