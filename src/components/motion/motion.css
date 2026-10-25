@@ -3,10 +3,10 @@
    filter only, so nothing reflows. Timing follows the approved participant ease. */
 :root {
   --motion-ease: cubic-bezier(0.23, 1, 0.32, 1);
-  --motion-in: 460ms;
+  --motion-in: 620ms;
   --motion-out: 200ms;
-  --motion-blur: 6px;
-  --motion-y: 10px;
+  --motion-blur: 12px;
+  --motion-y: 14px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -21,7 +21,7 @@
   }
   [data-motion="in"] {
     animation: motion-blur-in var(--motion-in) var(--motion-ease) both;
-    animation-delay: calc(min(var(--motion-i, 0), 10) * 45ms);
+    animation-delay: calc(min(var(--motion-i, 0), 14) * 42ms);
   }
 
   /* Tab panels: each newly shown panel settles in. */
