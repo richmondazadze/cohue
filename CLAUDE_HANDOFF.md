@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T04:08:46.852Z (America/Chicago display dates apply).
+Last update: 2026-10-25T04:09:17.284Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -631,3 +631,18 @@ Lastverification: foundation11hashes/handoffsync/diffcheck pass at13822b3; earli
 # Operator runtime environment parsing correction
 
 Preceding baseline95dfaa7. Corrected documented on-host acceptance command to use Node --env-file=/etc/cohue/worker.env, never shell-source the runtime file. Systemd/dotenv values are data; shell expansion could corrupt credentials or interpret special characters. No such source command was executed. No secrets displayed/transferred, no new permissions, no product module/config changes. On-host acceptance remains prepared/unexecuted; old worker held while lead migrates. Backend proof/runtime claims unchanged. Documentation check: gitdiffcheck and foundationpass; no app tests warranted for command-text correction. Both handoffs appended serially; lead notified before console execution.
+
+
+## Milestone from docs/status/backend/USER_STOP_CHECKPOINT.md
+
+# User-requested backend stop checkpoint
+
+User explicitly stopped all work due to credits; received through Product Engineer. Backend stopped immediately. No owned test/build/provider/probe/acceptance process remains running. Do not resume without user instruction. Production web unchanged; existing Vultr worker remains held INACTIVE, verified authenticated console25Oct2026 04:03:46UTC. Lastworker source8385a34; no final source refresh/restart or production SQL performed by backend. SSH/highport connectivity from local machine timed out; hostSSH/UFW22/outboundHTTPS healthy via console. No protections weakened/adminDB transferred.
+
+Committed stable milestones:52087aa sourceauth+D7originalproof; f4952f6 privacy/retention+0002migration;95dfaa7 guarded onhostD7/privacyacceptance harnesses;52e3944 safeNode--env-file command documentation. Last actual tests:26backend/7files on isolatedactualPG,0skips;2operatoroptin guard tests passed; tsc/lint/audit0/foundation/diffchecks passed. Lead's combined checks belong to lead evidence. Original deployedD7 passed8385a34 only. New finalreleaseD7/privacy proof NOT executed. Productionmigration/grant/probe state is lead-owned and must be read from final leadhandoff; do not infer it here.
+
+No uncommitted backend paths at stop. Other-owner changes observed `.env.example` and `docs/status/lead/RETENTION_ROLLOUT_GATE.md`, deliberately untouched/unstaged. Ignored artifacts include original safeD7trace, workerstop screenshot, preparedprivacy-smoke draft; authoritative guarded scripts tracked under scripts/worker. No bootstrappassword/runtime-transfercopies retained; dedicatedSSHkey/trustedknownhosts remain ignored. Never display credentials.
+
+Open mandatory gates: controlled0002migration/runtimeprivacy_auditgrant+actualruntimeprobe, compatibleweb+exactworkeridentity, enableEVENT_RETENTION_READYonlyafterallwriterscompatible, newfinalD7quietproof and safeSHOWCASEprivacy/sweeper evidence. RoomBRIEF localization/review/TTS remains existingunimplementedmandatorygap; no BRIEF implementation started, approved lead plan in chat still requires resumed work. Fullthree-languageproductionmedia/physicalphone/submission evidence incomplete. No finalreleasecomplete claim.
+
+Next action after explicit user resume: read both currenthandoffs/globalstoprecord and gitstatus, reconcile actualmigration/webstate withlead; useNode--env-file notshellsource forruntimeconfiguration. Coordinate exactreviewedworkercommit/update and quietproof; continueBRIEF only withinapprovedownership/contracts and withfrontend. No duplicatehost, no broadLIVEtest/reset, no independentpush/webdeploy/sharedbuild. This note/pairedhandoffs are the only work after stop, committed locally withoutpush.
