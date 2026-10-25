@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T05:54:37.485Z (America/Chicago display dates apply).
+Last update: 2026-10-25T06:00:06.242Z (America/Chicago display dates apply).
 Current milestone: USER STOPPED all work for credit conservation. Read docs/status/lead/STOP_STAGE_HANDOFF.md first. Local release implementation/tests saved; production migration0002 applied through Tiger SQL editor, runtime grant statement executed but runtime probe pending. New web/worker release NOT deployed; EVENT_RETENTION_READY NOT enabled. Vultr worker remains INACTIVE on old8385a34, production web remains available. Local test/dev/worker processes stopped. Resume only on new user instruction; no final readiness claim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -740,3 +740,12 @@ UI: Mission Room "Brief" lists the original and member-language drafts with stat
 Evidence: `npm run check` 99 tests, build OK; CI-equivalent e2e on disposable PostgreSQL with EVENT_RETENTION_READY=1: 15 passed (I3 now asserts the canonical brief); browser journey 3/3 repeats after two test fixes (creator explicitly takes part, since the composer never assumes it; wait for the repaired revision before selecting). Real-provider local probe (local DB, real Gemini/ElevenLabs keys): briefs en APPROVED + es/fr REVIEW_REQUIRED machine translations, creator approval → APPROVED, member-requested Spanish brief TTS READY (purpose BRIEF). Observed UX defect (server-safe): "Review the repaired proposal" can render one poll before the repaired proposal card, so an immediate Select gets an honest STALE_VERSION.
 
 Deployment dependency: the running worker (cd32236) still has the old orphan-localization prune, which deletes brief translations on each sweep. The worker must be updated to this release for production briefs to persist. Web auto-deploys on push.
+
+
+## Milestone from docs/status/lead/RELEASE_266A240.md
+
+Release 266a24083e283138f348fb3d77d04f9b7d23a224 (shared team brief) is on both runtimes, 25 Oct 2026 ~01:00 CDT, with the user's explicit approval ("I approve the next step") of the worker update.
+
+Web: Vercel production cohue-5uh4wn39z (created 00:54:40 CDT from main), aliased to cohue.tech, HTTP 200. Worker: authenticated Vultr console; codeload archive sha256 8ab66cb38f932f52efa9578c92fb15a6dbc614db71aeca46e99217fbae435b40 (matches local), npm ci 506 packages, .release-commit 266a240…, previous release kept at /opt/cohue-cd32236 (also /opt/cohue-c70b745, /opt/cohue-8385a34); unit unchanged; EVENT_RETENTION_READY=1 retained in worker.env; service active ("worker b8f62939 started" 05:59:27 UTC). Both runtimes now share the brief-aware retention rules, so brief translations persist.
+
+Not re-proven on this release: deployed D7 (last pass cd32236; the runner, jobs and sweeper ordering are unchanged except localization/audio orphan rules) and a production brief journey (needs real LIVE people or a re-anchored showcase). Next: re-anchor showcase availability, deployed two-phone multilingual journey (item 4), device/accessibility checks (item 5), video/Devpost (item 6).
