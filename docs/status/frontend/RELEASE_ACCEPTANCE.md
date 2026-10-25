@@ -45,3 +45,13 @@ No production mutation, microphone prompt or participant consent performed. Rema
 ## Breakpoint review continuity correction
 
 Static diagnosis confirms wide conditional replaced the entire Tabs/CenterPanel subtree at1024px, unmounting CreatorInvitationReview and OrganizerReview's local text state. CUA had actually observed original-only sheet dismissal; translated draft loss was not browser-reproduced because local providers disabled, but follows directly from unmounted useState. Unified stable layout/Tabs ancestry now uses the same responsive classes and tab choices, preserving open sheet/draft across breakpoints. Added synthetic E2E assertions at390/1024/1440/768 for open dialog+exact edited text and Escape trigger focus. Authored assertions pending lead execution/rebuild, not a pass. Owned ESLint/types/38unit tests pass before final class-only adjustment.
+
+## Fresh integrated real-provider browser checks — 24 October, 11:03 PM America/Chicago
+
+Lead confirmed fresh3100 production build includes f4952f6/192c2b6/809db4f, isolatedcohue_ci_review_e2e, actual configured providers ON. Reopened own synthetic SHOWCASE mission through preserved session.
+
+Actual CUA: Escape closes review and focuses its native review trigger. Spanish machine translation appeared; corrected responsibility wording while retaining complete terms, then exact edited text and open sheet survived390/1024/1440/768 widths, scrollWidth equals viewport each. Approved Spanish via organizer UI; status reviewed and translated Listen appeared. Participant approvals remained1/4 with activation disabled. Actual Spanish audio readyState4, duration28.606984s, currentTime5.670248s, pausedfalse, noerrors. Switching to original English paused Spanish at10.039884s; actual English readyState4, duration26.006349s, currentTime7.707597s, pausedfalse. Both actual media, no browser microphone permission. This is DOM playback-progress evidence, not a human listening/quality claim.
+
+French actual generated translation reviewed and approved on SyntheticParticipant03; French Listen requested, final media observation pending. Screenshot artifacts/review-approved-provider-390.png contains only synthetic terms, no bearer. These are LOCAL real-provider results, not deployed-site/physicalphone/recording/STT evidence. Prior providers-disabled limitation superseded for these specific checks only.
+
+French final playback PASS: readyState4, duration30.51102s, currentTime13.488512s, pausedfalse, noalerts. Ownsyntheticmission cancelled normally; finalUI confirms releasedreservations. See FRESH_REVIEW_ACCEPTANCE.md for consolidated evidence and remaininggates.
