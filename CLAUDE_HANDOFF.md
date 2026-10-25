@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T06:46:45.108Z (America/Chicago display dates apply).
+Last update: 2026-10-25T06:54:53.719Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -781,3 +781,14 @@ Not exercised in this run (by the records): decline/repair (deliberately skipped
 # Resume from Claude continuation — 25 October 2026
 
 User supplied continuation transcript and requestsresume+specialistallocation. Repositorylatestb0db29e isclean/trackingremote; latestappendedhandoffsshowClaudecompletedruntime/retentionrollout,D7/privacyproof,BRIEFlocalization/deployment,SHOWCASEjourney andLIVEtwophoneactivation8c27892. OldtopSTOPsummary isstale; replaced bycurrentevidencedsummary withoutdeletinghistoricalcheckpoint. FINAL_ACCEPTANCE_ASSIGNMENTS.md allocatesfinalUI/demo andbackendintegrity/opswork; not provisioningagain. Both existingengineerchats willbeactivatedexplicitly. No deployment/provider/DBmutationinthisresumedispatchmilestone. Realphone translationapproval/Listen/taskchange/video/Devpoststillpendingwhereunverified. Preserveexistingproductionvisuals; no newredesign/frozenedits. CurrentuserrequestrevokesSTOPforassignedwork.
+
+
+## Milestone from docs/status/frontend/ROOM_REVIEW_CONTINUITY.md
+
+# Final acceptance: Room review continuity correction
+
+25 October2026 America/Chicago. Preceding baseline7c246ea. Read latestClaudehandoffs/FINAL_ACCEPTANCE_ASSIGNMENTS/acceptedv1.1delta/demo. ActualCUA https://cohue.tech (backendverifiedwebb0db29e, worker266a240; beforependingsecuritypatch) reproduceddesktopSpanishBRIEFeditor withunsavededit →390px →Brief tab: editorclosed/draftlost. Staticcausewide/mobileternaryreplacedRoomtree. NoLIVErecords/consentchanged.
+
+Ownedfix: Room singleRadixTabs tree, forceMountcontents; inactivephonepanelsdisplaynone, desktopallpanelsretainexistingtwo-columnappearance. Reviewstate survivesorientation/tabnavigation. Hiddenbriefplaybackbecomesinactive; Listenpauses. Briefkey includescanonicalhash/sourceVersion/version/status toretireoldeditor/mediaonsourcechange. Existingfont/radii/palette/logo/motionpreserved. AddedboundedsyntheticE2E exactdraft390/1024/1440/768+tabhide/reviewedListen assertions; harnessRoombriefs useexistinglocalizedrecords. E2Eauthoredpendingleadexecution, notpass.
+
+Actualownedlint/tsc/38frontendunitchecks recordedbeforecommit; fullcombinedbuild/audit/browserfixverificationreservedlead. ProductionCUAbeforefix: composer5widths nooverflow/nounder24visiblecontrol; invitation+creatorreview390/1024/1440withreducedmotionon/off exactdraft/focus/terms pass, SpanishinvitationTTSactualprogress; syntheticdecline→realrev2repair→renewedacceptance→activation3members4tasks; creatorTaskIN_PROGRESS persistedversion2. Original+SpanishRoombriefpresent, originalbindingretained. Detailedfinalmatrixandremaininghumansteps followsinFINAL_ACCEPTANCE.md. Ownmission4403db99-22ea-41d1-a41d-e452774eca25 cancellationpendingendofmediaobservation. Noindependentbuild/push/deploy.

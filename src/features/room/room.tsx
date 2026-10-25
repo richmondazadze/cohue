@@ -7,7 +7,8 @@ import { Select } from "@/components/ui/field";
 import { ErrorNotice, Notice } from "@/components/ui/notice";
 import { Panel, Skeleton } from "@/components/ui/surface";
 import { StatusBadge } from "@/components/ui/status";
-import { Tabs } from "@/components/ui/dialog";
+import * as RoomTabs from "@radix-ui/react-tabs";
+import { cx } from "@/components/ui/cx";
 import { useCommand } from "@/client/command";
 import { isApiError } from "@/client/http";
 import { keys, useRoom } from "@/client/queries";
@@ -85,7 +86,7 @@ function RoomView({ room }: { room: Room }) {
       <h2 id="brief-h" className="type-section">Brief</h2>
       <p>{room.mission.objective}</p>
       <p className="text-sm text-muted">Expected output: {room.mission.expectedOutput}</p>
-      <BriefList room={room} />
+      <BriefList room={room} playbackAllowed={wide || tab === "brief"} />
     </section>
   );
   const resources = (
@@ -138,32 +139,25 @@ function RoomView({ room }: { room: Room }) {
           <span className="type-meta text-muted">{room.memberships.length} members · {room.tasks.length} tasks</span>
         </div>
       </header>
-      {wide ? (
+      {/* Stable panel ancestry preserves unsubmitted review text during orientation changes.
+          forceMount keeps inactive mobile panels in state; display:none removes them from access/focus. */}
+      <RoomTabs.Root value={tab} onValueChange={setTab} className="rounded-panel border border-line-panel bg-surface p-4 md:border-0 md:bg-transparent md:p-0">
+        <RoomTabs.List aria-label="Room sections" className="mb-4 flex gap-1 overflow-x-auto border-b border-line-subtle md:hidden">
+          {[['tasks', 'Tasks'], ['brief', 'Brief'], ['team', 'Team'], ['resources', 'Resources']].map(([value, label]) => (
+            <RoomTabs.Trigger key={value} value={value} className="min-h-11 shrink-0 border-b-2 border-transparent px-3 text-sm font-medium text-muted data-[state=active]:border-action data-[state=active]:text-ink hover:text-ink">{label}</RoomTabs.Trigger>
+          ))}
+        </RoomTabs.List>
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-          <Panel className="flex flex-col gap-8 p-5 md:p-6">
-            {tasks}
-            {brief}
+          <Panel className={cx("min-w-0 flex-col gap-8 border-0 bg-transparent p-0 md:flex md:border md:bg-surface md:p-6", ['tasks', 'brief'].includes(tab) ? 'flex' : 'hidden')}>
+            <RoomTabs.Content forceMount value="tasks" className="hidden outline-none data-[state=active]:block md:block">{tasks}</RoomTabs.Content>
+            <RoomTabs.Content forceMount value="brief" className="hidden outline-none data-[state=active]:block md:block">{brief}</RoomTabs.Content>
           </Panel>
-          <div className="flex flex-col gap-6">
-            <Panel className="p-5">{team}</Panel>
-            <Panel className="p-5">{resources}</Panel>
+          <div className={cx("flex-col gap-6 md:flex", ['team', 'resources'].includes(tab) ? 'flex' : 'hidden')}>
+            <RoomTabs.Content forceMount value="team" className="hidden outline-none data-[state=active]:block md:block"><Panel className="border-0 bg-transparent p-0 md:border md:bg-surface md:p-5">{team}</Panel></RoomTabs.Content>
+            <RoomTabs.Content forceMount value="resources" className="hidden outline-none data-[state=active]:block md:block"><Panel className="border-0 bg-transparent p-0 md:border md:bg-surface md:p-5">{resources}</Panel></RoomTabs.Content>
           </div>
         </div>
-      ) : (
-        <Panel className="p-4">
-          <Tabs
-            label="Room sections"
-            value={tab}
-            onValueChange={setTab}
-            items={[
-              { value: "tasks", label: "Tasks", content: tasks },
-              { value: "brief", label: "Brief", content: brief },
-              { value: "team", label: "Team", content: team },
-              { value: "resources", label: "Resources", content: resources },
-            ]}
-          />
-        </Panel>
-      )}
+      </RoomTabs.Root>
       <div>
         <ButtonLink href={`/missions/${room.mission.id}`} variant="tertiary" size="sm">
           Back to Mission Theater (creator only)
@@ -245,7 +239,7 @@ function TaskRow({ task, ownerRole, missionId }: { task: Task; ownerRole: string
 
 type Brief = Room["briefs"][number];
 /** Shared team brief: the canonical original plus member-language translations. Playback only for reviewed text. */
-function BriefList({ room }: { room: Room }) {
+function BriefList({ room, playbackAllowed }: { room: Room; playbackAllowed: boolean }) {
   const [playing, setPlaying] = useState<string | null>(null);
   const label = (b: Brief) =>
     b.language === b.originalLanguage
@@ -259,7 +253,7 @@ function BriefList({ room }: { room: Room }) {
     <>
       {room.briefs.map((b) => (
         <article
-          key={`${b.id}:${b.version}:${b.status}`}
+          key={`${b.id}:${b.version}:${b.sourceVersion}:${b.canonicalTextHash}:${b.status}`}
           lang={b.language}
           className="rounded-field border border-line-panel bg-surface p-4"
         >
@@ -272,7 +266,7 @@ function BriefList({ room }: { room: Room }) {
               <Listen
                 id={`${b.id}-brief`}
                 label={`Listen in ${languageName(b.language)}`}
-                active={playing === `${b.id}-brief`}
+                active={playbackAllowed && playing === `${b.id}-brief`}
                 onActivate={setPlaying}
                 source={{ sourceId: b.sourceId, sourceKind: "BRIEF", sourceVersion: b.sourceVersion }}
                 language={b.language}

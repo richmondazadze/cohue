@@ -199,7 +199,7 @@ export class MockBackend {
     }
   }
 
-  room() {
+  room(): ApiOutput<"room">["data"] {
     const memberships = proposal.members.map((m, i) => ({
       id: fixtureId(300 + i), missionId: this.mission.id, participantId: m.participantId, approvedRole: m.role,
       termsHash: m.termsHash, invitationId: fixtureId(200 + i), responseId: fixtureId(250 + i), joinedAt: fixtureTime,
@@ -208,7 +208,7 @@ export class MockBackend {
       mission: this.mission,
       memberships,
       tasks: [{ id: fixtureId(400), missionId: this.mission.id, ownerMembershipId: fixtureId(301), description: "Sketch the accessible interface", status: this.taskStatus, dueAt: null, version: this.taskVersion }],
-      opportunities: [], briefs: [], reviews: [],
+      opportunities: [], briefs: this.localizations.filter((l) => l.sourceId === this.mission.id), reviews: [],
     };
   }
 
