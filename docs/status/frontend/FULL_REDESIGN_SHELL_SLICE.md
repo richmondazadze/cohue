@@ -1,0 +1,7 @@
+# Full redesign — shared shell and voice slice (in progress)
+
+25 October2026. User objective read from attached goal-objective.md; complete scope tracked in docs/status/frontend/full-redesign/IMPLEMENTATION_PLAN.md. This is progress, not completion of the full redesign goal.
+
+Extended approved App Shell2/landing fonts/colors/component language across all non-home product routes. Removed old route-level3D Stage from those routes; route breadcrumbs now identify Composer/Theater/invitation/Room/replay/app entry. Restored explicit server-command Return to live mode in new showcase banner. Composer heading, brief/requirements/time sections and review surfaces translated; all existing logic kept. Added measured recording-intensity microphone/waveform visual with reduced-motion static parity. Five3D avatar PNGs scouted/downloaded from alohe/avatars with MIT license/source manifest. Shared username/avatar persistence remains unresolved, detailed in IDENTITY_INTEGRATION.md; no fake local-only identity or competing contract added.
+
+npm run check PASS for shell/voice/composer code (foundation/lint/types/tests/build); avatar asset additions are static and source/license retained. Browser verification of this slice, remaining bespoke route treatments, live board/voice playback states, identity integration and full requirement audit remain pending. No push/deploy/other-chat contact. This milestone supersedes no full-release acceptance gate. Both handoffs appended through serialized script.

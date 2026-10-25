@@ -210,7 +210,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
 
   if (phase === "review")
     return (
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,680px)_minmax(0,1fr)]">
+      <div className="composer-review grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="min-w-0">
           <h2 ref={reviewRef} tabIndex={-1} className="type-section outline-none">
             Review before discovery
@@ -275,7 +275,7 @@ function ComposerForm({ skills }: { skills: TaxonomySkill[] }) {
     );
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12">
+    <div className="composer-workspace grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-8">
       <div className="flex min-w-0 flex-col gap-8">
         {!memory.participantId ? (
           <Notice tone="pending" title={inShowcase ? "Choose the synthetic organizer" : "Create your profile first"}>

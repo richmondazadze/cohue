@@ -5,6 +5,7 @@ import { ErrorNotice, Notice } from "@/components/ui/notice";
 import { useRecorder, transcribeAudio, newVoiceKey } from "@/client/voice";
 import { useReducedMotionPreference } from "@/client/media";
 import { MEDIA_LIMITS } from "@/contracts";
+import "./voice-meter.css";
 
 type Purpose = "PROFILE" | "MISSION" | "INVITATION_RESPONSE";
 
@@ -25,10 +26,15 @@ export function RecordControl(props: RecordControlProps) {
 }
 function RecordingSession({ purpose, language, onTranscript, label = "Record instead", beforeTranscribe }: RecordControlProps) {
   const meter = useRef<HTMLSpanElement>(null);
+  const bars = useRef<HTMLSpanElement>(null);
   const reduced = useReducedMotionPreference();
   const onLevel = useCallback(
     (level: number) => {
       if (meter.current) meter.current.style.transform = `scaleX(${reduced ? 1 : Math.max(0.04, level)})`;
+      bars.current?.querySelectorAll<HTMLElement>("span").forEach((bar, index) => {
+        const weight = [0.4, 0.65, 0.85, 1, 0.85, 0.65, 0.4][index];
+        bar.style.transform = `scaleY(${reduced ? 0.45 : Math.max(0.12, Math.min(1, level * 2.5 * weight))})`;
+      });
     },
     [reduced],
   );
@@ -102,6 +108,7 @@ function RecordingSession({ purpose, language, onTranscript, label = "Record ins
       {p === "requesting" ? <p className="type-meta text-muted">Waiting for microphone permission…</p> : null}
       {p === "recording" ? (
         <div className="flex flex-wrap items-center gap-3 rounded-field border border-line-control bg-surface p-3" role="status">
+          <span className="voice-recording-visual" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-3 0h6"/></svg><span ref={bars} className="voice-intensity">{Array.from({length:7},(_,i)=><span key={i}/>)}</span></span>
           <span className="type-compact text-declined">● Recording</span>
           <span className="type-meta tabular text-muted">
             {secs}s / {MEDIA_LIMITS.maxDurationMs / 1000}s

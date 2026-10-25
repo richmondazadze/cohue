@@ -4,17 +4,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useSession } from "@/client/queries";
+import { keys, useSession } from "@/client/queries";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useCommand } from "@/client/command";
+import { ErrorNotice } from "@/components/ui/notice";
 import "./participants.css";
 
 // Layout adapted from Efferd's free App Shell 2; COHUE's existing Radix primitives supply mobile focus management.
 export function ParticipantShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const session = useSession();
+  const client = useQueryClient();
+  const router = useRouter();
+  const live = useCommand("createSession");
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const title =
-    pathname === "/join" ? "Join the network" : "My profile & invitations";
+    pathname === "/join" ? "Join the network" : pathname === "/me" ? "My profile & invitations" : pathname === "/missions/new" ? "Create a mission" : pathname.endsWith("/room") ? "Mission Room" : pathname.endsWith("/replay") ? "Impact & replay" : pathname.startsWith("/missions/") ? "Mission Theater" : pathname.startsWith("/invitations/opened/") ? "Your invitation" : pathname.startsWith("/invitations/") ? "Invitation access" : "Explore COHUE";
   return (
     <div
       className={`participant-theme participant-app-shell${collapsed ? " sidebar-collapsed" : ""}`}
@@ -91,6 +98,8 @@ export function ParticipantShell({ children }: { children: ReactNode }) {
           <div className="participant-mode" role="status">
             Synthetic showcase · Profiles and missions in this space are
             separate from live activity.
+            <button type="button" className="ml-4 min-h-11 underline" disabled={live.isPending} onClick={() => live.mutate({input:{executionMode:"LIVE",showcaseId:null}},{onSuccess:next=>{client.clear();client.setQueryData(keys.session,next);router.push("/app")}})}>{live.isPending ? "Returning to live…" : "Return to live mode"}</button>
+            {live.isError ? <ErrorNotice error={live.error}/> : null}
           </div>
         ) : null}
         {children}
@@ -148,7 +157,7 @@ function SidebarContent({
       </Link>
       <nav aria-label="Workspace navigation">
         <p className="sidebar-group-label">Workspace</p>
-        <Link href="/app" onClick={onNavigate} aria-label="Explore">
+        <Link href="/app" onClick={onNavigate} aria-label="Explore" aria-current={pathname === "/app" ? "page" : undefined}>
           <ParticipantIcon kind="compass" />
           <span>Explore</span>
         </Link>
@@ -156,6 +165,7 @@ function SidebarContent({
           href="/missions/new"
           onClick={onNavigate}
           aria-label="Start a mission"
+          aria-current={pathname === "/missions/new" ? "page" : undefined}
         >
           <ParticipantIcon kind="plus" />
           <span>Start a mission</span>

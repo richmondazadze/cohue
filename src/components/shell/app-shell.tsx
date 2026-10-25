@@ -110,7 +110,7 @@ export function PageFrame({
       id="main"
       tabIndex={-1}
       className={cx(
-        "gutter mx-auto w-full pt-6 pb-24 outline-none md:pt-10",
+        "workspace-page gutter mx-auto w-full pt-6 pb-24 outline-none md:pt-10",
         width === "reading" && "max-w-[728px]",
         width === "form" && "max-w-[1120px]",
         width === "wide" && "max-w-[1600px]",

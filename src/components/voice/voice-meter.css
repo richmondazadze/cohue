@@ -1,0 +1,3 @@
+.voice-recording-visual{display:inline-flex;align-items:center;gap:12px;color:#315cce;padding:8px 12px;background:#edf1fb;border:1px solid #d9e2f7;border-radius:30px}
+.voice-intensity{display:flex;align-items:center;gap:3px;height:26px}.voice-intensity>span{width:3px;height:24px;background:currentColor;border-radius:3px;transform:scaleY(.12);transition:transform 100ms linear;transform-origin:center}
+@media(prefers-reduced-motion:reduce){.voice-intensity>span{transition:none;transform:scaleY(.45)!important}}

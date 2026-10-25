@@ -1204,3 +1204,10 @@
 .participant-notifications>[role=status]{position:static;inset:auto;padding:0;width:100%;align-items:stretch}
 .participant-notifications>[role=status]>div{pointer-events:auto}
 @media(max-width:550px){.participant-notifications{top:auto;bottom:max(16px,env(safe-area-inset-bottom));left:16px;right:16px;width:auto}}
+
+/* Shared workspace translation of the approved landing, all product routes. */
+.participant-theme .workspace-page{max-width:1440px;padding:44px 36px 72px}.participant-theme .workspace-page.max-w-\[728px\]{max-width:940px}.participant-theme .workspace-page h1.type-experience{font-size:clamp(34px,4vw,56px);letter-spacing:-.05em;line-height:1.12}.participant-theme .workspace-page h2{letter-spacing:-.035em}.participant-theme .workspace-page [data-tilt]{transform:none!important}
+.composer-workspace>div>section{padding:28px;border:1px solid var(--color-line-panel);background:var(--color-surface);border-radius:12px}.composer-workspace>aside>section{background:#e9ece8}.composer-workspace>div>section:first-of-type{border-top:3px solid #315cce}.composer-review{padding:30px;border:1px solid var(--color-line-panel);border-radius:12px;background:var(--color-surface)}
+.participant-theme [role=tablist]{gap:8px}.participant-theme [role=tab]{padding:12px 18px;font-size:13px}.participant-theme .workspace-page .type-meta{line-height:1.7}.participant-theme .workspace-page fieldset{min-width:0}.participant-theme .workspace-page input,.participant-theme .workspace-page textarea{font-size:14px}
+@media(max-width:1100px){.composer-workspace{grid-template-columns:minmax(0,1fr)!important}.composer-workspace>aside{display:none}.composer-review{grid-template-columns:minmax(0,1fr)!important}}
+@media(max-width:550px){.participant-theme .workspace-page{padding:32px 6vw 64px}.composer-workspace>div>section{padding:20px 16px}.composer-review{padding:20px 16px}.participant-theme [role=tab]{padding:12px;font-size:12px}}

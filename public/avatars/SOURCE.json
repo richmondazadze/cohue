@@ -1,0 +1,27 @@
+{
+  "source": "https://github.com/alohe/avatars",
+  "license": "LICENSE.txt",
+  "assets": [
+    {
+      "name": "3d_1.png",
+      "url": "https://raw.githubusercontent.com/alohe/avatars/main/png/3d_1.png"
+    },
+    {
+      "name": "3d_2.png",
+      "url": "https://raw.githubusercontent.com/alohe/avatars/main/png/3d_2.png"
+    },
+    {
+      "name": "3d_3.png",
+      "url": "https://raw.githubusercontent.com/alohe/avatars/main/png/3d_3.png"
+    },
+    {
+      "name": "3d_4.png",
+      "url": "https://raw.githubusercontent.com/alohe/avatars/main/png/3d_4.png"
+    },
+    {
+      "name": "3d_5.png",
+      "url": "https://raw.githubusercontent.com/alohe/avatars/main/png/3d_5.png"
+    }
+  ],
+  "downloaded": "2026-10-25"
+}

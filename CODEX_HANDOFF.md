@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T13:57:23.337Z (America/Chicago display dates apply).
+Last update: 2026-10-25T14:08:21.108Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1098,3 +1098,14 @@ Manual CUA against actual local next start on8796: real taxonomy/session service
 Actual browser verification on cohue.tech: /join renders App Shell2, approved typography, four-step progress and loaded taxonomy/form; /me renders new inbox with real API-loaded synthetic-showcase invitations and profile-loading state. Existing browser session was already synthetic showcase; label remained explicit. No new participant saved, invitation answered, link issued, deletion or provider action performed during smoke. Toast implementation included in deployed source; failure behavior already verified in local production and contract-fixture tests, not deliberately induced on live. Screenshot docs/status/frontend/release-artifacts/join-live.png. Previous local PostgreSQL timeout is not evidence of a production outage. This smoke is not comprehensive LIVE-mode/provider/D7 acceptance.
 
 Both handoffs synchronized. Documentation-only follow-up commit pushed after successful code deployment; no other chats contacted.
+
+
+## Milestone from docs/status/frontend/FULL_REDESIGN_SHELL_SLICE.md
+
+# Full redesign — shared shell and voice slice (in progress)
+
+25 October2026. User objective read from attached goal-objective.md; complete scope tracked in docs/status/frontend/full-redesign/IMPLEMENTATION_PLAN.md. This is progress, not completion of the full redesign goal.
+
+Extended approved App Shell2/landing fonts/colors/component language across all non-home product routes. Removed old route-level3D Stage from those routes; route breadcrumbs now identify Composer/Theater/invitation/Room/replay/app entry. Restored explicit server-command Return to live mode in new showcase banner. Composer heading, brief/requirements/time sections and review surfaces translated; all existing logic kept. Added measured recording-intensity microphone/waveform visual with reduced-motion static parity. Five3D avatar PNGs scouted/downloaded from alohe/avatars with MIT license/source manifest. Shared username/avatar persistence remains unresolved, detailed in IDENTITY_INTEGRATION.md; no fake local-only identity or competing contract added.
+
+npm run check PASS for shell/voice/composer code (foundation/lint/types/tests/build); avatar asset additions are static and source/license retained. Browser verification of this slice, remaining bespoke route treatments, live board/voice playback states, identity integration and full requirement audit remain pending. No push/deploy/other-chat contact. This milestone supersedes no full-release acceptance gate. Both handoffs appended through serialized script.
