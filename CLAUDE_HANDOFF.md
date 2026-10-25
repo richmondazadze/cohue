@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T14:58:23.731Z (America/Chicago display dates apply).
+Last update: 2026-10-25T15:25:27.822Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1206,3 +1206,16 @@ User approved in the thread ("Approved. Run all. Also for existing user profile 
 - Ran scripts/worker/assign-avatars.sql (84209bb; idempotent, deterministic from md5(id), skips profiles that already chose an avatar, leaves usernames): 204 updated, 0 without avatar after. Spread 3d_1 47, 3d_2 41, 3d_3 40, 3d_4 35, 3d_5 41. profile_version unchanged (avatar is presentation, not commitment terms).
 - Showcase seeding (seed-showcase.ts, showcase-crowd.sql) now assigns avatars so a reseed keeps them.
 - After: showcase-journey and session-continuity against https://cohue.tech passed.
+
+
+## Milestone from docs/status/lead/APP_MOTION.md
+
+# App-wide motion (25 Oct 2026, ~10:25 CDT)
+
+User ask: full app motion, subtle blur/offset ease-in for everything, sidebar slide-outs, clean and classy; then push and verify. Coordinator pointed to motion/bountini-film-60s-v2.mp4 (git-ignored reference): blur-in from a small offset, UI assembling row by row.
+
+- 15ce2f0 + f8bc188: src/components/motion/motion-layer.tsx and motion.css, mounted once in ParticipantShell around the page (`[data-motion-root]`). Each route assembles row by row: containers taller than 220 px split into their children (depth 5, 64 units), 12 px blur + 14 px offset, 620 ms cubic-bezier(.23,1,.32,1), 42 ms stagger capped at 14 steps. Blocks below the fold wait and reveal on scroll; content arriving later (query results, new list items) assembles the same way. Elements GSAP is already moving (inline transform/opacity/visibility), svg/canvas/video and tab-panel contents are left alone; attributes are removed on animationend.
+- Sidebar collapse eases width/margin, labels re-enter with blur; mobile drawer slides out with blur over a blurred overlay and slides back on close (Radix data-state exit); tab panels, sheet close, live alerts and breadcrumb title share the vocabulary. Landing page "/" untouched.
+- prefers-reduced-motion: nothing hidden or moved (verified: root opacity 1, no motion attributes). First-paint gate has a 1.2 s CSS failsafe.
+
+Verification: unit 114/114, lint, types, build; mocked frontend browser suite 51/51 against a local production build (twice). Production (https://cohue.tech, deployment cohue-992z37ob5): sampled blur 12 px → 9.3 px with opacity rising during a route change; 35 staggered reveal events on /join; drawer opens/closes; after jumping to the bottom and scrolling back, 0 hidden blocks and 0 horizontal overflow on /missions/new, /join, /me, /app at 1440 and 390; showcase-journey and session-continuity passed live. Hosted CI for f8bc188 was in progress at this note. Not checked: physical-device frame rate.
