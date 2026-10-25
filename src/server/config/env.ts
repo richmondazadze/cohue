@@ -18,6 +18,8 @@ const EnvSchema = z.object({
   ELEVENLABS_TTS_MODEL: optional,
   ELEVENLABS_VOICE_ID: optional,
   SERPAPI_API_KEY: optional,
+  META_MODEL_API_KEY: optional,
+  META_MODEL: optional,
   DISPATCHER_SECRET: optional,
   DISPATCHER_MODE: optional.pipe(z.enum(["scheduled", "worker"]).optional()).catch(undefined),
   NEXT_PUBLIC_APP_URL: optional,

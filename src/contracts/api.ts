@@ -236,6 +236,23 @@ export const CoordinatorTurnSchema = z.strictObject({
   reply: z.string().trim().min(1).max(600),
   questions: z.array(z.string().trim().min(1).max(300)).max(2),
   draft: MissionExtractionSchema,
+  // Which model drafted this turn (Meta is the fallback when Gemini is unavailable).
+  drafter: z.enum(["GEMINI", "META"]),
+  // A second model's one-line review of the draft, when available.
+  strategist: z.strictObject({ model: LabelSchema, note: TextSchema }).nullable(),
+  // What the Coordinator says aloud, signed so speech can be requested only for its own words.
+  speech: z.strictObject({ text: TextSchema, signature: z.string().regex(/^[A-Za-z0-9_-]{43}$/) }),
+});
+export const CoordinatorSpeechSchema = z.strictObject({
+  mimeType: z.literal("audio/mpeg"),
+  base64: z.string().max(2_000_000),
+});
+// The Coordinator's first-hour plan for an activated team, in the reader's language. Advisory, never binding.
+export const KickoffPlanSchema = z.strictObject({
+  language: LanguageSchema,
+  steps: z.array(z.strictObject({ role: LabelSchema, action: TextSchema })).min(1).max(12),
+  checkIn: TextSchema,
+  drafter: z.enum(["GEMINI", "META"]),
 });
 export const apiContracts = {
   taxonomy: route("GET", "/api/taxonomy", "PUBLIC", empty, TaxonomySchema, 200),
@@ -503,6 +520,23 @@ export const apiContracts = {
     "MEMBER",
     empty,
     RoomSchema,
+    200,
+  ),
+  speakCoordinator: route(
+    "POST",
+    "/api/missions/coordinate/speech",
+    "SESSION",
+    z.strictObject({ speech: CoordinatorTurnSchema.shape.speech }),
+    CoordinatorSpeechSchema,
+    200,
+    true,
+  ),
+  kickoffPlan: route(
+    "GET",
+    "/api/missions/:id/kickoff",
+    "MEMBER",
+    z.strictObject({ language: LanguageSchema }),
+    KickoffPlanSchema,
     200,
   ),
   updateTask: route(

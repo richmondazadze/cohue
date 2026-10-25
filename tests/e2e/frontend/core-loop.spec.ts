@@ -79,6 +79,10 @@ for (const width of [390, 1280]) {
     await shot("theater-activated");
     await page.getByRole("link", { name: "Open Mission Room" }).click();
     await expect(page.getByText("Sketch the accessible interface", { exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Kickoff plan for your first hour" })).toBeVisible();
+    await expect(page.getByText(/five-minute round of introductions/)).toBeVisible();
+    await page.getByRole("button", { name: "es" }).click();
+    await expect(page.getByRole("button", { name: "es" })).toHaveAttribute("aria-pressed", "true");
     await page.getByLabel(/Status for Sketch/).selectOption("DONE");
     await expect(page.getByText("Someone else changed this task")).toBeVisible();
     await shot("room-stale");

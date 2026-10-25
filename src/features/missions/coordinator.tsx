@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import type { ApiData } from "@/client/http";
 import { useCommand } from "@/client/command";
 import { Button } from "@/components/ui/button";
@@ -8,18 +8,40 @@ import { ErrorNotice } from "@/components/ui/notice";
 import { RecordControl } from "@/components/voice/record-control";
 import { cx } from "@/components/ui/cx";
 
-type Turn = { role: "CREATOR" | "COORDINATOR"; text: string; questions?: string[] };
+type Turn = {
+  role: "CREATOR" | "COORDINATOR";
+  text: string;
+  questions?: string[];
+  drafter?: "GEMINI" | "META";
+  strategist?: { model: string; note: string } | null;
+};
 export type CoordinatorDraft = ApiData<"coordinateMission">["draft"];
 
 const MAX_TURNS = 12;
 const SPEAK_KEY = "cohue.coordinator.speak";
 const VOICE_LANG: Record<string, string> = { en: "en-US", es: "es-ES", fr: "fr-FR" };
 
-/** Spoken replies use the browser's own speech engine: no audio leaves the device and nothing is stored. */
-function speak(text: string, language: string) {
+const MODEL_NAME = { GEMINI: "Gemini", META: "Meta Muse Spark" } as const;
+
+let playing: HTMLAudioElement | null = null;
+function stopSpeaking() {
+  playing?.pause();
+  playing = null;
+  globalThis.speechSynthesis?.cancel();
+}
+/** The Coordinator's ElevenLabs voice; the browser's own speech engine only when that voice is unavailable. */
+function speak(text: string, language: string, audio: { mimeType: string; base64: string } | null) {
+  stopSpeaking();
+  if (audio) {
+    playing = new Audio(`data:${audio.mimeType};base64,${audio.base64}`);
+    void playing.play().catch(() => browserSpeak(text, language));
+    return;
+  }
+  browserSpeak(text, language);
+}
+function browserSpeak(text: string, language: string) {
   const synth = globalThis.speechSynthesis;
   if (!synth) return;
-  synth.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = VOICE_LANG[language] ?? language;
   synth.speak(u);
@@ -41,6 +63,7 @@ export function CoordinatorChat({
   onReady: () => void;
 }) {
   const turnCmd = useCommand("coordinateMission");
+  const speakCmd = useCommand("speakCoordinator");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [text, setText] = useState("");
   // The composer renders only after hydration, so device storage can seed state directly.
@@ -51,14 +74,14 @@ export function CoordinatorChat({
   const input = useRef<HTMLTextAreaElement>(null);
   const canSpeak = typeof window !== "undefined" && "speechSynthesis" in window;
 
-  useEffect(() => () => globalThis.speechSynthesis?.cancel(), []);
+  useEffect(() => stopSpeaking, []);
   useEffect(() => {
     log.current?.lastElementChild?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [turns, turnCmd.isPending]);
 
   const toggleSpeak = (v: boolean) => {
     setSpeakReplies(v);
-    if (!v) globalThis.speechSynthesis?.cancel();
+    if (!v) stopSpeaking();
     try { localStorage.setItem(SPEAK_KEY, v ? "1" : "0"); } catch { /* ignore */ }
   };
 
@@ -77,9 +100,20 @@ export function CoordinatorChat({
       { input: { language, turns: next } },
       {
         onSuccess: (x) => {
-          setTurns((t) => [...t, { role: "COORDINATOR", text: x.reply, questions: x.questions }]);
+          setTurns((t) => [
+            ...t,
+            { role: "COORDINATOR", text: x.reply, questions: x.questions, drafter: x.drafter, strategist: x.strategist },
+          ]);
           onDraft(x.draft);
-          if (speakReplies) speak([x.reply, ...x.questions].join(" "), language);
+          if (speakReplies)
+            // Text is already on screen; the ElevenLabs voice follows, or the device voice if it can't.
+            speakCmd.mutate(
+              { input: { speech: x.speech } },
+              {
+                onSuccess: (audio) => speak(x.speech.text, language, audio),
+                onError: () => speak(x.speech.text, language, null),
+              },
+            );
           requestAnimationFrame(() => input.current?.focus());
         },
         onError: () => {
@@ -112,7 +146,8 @@ export function CoordinatorChat({
       {turns.length ? (
         <ol ref={log} aria-live="polite" aria-label="Conversation with the Coordinator" className="m-0 flex max-h-[420px] list-none flex-col gap-3 overflow-y-auto p-0">
           {turns.map((t, i) => (
-            <li key={i} className={cx("flex", t.role === "CREATOR" ? "justify-end" : "justify-start")}>
+            <Fragment key={i}>
+            <li className={cx("flex", t.role === "CREATOR" ? "justify-end" : "justify-start")}>
               <div
                 className={cx(
                   "max-w-[85%] rounded-panel px-4 py-3 text-sm leading-6 break-words",
@@ -126,8 +161,22 @@ export function CoordinatorChat({
                     {t.questions.map((q) => <li key={q}>→ {q}</li>)}
                   </ul>
                 ) : null}
+                {t.drafter ? <span className="type-meta mt-2 block text-muted">Coordinator · {MODEL_NAME[t.drafter]}</span> : null}
               </div>
             </li>
+            {t.strategist ? (
+              <li className="flex justify-start">
+                <div className="flex max-w-[85%] gap-2 rounded-panel border border-dashed border-line-control px-4 py-3 text-sm leading-6">
+                  <span aria-hidden className="type-meta mt-0.5 h-fit rounded-compact border border-line-control px-1.5 font-semibold">St</span>
+                  <span>
+                    <span className="sr-only">Strategist: </span>
+                    {t.strategist.note}
+                    <span className="type-meta mt-1 block text-muted">Strategist second opinion · Meta {t.strategist.model}</span>
+                  </span>
+                </div>
+              </li>
+            ) : null}
+            </Fragment>
           ))}
           {turnCmd.isPending ? (
             <li className="flex justify-start">

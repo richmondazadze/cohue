@@ -234,6 +234,22 @@
       "idempotentCommand": false
     },
     {
+      "name": "speakCoordinator",
+      "method": "POST",
+      "path": "/api/missions/coordinate/speech",
+      "auth": "SESSION",
+      "status": 200,
+      "idempotentCommand": true
+    },
+    {
+      "name": "kickoffPlan",
+      "method": "GET",
+      "path": "/api/missions/:id/kickoff",
+      "auth": "MEMBER",
+      "status": 200,
+      "idempotentCommand": false
+    },
+    {
       "name": "updateTask",
       "method": "PATCH",
       "path": "/api/missions/:id/tasks/:taskId",

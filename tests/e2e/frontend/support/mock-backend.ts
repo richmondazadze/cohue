@@ -183,6 +183,16 @@ export class MockBackend {
         return [200, this.room()];
       case "room":
         return this.mission.state === "ACTIVATED" ? [200, this.room()] : [403, err("FORBIDDEN")];
+      case "kickoffPlan": {
+        if (this.mission.state !== "ACTIVATED") return [403, err("FORBIDDEN")];
+        const roles = this.room().memberships.map((m) => m.approvedRole);
+        return [200, {
+          language: query.get("language") ?? "en",
+          steps: roles.map((role) => ({ role, action: `Share your first idea for ${role.toLowerCase()} (fixture plan).` })),
+          checkIn: "Start with a five-minute round of introductions (fixture plan).",
+          drafter: "GEMINI",
+        }];
+      }
       case "updateTask":
         if (this.staleOnce) {
           this.staleOnce = false;

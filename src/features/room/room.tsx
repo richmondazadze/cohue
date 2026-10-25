@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ApiOutput } from "@/contracts";
 import { ButtonLink } from "@/components/ui/button";
 import { Select } from "@/components/ui/field";
@@ -10,8 +10,8 @@ import { StatusBadge } from "@/components/ui/status";
 import * as RoomTabs from "@radix-ui/react-tabs";
 import { cx } from "@/components/ui/cx";
 import { useCommand } from "@/client/command";
-import { isApiError } from "@/client/http";
-import { keys, useRoom } from "@/client/queries";
+import { callApi, isApiError } from "@/client/http";
+import { keys, queryRetry, useDeviceMemory, useParticipant, useRoom } from "@/client/queries";
 import { useMediaQuery } from "@/client/media";
 import { formatTimestamp } from "@/client/time";
 import { languageName } from "@/features/shared/skills";
@@ -56,6 +56,7 @@ function RoomView({ room }: { room: Room }) {
   const roleOf = new Map(room.memberships.map((m) => [m.id, m.approvedRole]));
   const tasks = (
     <section aria-labelledby="tasks-h">
+      <KickoffPlan missionId={room.mission.id} />
       <h2 id="tasks-h" className="type-section mb-3">Tasks</h2>
       {room.tasks.length ? (
         <ul className="m-0 flex list-none flex-col gap-3 p-0">
@@ -164,6 +165,68 @@ function RoomView({ room }: { room: Room }) {
         </ButtonLink>
       </div>
     </div>
+  );
+}
+
+const PLAN_LANGUAGES = ["en", "es", "fr"] as const;
+
+/** The Coordinator's advisory first-hour plan, in the reader's language; tasks and terms stay authoritative. */
+function KickoffPlan({ missionId }: { missionId: string }) {
+  const memory = useDeviceMemory();
+  const me = useParticipant(memory.participantId);
+  const fallback = PLAN_LANGUAGES.find((l) => navigator.language?.startsWith(l)) ?? "en";
+  const [chosen, setChosen] = useState<string | null>(null);
+  const language = chosen ?? (PLAN_LANGUAGES.find((l) => l === me.data?.language) ?? fallback);
+  const plan = useQuery({
+    queryKey: ["mission", missionId, "kickoff", language],
+    queryFn: ({ signal }) => callApi("kickoffPlan", { params: { id: missionId }, input: { language }, signal }),
+    staleTime: Infinity,
+    retry: queryRetry,
+  });
+  return (
+    <section aria-labelledby="kickoff-h" className="mb-8 rounded-field border border-line-panel bg-subtle p-4 md:p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 id="kickoff-h" className="type-panel flex items-center gap-2">
+          <span aria-hidden className="grid size-6 place-items-center rounded-full bg-action text-xs font-semibold text-white">C</span>
+          Kickoff plan for your first hour
+        </h2>
+        <div role="group" aria-label="Plan language" className="flex gap-1">
+          {PLAN_LANGUAGES.map((l) => (
+            <button
+              key={l}
+              type="button"
+              aria-pressed={l === language}
+              onClick={() => setChosen(l)}
+              className={cx(
+                "min-h-11 min-w-11 rounded-button px-2 text-sm font-medium uppercase",
+                l === language ? "bg-action text-white" : "text-muted hover:text-ink",
+              )}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
+      </div>
+      {plan.isPending ? (
+        <Skeleton className="mt-3 h-24 w-full" label="The Coordinator is writing the kickoff plan" />
+      ) : plan.isError ? (
+        <ErrorNotice className="mt-3" error={plan.error} title="Kickoff plan unavailable. The tasks below are the plan of record." onRetry={() => void plan.refetch()} />
+      ) : (
+        <>
+          <ol className="mt-3 flex list-decimal flex-col gap-2 pl-5 text-sm leading-6">
+            {plan.data.steps.map((st, i) => (
+              <li key={i}>
+                <strong>{st.role}:</strong> {st.action}
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 text-sm">{plan.data.checkIn}</p>
+          <p className="type-meta mt-2 text-muted">
+            Suggested by the Coordinator · {plan.data.drafter === "META" ? "Meta Muse Spark" : "Gemini"} · {languageName(plan.data.language)}. Advisory; the tasks and approved terms are binding.
+          </p>
+        </>
+      )}
+    </section>
   );
 }
 
