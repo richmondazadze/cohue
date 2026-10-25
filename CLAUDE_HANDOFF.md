@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T00:30:34.427Z (America/Chicago display dates apply).
+Last update: 2026-10-25T00:50:49.317Z (America/Chicago display dates apply).
 Current milestone: lead continuation in Claude Code. Foundation I0 complete; contract 1.1.0 adds the invitation share-link operation; lead integration harness for I2/I3 is committed but has not run against a backend. No frontend or backend work has landed and no specialist conversation is known to be active, so I1 is unstarted. Deployed D7 remains UNVERIFIED.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -214,3 +214,14 @@ Combined evidence on this tree: `npm run check` passed (foundation hashes, hando
 Defect fixed during integration: superseded-invitation revocation events were emitted after the reissued invitations, so the UI showed the new invitation as revoked; revocations now commit first. Frontend contract questions recorded in docs/status/frontend/F1-F3.md: own participant id is kept per device in localStorage; no checkpoint id is exposed for retry/resume; room/terms carry roles, not names; snapshot has no invitations list (UI folds INVITATION_* events, which is now causally ordered).
 
 Blockers unchanged: provider keys empty in .env.local, so Gemini/ElevenLabs/SerpApi paths return PROVIDER_UNAVAILABLE and are unproven; no Tiger Data URL; Vercel CLI is signed in but the user has not chosen a reachable database, and Hobby cron cannot run every minute, so deployed D7 is UNVERIFIED. Next: deployment once the database is chosen; SSE + remaining event motions in the theater; showcase seed script; multilingual proof once keys land.
+
+
+## Milestone from docs/status/lead/I4-I5-ui.md
+
+I4/I5 user-facing slice integrated, 24 Oct 2026 late evening CDT. Commits: 66c9667 showcase seed + resumable pause checkpoints (PAUSED_FOR_HUMAN.checkpoint now carries the resumable job id), 1a4cbda deployment runbook (docs/operations/DEPLOYMENT.md), rate limit, eda7cd2 frontend F4–F5 (live SSE theater with JSON backfill/fallback, eight committed-event motions with reduced-motion parity, Activity tab, read-only replay scrubber + Impact from real records, voice record/transcribe draft, translations beside the binding original with organizer approval and Listen, opt-in synthetic showcase marked on every page), 67e4c90 binding original listed as an APPROVED localized item so original-language playback can bind to its hash.
+
+Contract fix (still 1.1.0, bug fix): replay atSequence is coerced from the query string; unit-tested, and the I3 spec now asserts replay at activation-1 is AWAITING_APPROVAL and at activation is ACTIVATED.
+
+Evidence: `npm run check` passed (53 tests + 1 DB test skipped without COHUE_TEST_DATABASE_URL; build OK). Production `COHUE_REQUIRE_INTEGRATION=1 npm run test:e2e`: 11 passed (incl. real-UI browser journey, showcase). Against :3300 dev + cohue_test: tests/e2e/integration + tests/e2e/frontend 13 passed (incl. live-features over SSE on the real API). Providers still unconfigured, so only their honest-failure paths are tested. Organizer deadline search found nothing authoritative; Sunday 11:30 AM CDT remains a PRD-supplied, unconfirmed date.
+
+Open: creator cannot list an invitation's translations without opening the invite (getInvitation is INVITATION-only); own-participant id per scope is client-stored; deployment and D7 waiting on user's database choice and Vercel plan; real phone, 320–1440 widths for new screens and screen-reader passes untested.
