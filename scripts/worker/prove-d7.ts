@@ -58,7 +58,8 @@ try {
   }
   assert(stale,"Worker did not lease the held mission");
   record("actual_inflight_lease_held",{jobId:stale!.id,owner:stale!.lease_owner,fence:stale!.fence,attempts:stale!.attempts});
-  ssh("kill -KILL $(systemctl show -p MainPID --value cohue-worker)");
+  // MainPID is the npm wrapper; its node/tsx child must die too, or the orphan finishes the leased step.
+  ssh("systemctl kill --signal=KILL cohue-worker || true; pkill -KILL -u cohue -f scripts/worker/run.ts || true");
   record("worker_killed_during_lease");
   await lock.query("ROLLBACK"); lock.release(); lock=undefined;
   } else {
