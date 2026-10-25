@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T02:24:46.874Z (America/Chicago display dates apply).
+Last update: 2026-10-25T02:29:08.673Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -436,3 +436,10 @@ Vultr authenticated. Prepared vc2-1c-1gb Atlanta Ubuntu24.04LTS, $5/month hourly
 User explicitly approved creation after reviewing$5/month hourly cost and account credit. Created cohue-worker, instance edfad586-5b1d-4475-9387-63116bf26550, Atlanta, vc2-1c-1gb,1vCPU/1GBRAM/25GBSSD, Ubuntu24.04LTS, publicIPv4 155.138.162.102. Console verified Running after installation. No paid addons/backups selected; authoritative data stays in backed-up TigerData. Account credit previously verified$300 expiring2026-11-24; billing continues after credit expiry until instance destroyed.
 
 Instance creation is complete; application worker installation and D7 are NOT complete. Dedicated local administration key generated in ignored credentials/ (modeprotected), not yet installed remotely. Console copy-password action yielded empty clipboard; no bootstrap password captured or printed. Resume secure access setup on this existing instance, never deploy a duplicate. No runtime secrets transferred yet. Safe running-instance screenshot retained in ignored artifacts/vultr-instance-created.png. Both handoffs appended together. Web application remains deployed separately on Vercel/cohue.tech.
+
+
+## Milestone from docs/status/lead/SPECIALIST_RELEASE_DISPATCH.md
+
+# Specialist release dispatch
+
+User explicitly requests orchestrated remaining work in the two existing specialist chats. Restored separatefrontend/backendownership inAGENTS; created RELEASE_ORCHESTRATION.md, FRONTEND_RELEASE_SCOPE.md and BACKEND_RELEASE_SCOPE.md with orderedR0–R6gates, exactboundaries/dependencies/acceptance and evidence-basedcompletion. Baseline796042e; hostedCI for796042e andd01e5a2 bothsuccess. Weblive, VultrhostRunning butworkeruninstalled/D7unverified. No duplicateinstance orsecrettransfer claimed. Lead retainsconfig/contracts/CI/finalreview and serializedpush/deploy. Actualdispatch receipt follows tools; documentcreation alone doesnotactivatechats.

@@ -1,0 +1,3 @@
+# Specialist release dispatch
+
+User explicitly requests orchestrated remaining work in the two existing specialist chats. Restored separatefrontend/backendownership inAGENTS; created RELEASE_ORCHESTRATION.md, FRONTEND_RELEASE_SCOPE.md and BACKEND_RELEASE_SCOPE.md with orderedR0–R6gates, exactboundaries/dependencies/acceptance and evidence-basedcompletion. Baseline796042e; hostedCI for796042e andd01e5a2 bothsuccess. Weblive, VultrhostRunning butworkeruninstalled/D7unverified. No duplicateinstance orsecrettransfer claimed. Lead retainsconfig/contracts/CI/finalreview and serializedpush/deploy. Actualdispatch receipt follows tools; documentcreation alone doesnotactivatechats.
