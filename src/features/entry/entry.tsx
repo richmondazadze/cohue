@@ -43,11 +43,11 @@ export function Entry() {
         if (context.conditions?.reduce) return;
         gsap.from("[data-rise='hero']", {
           autoAlpha: 0,
-          y: 28,
-          rotationX: -12,
+          y: 8,
+
           transformOrigin: "50% 100%",
           stagger: 0.07,
-          duration: 0.75,
+          duration: 0.28,
           clearProps: "transform,opacity,visibility",
         });
         ScrollTrigger.batch("[data-rise='step']", {
@@ -56,11 +56,11 @@ export function Entry() {
           onEnter: (batch) => {
             gsap.from(batch, {
               autoAlpha: 0,
-              y: 24,
-              rotationX: -10,
+              y: 8,
+
               transformOrigin: "50% 100%",
               stagger: 0.08,
-              duration: 0.65,
+              duration: 0.28,
               clearProps: "transform,opacity,visibility",
             });
           },
@@ -72,7 +72,7 @@ export function Entry() {
   );
   return (
     <main id="main" ref={mainRef} data-stage="hero" tabIndex={-1} className="outline-none">
-      <section className="gutter mx-auto max-w-[1600px] pt-12 pb-12 text-center md:pt-20">
+      <section className="workspace-entry-hero gutter mx-auto max-w-[1600px] pt-12 pb-12 md:pt-20">
         <p data-rise="hero" className="eyebrow mb-6 inline-flex items-center gap-3">
           <span aria-hidden="true" className="block h-px w-7 bg-line-control" />
           Common ground

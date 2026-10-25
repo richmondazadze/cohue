@@ -18,7 +18,7 @@ export function Sheet({
   footer,
   trigger,
   className,
-  subtle = false,
+  subtle = true,
   returnFocusRef,
 }: {
   open: boolean;
@@ -62,6 +62,7 @@ export function Sheet({
             "inset-x-0 bottom-0 rounded-t-sheet",
             "md:inset-auto md:top-1/2 md:left-1/2 md:w-[min(560px,calc(100vw-48px))] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-panel",
             !subtle && "data-[state=open]:animate-[cohue-sheet_240ms_var(--ease-standard)] [perspective:900px]",
+            "participant-sheet",
             className,
           )}
         >

@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T14:21:51.106Z (America/Chicago display dates apply).
+Last update: 2026-10-25T14:24:56.898Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -1142,3 +1142,14 @@ Full goal remains active: invitation identity projection, existing-profile ident
 Coordinator preparing/speaking/stop-voice state now follows actual HTML audio or speech-synthesis lifecycle; reduced-motion chat scrolling respected. Existing reviewed-audio intensity/recording views remain. No fabricated model thoughts or automatic consent. Database connectivity re-probe still times out; no migration applied, actual concurrent scoped username DB uniqueness remains unverified.
 
 npm run check PASS; audit zero vulnerabilities. Production-build fixture browser regression5/5 PASS: identity editor versioned save, mission core loop390/1280, API failure, translation review. DB/provider/invitation real-user acceptance not claimed. Full visual audit, final scope/gap audit, coordinator intensity detail and migration-backed acceptance remain pending. No push/deployment/chat messages. Both handoffs synchronized by script.
+
+
+## Milestone from docs/status/frontend/FULL_REDESIGN_DB_VISUAL_SLICE.md
+
+# Full redesign — real identity persistence and visual audit slice
+
+25 October2026. Preceding baseline0fe74de. Remote DB remained unavailable, so created isolated PostgreSQL17 cluster /tmp/cohue-identity-pg on127.0.0.1:55439, databasecohue_identity. No production DB/env touched. All migrations0000–0003 applied successfully. New real-PostgreSQL identity test verifies normalized username/avatar persistence, concurrent duplicate rejection in one scope, update persistence and independent showcase reuse. All backend tests on this isolated database:11 files/45 tests PASS. This supersedes earlier “migration/DB uniqueness unverified” for isolated local acceptance only; production migration remains unapplied.
+
+Manual actual browser against production Next server8796 configured to isolated DB: chose3D avatar3, username redesign_review/display nameLocal redesign review, progressed all four steps with opt-ins unselected, saved successfully and /me showed persistent username, saved confirmation and identity-edit control. Actual composer loaded taxonomy/profile/session and full structured fields. Screenshot full-redesign/artifacts/identity-real-db.png retained. No provider call, invite response or production participant created.
+
+Refined app entry into landing-style editorial layout with short gentle entrances, impact data into clearer type hierarchy, and shared sheets default to subtle approved styling. Existing API/consent behavior preserved. Scoped CSS only. npm run check PASS before tiny coordinator badge sizing refinement; audit/regression final sweep pending. Full goal remains active: final screenshots/state-matrix audit, speaking-intensity detail and objective completion audit remain. No push/deployment/chat messages. Both handoffs synchronized.
