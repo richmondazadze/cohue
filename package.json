@@ -17,7 +17,10 @@
     "check:foundation": "node scripts/check-foundation.mjs",
     "check": "npm run check:foundation && npm run lint && npm run typecheck && npm test && npm run build",
     "contracts:export": "tsx scripts/export-contracts.ts",
-    "handoff:append": "node scripts/append-handoff.mjs"
+    "handoff:append": "node scripts/append-handoff.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/worker/migrate.ts",
+    "worker": "tsx --conditions=react-server scripts/worker/run.ts"
   },
   "dependencies": {
     "next": "16.4.3",

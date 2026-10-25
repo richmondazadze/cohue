@@ -67,7 +67,12 @@ test("decline triggers repair, changed group needs reconsent, activation opens t
     },
   });
   expect(selected.mission.state).toBe("AWAITING_APPROVAL");
-  const invitedIds = selected.invitations.map((i) => i.participantId);
+  // Selecting is the creator's own explicit approval of the creator's terms; other members start PENDING.
+  const creatorInvite = selected.invitations.find((i) => i.participantId === creator.participantId);
+  expect(creatorInvite?.status).toBe("ACCEPTED");
+  const invitedIds = selected.invitations
+    .filter((i) => i.status === "PENDING")
+    .map((i) => i.participantId);
   expect(new Set(invitedIds).size).toBe(invitedIds.length);
 
   const builder = first.members.find(
@@ -204,9 +209,8 @@ test("decline triggers repair, changed group needs reconsent, activation opens t
   expect(reconsent.termsHash).not.toBe(designerInvite.termsHash);
   expect(reconsent.lineage).toBeNull();
 
-  const creatorInvited = invitedIds.includes(creator.participantId);
   for (const person of people) {
-    if (person === builder || (person === creator && !creatorInvited)) continue;
+    if (person === builder || person === creator) continue;
     const invite = await pendingInvitation(person, created.id, second.revision);
     const { phone, invitation } = await openOnSecondDevice(person, invite);
     devices.push(phone);

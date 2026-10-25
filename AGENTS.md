@@ -32,3 +32,13 @@ Animations consume committed events and handle interruption/reconnect/replay/red
 Run npm run check, npm audit --audit-level=high and production browser smoke for each integrated milestone, plus meaningful owned unit/integration/E2E tests. Real PostgreSQL/provider/phone/deployed D7 claims require actual evidence, never mocks or skipped tests. CI YAML configured is not proof of a hosted run. Record commands/results/limits, changed contracts, migrations, providers, defects, deployment and next step.
 
 After a meaningful owned milestone write docs/status/<role>/<milestone>.md with no secrets and append using the shared script. It takes exclusive .handoff-update.lock, rereads current matching handoffs and writes both identically. If locked, continue independent owned work and retry; never delete another writer’s lock. Mismatch/crash residue requires lead reconciliation. Stage BOTH handoffs with your owned milestone only. Lead refreshes the current summary at integration checkpoints. Later appended milestones supersede timestamped component status. Both models must read both files at startup. Use Git as durable record; handoff records preceding baseline commit, containing commit via `git log -1 -- CODEX_HANDOFF.md` to avoid self-referential hashes. No implementation knowledge only in conversation.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
