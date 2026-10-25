@@ -37,3 +37,7 @@ Actual CUA: local live WebGL hero rendered; menu opens/closes; gallery chapter a
 This is a reference replica, not production accessibility/performance certification. Original menu touch target is only18px high; magnetic split-character labels and original email/footer links remain source content. Tailwind CDN emits its normal production warning. Source reduced-motion logic is retained, not newly certified. Before COHUE integration: adapt realcopy/CTAs/links, make touch and keyboard behavior production-ready, remove preview instrumentation/CDN Tailwind, self-host eligible dependencies through reviewed stack, and profile/adaptWebGL/mobile cost. No invented60fps or business-success claim.
 
 Wait for the user's next direction after reviewing this first replica. Do not expand into application redesign or message other chats.
+
+## COHUE adaptation
+
+The user subsequently authorized the full COHUE product landing. Review http://127.0.0.1:8795/cohue/ and [the implementation milestone](../COHUE_LANDING_COMPLETE.md). This derivative preserves the original reference separately, replaces stock/template content, and adds the complete accessible reading experience.

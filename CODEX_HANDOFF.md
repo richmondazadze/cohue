@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T12:33:03.371Z (America/Chicago display dates apply).
+Last update: 2026-10-25T12:55:11.001Z (America/Chicago display dates apply).
 Current milestone: RESUMED by user on25Oct2026 from Claude continuation, baselineb0db29e. Repository records web+worker266a240, retentionenabled, deployedD7/privacyPASS cd32236, BRIEFlocalizationlive, SHOWCASEjourneypass and realtwo-phoneactivation8c27892. These latermilestones supersede historicalSTOP/oldworker/BRIEFpending labels. Currentruntimeidentities requirefreshread-onlyverification. Finaltranslationapproval/phoneListen/taskchange/voice/devicechecks/video/Devpost remainpendingwhereunverified. Follow FINAL_ACCEPTANCE_ASSIGNMENTS.md; frontend/backendexistingchatsactivatedforfinalacceptance, leadretainsintegration. No finalreadinessclaim.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -997,3 +997,20 @@ Saved exact 92,069-character original export plus 5,001-character prompt and sou
 Actual local CUA at http://127.0.0.1:8795/matter/: live WebGL hero rendered; corrected menu open/close, gallery and object-detail drawer, physics and typography chapter content observed.390px document width390/canvas390; desktop/mobile screenshots in owned artifacts. Script syntax/import-map/hash checks recorded; foundation/pairedhandoffs/diff checked. No full app build/test suite warranted or run for this isolated static reference; not integrated product acceptance. Original touch targets/accessibility, remote CDNs/fonts/gallery assets and motion/performance limitations documented in landing-overhaul/README.md; no60fps or physical-device certification. Original email/footer text remains template reference content.
 
 Static preview server started only on127.0.0.1:8795, serving public/landing-lab; no DB/worker/provider secrets, no shared.next/dev server. Existing product home/flows untouched. User can review complete local replica before instructing COHUE adaptation. Do not expand into other screens or message chats without user instruction. Bothhandoffs serialized with this milestone.
+
+
+## Milestone from docs/status/frontend/COHUE_LANDING_COMPLETE.md
+
+# COHUE kinetic landing — complete local product adaptation
+
+25 October 2026. Preceding baseline: 5e07783. User requests a complete COHUE landing adaptation of the selected kinetic template, with ambitious product copy and visual polish. This follows explicit permission to explore beyond the frozen visual direction. No other chats contacted.
+
+Implemented public/landing-lab/cohue/index.html as a complete standalone landing. Local review: http://127.0.0.1:8795/cohue/ (same static preview server); Next static path: /landing-lab/cohue/index.html. Production home and existing application flows are unchanged; no push/deployment performed. Original reference export, prompt and provenance remain intact.
+
+Story: “Find your people. Make it happen.” Seven animated chapters translate the reference into intent, skills, explicit consent, repair and shared action. Five detailed product steps replace the stock gallery, with illustrative HTML examples labeled as examples rather than live missions. Clear real-product CTAs lead to https://cohue.tech/missions/new, /join and /me. Includes synthetic-showcase entry, three-language support, truthful AI/consent explanations, closing CTA and attribution. No invented traction, pricing, testimonials or valuation claims. No new backend behavior promised.
+
+Complete reading experience at ?view=reading includes all five steps, principles, six FAQs and closing actions. Automatically selected for prefers-reduced-motion; no-JS CSS fallback and scene-load timeout provided. Menu/drawer use keyboard focus handling, inert hidden content, semantic labels and Escape support. Touch targets expanded; mobile hero adjusted to prevent overlap. Removed Tailwind CDN/config and preview performance instrumentation. Three.js and Google Fonts still require internet; eligible assets/dependencies should be self-hosted during production integration. Frozen design documents untouched.
+
+Actual browser evidence: live WebGL desktop hero, menu navigation to gallery, step drawer content/focus, full reading-mode text, and OS reduced-motion emulation selecting reading mode automatically. Responsive checks at 320/390/768/1024/1440 CSS pixels: no horizontal overflow; minimum primary navigation targets44px and primary actions48px. Mobile hero eyebrow/copy separation verified. Desktop screenshot: docs/status/frontend/landing-overhaul/artifacts/cohue-desktop.png. Inline JavaScript syntax, import-map JSON, unique IDs/nonempty links and original-source SHA256 checks pass. npm audit --audit-level=high: zero vulnerabilities. npm run check: PASS (foundation, lint, types, 93 tests passed; 22 environment-dependent tests skipped; production build passed). Actual next start production smoke at localhost:8796/landing-lab/cohue/index.html: hero/WebGL and real navigation rendered, zero warning/error console entries. Skipped tests are not evidence of real DB/provider/deployed behavior. No physical-device, sustained FPS or deployed-home acceptance claim.
+
+This is the requested complete local landing, ready for user review. Application-wide redesign and live publication are separate work. Both handoffs synchronized through the serialized append script; no chat notification sent.
