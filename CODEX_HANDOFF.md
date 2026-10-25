@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T02:22:08.260Z (America/Chicago display dates apply).
+Last update: 2026-10-25T02:24:46.874Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -427,3 +427,12 @@ Web https://cohue.tech is deployed, TLS verified and connected to real Tiger Dat
 Follow-up fixes scope device convenience storage by executionMode/showcase/principal; legacy ambiguous storage not imported. Showcase entry validates actual installed synthetic organizer via authorized API, no fabricated profile or inferred consent. Dispatcher mode trims whitespace. Latest combined check70passed+1DBskip, lint/types/build/frozen design passed; actual DB checks recorded separately.
 
 Vultr authenticated. Prepared vc2-1c-1gb Atlanta Ubuntu24.04LTS, $5/month hourly, no paid addons; no instance deployed yet. Action-time approval requested for recurring cost, dedicated SSH public key and secure runtime-secret installation. Worker/D7 remain unverified until actual host exists and unattended/restart/lease/fencing/ordering/unique-effects proof captured. Do not mistake live web or request-triggered acceleration for durable execution.
+
+
+## Milestone from docs/status/lead/VULTR_INSTANCE_CREATED.md
+
+# Vultr instance created — 24 October 2026
+
+User explicitly approved creation after reviewing$5/month hourly cost and account credit. Created cohue-worker, instance edfad586-5b1d-4475-9387-63116bf26550, Atlanta, vc2-1c-1gb,1vCPU/1GBRAM/25GBSSD, Ubuntu24.04LTS, publicIPv4 155.138.162.102. Console verified Running after installation. No paid addons/backups selected; authoritative data stays in backed-up TigerData. Account credit previously verified$300 expiring2026-11-24; billing continues after credit expiry until instance destroyed.
+
+Instance creation is complete; application worker installation and D7 are NOT complete. Dedicated local administration key generated in ignored credentials/ (modeprotected), not yet installed remotely. Console copy-password action yielded empty clipboard; no bootstrap password captured or printed. Resume secure access setup on this existing instance, never deploy a duplicate. No runtime secrets transferred yet. Safe running-instance screenshot retained in ignored artifacts/vultr-instance-created.png. Both handoffs appended together. Web application remains deployed separately on Vercel/cohue.tech.

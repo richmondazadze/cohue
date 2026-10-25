@@ -1,0 +1,5 @@
+# Vultr instance created — 24 October 2026
+
+User explicitly approved creation after reviewing$5/month hourly cost and account credit. Created cohue-worker, instance edfad586-5b1d-4475-9387-63116bf26550, Atlanta, vc2-1c-1gb,1vCPU/1GBRAM/25GBSSD, Ubuntu24.04LTS, publicIPv4 155.138.162.102. Console verified Running after installation. No paid addons/backups selected; authoritative data stays in backed-up TigerData. Account credit previously verified$300 expiring2026-11-24; billing continues after credit expiry until instance destroyed.
+
+Instance creation is complete; application worker installation and D7 are NOT complete. Dedicated local administration key generated in ignored credentials/ (modeprotected), not yet installed remotely. Console copy-password action yielded empty clipboard; no bootstrap password captured or printed. Resume secure access setup on this existing instance, never deploy a duplicate. No runtime secrets transferred yet. Safe running-instance screenshot retained in ignored artifacts/vultr-instance-created.png. Both handoffs appended together. Web application remains deployed separately on Vercel/cohue.tech.
