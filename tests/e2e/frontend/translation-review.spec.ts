@@ -27,6 +27,12 @@ test("creator reviews translation without redeeming a participant capability; fa
   await expect(dialog.getByRole("button", { name: /Listen in Español/ })).toHaveCount(0);
   await dialog.getByRole("button", { name: "Organizer: review this translation" }).click();
   await dialog.getByLabel("Reviewed translation").fill("Revisa los términos originales y confirma tu disponibilidad.");
+  // Rotation / tablet breakpoints must preserve the open sheet and its unsubmitted edit.
+  for (const width of [390, 1024, 1440, 768]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByLabel("Reviewed translation")).toHaveValue("Revisa los términos originales y confirma tu disponibilidad.");
+  }
   await dialog.getByRole("button", { name: "Approve translation", exact: true }).click();
   await expect(dialog.getByText(/Translation reviewed by the organizer/)).toBeVisible();
   await dialog.getByRole("button", { name: /Listen in Español/ }).click();
@@ -34,6 +40,7 @@ test("creator reviews translation without redeeming a participant capability; fa
   await expect(dialog.getByText("Revisa los términos originales y confirma tu disponibilidad.")).toBeVisible();
   expect(mock.commands.filter((c) => c.op === "redeemInvitation" || c.op === "respondInvitation")).toEqual([]);
   expect(mock.commands.find((c) => c.op === "approveLocalization")?.body).toMatchObject({ expectedVersion: 1, canonicalTextHash: "a".repeat(64) });
-  await dialog.getByRole("button", { name: "Close", exact: true }).click();
+  await dialog.getByRole("button", { name: "Close", exact: true }).press("Escape");
   await expect(dialog).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Review terms & translations" }).nth(1)).toBeFocused();
 });

@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T03:59:55.110Z (America/Chicago display dates apply).
+Last update: 2026-10-25T04:01:17.755Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -555,3 +555,29 @@ Independent source/unit review continued without further speculative changes. No
 Found Escape focus return defect; optional Radix Sheet trigger added to dialog.tsx and used in creator-review.tsx so trigger participates in native focus restoration. Source verification pending below; fresh browser proof requires lead rebuild. No design changes or root/backend edits. Browser access blocker superseded, remaining multilingual/provider/deployed/device/performance gates explicitly open. Both handoffs appended only with shared script. Lead notified for integration and rebuild; no push/deploy by frontend.
 
 Actual source checks: targeted ESLint and tsc --noEmit passed; frontend38tests/8files passed. Screenshot documents original terms only. Focus correction remains browser-unverified until lead rebuild.
+
+
+## Milestone from docs/status/backend/PRIVACY_RETENTION.md
+
+# Backend privacy and retention milestone
+
+Preceding baseline b412e35 (shared main; later frontend/lead commits may coexist). Continued user-authorized release scope after interruption; reread both current handoffs/status. No completed worker setup repeated. D7 proof remains for worker8385a34, not this new code. Lead approved privacy interpretation and additive database migration/compatibility bridge. Shared wire contracts/design/root configuration remain lead/frontend-owned and unchanged by backend.
+
+Implemented migration0002: restricted opaque privacy_audit, monotonic mission event_sequence seeded from committed events, SECURITY INVOKER qualified-target trigger bridging old inserts. New allocator atomically uses GREATEST(counter,existingMAX)+1. EVENT_RETENTION_READY server configuration defaults off until all web/worker writers compatible; lead owns envexample/deploy settings. Exact rollout, least-privilege runtime-table grant, required real-runtime rollback probe, writer coordination and rollback limits: docs/operations/PRIVACY_RETENTION.md. No production migration/grant/worker update performed here.
+
+Deletion now synchronously scrubs profile/capabilities, affected canonical/proposal/response payloads, translations/media/receipts, derived matching/resources/reviews/task text; revokes scoped sessions; preserves original hash/action/time only in restricted<=720hour audit. Historical private terms are tombstones excluded from consumers, never reconstructed fake commitments. Inactive missions genuinely replan/pause; active missions keep state/capacity and expose contract-valid tombstone+OPEN review. Other-scope session unaffected. Replay of removed historical terms typed unavailable. Late provider output publishes only after short post-provider lock/current-source recheck. Share-link receipt replay cannot restore revoked source access. Sweeper repairs legacy deletion, prunes audit/private sources/orphans/history, event retention after compatibility flag. Pruning uses latest state history for terminal age; counter preserves sequence across event deletion.
+
+Actual checks: disposable local PostgreSQL cohue_backend_release migration0002 applied initially, fresh isolated-schema tests exercised final full0002includingtrigger. `COHUE_TEST_DATABASE_URL=postgresql://cohue@127.0.0.1:54329/cohue_backend_release npx vitest run tests/backend`:26passed/7files/0skips. Five new privacy integration tests cover deletedinvitee/creator, scope collateral denial, historical/localization/receipt cleanup, activevsinactive behavior, surviving room and reservations, concurrentread/deletion/stalecapability, idempotent sweeper, exact720hour audit bound, oldwriterbridge/pruning/monotonicsequence and recentterminal retention. Initial test fixture ambiguousuuid/text cast corrected; DST calendar30day overrun found and changed to720hours. Final targeted ESLint, tsc noemit, audit0vulnerabilities, gitdiffcheck and foundation check recorded at commit. Full combinedcheck/productionbrowser smoke belongs to lead's serialized integration; not run independently.
+
+Status: implementation and isolatedDB verification complete for this slice; deployed privacy acceptance NOT complete. Required next: lead integrates/checks, controlled0002migration+cohue_appgrant/runtimeprobe, compatibleVercel deployment and exactworkerrefresh, enableeventretention onlyafterallwritersverified, actualsafeSHOWCASE unattendedcleanup/expiry proof. Backend will execute approved runtime/worker tasks when exact release is supplied. Original D7 remains historicalpassed; three-language productionmedia/phone/releasevideo/submission still require actual evidence. No fresh provider call, frontend redesign, root dependency/config edit, push or webdeploy by backend. Both handoffs serialized with append script; only owned paths staged.
+
+
+## Milestone from docs/status/frontend/REVIEW_BREAKPOINT_CONTINUITY.md
+
+# Creator review breakpoint continuity
+
+24 October2026 America/Chicago, preceding baseline809db4f. Actual local CUA had observed sheet unmount crossing1024. Static tree review confirms wide ternary swapped Tabs/CenterPanel ancestry, destroying nested OrganizerReview useState text edits. No translated edit browser-reproduction claimed: providers disabled in localbuild.
+
+Replaced competing responsive subtrees with one stable grid/Tabs tree, identical breakpoint tabchoices/rails and spacing. Sheet and unsubmitted edit remain mounted across orientation changes; no cache/global persistence introduced. Added synthetic E2E resize exactdraft and Escape focus assertions for lead runner. No design token or frozen source changes.
+
+Owned ESLint/tsc/frontend38tests passed; final combined build/browser/E2E held by lead, pending proof. Both handoffs serialized. Next: one final rebuild with backendprivacy then actual CUA draft/focus checks and deployedprovider matrix.

@@ -220,45 +220,29 @@ function TheaterView({
           Showing the last verified state. Actions that change the mission stay safe to retry; nothing is queued while offline.
         </Notice>
       ) : null}
-      {wide ? (
-        <div className="grid min-h-[520px] grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)_320px]">
-          <aside aria-label="Mission needs" className="border-r border-line-subtle px-5 py-6">
-            {rail}
-          </aside>
-          <div className="min-w-0">
-            <Tabs
-              className="px-6 pt-4"
-              label="Theater view"
-              value={["mission", "map", ...(xl ? [] : ["activity"])].includes(tab) ? tab : "mission"}
-              onValueChange={setTab}
-              items={[
-                { value: "mission", label: "Mission", content: <div className="pb-6">{center}</div> },
-                { value: "map", label: "Network map", content: <div className="pb-6">{network}</div> },
-                ...(xl ? [] : [{ value: "activity", label: "Activity", content: <div className="pb-6">{activity}</div> }]),
-              ]}
-            />
-          </div>
-          {xl ? (
-            <aside aria-label="Activity" className="border-l border-line-subtle px-5 py-6">
-              <h2 className="eyebrow mb-3">Activity · committed events</h2>
-              {activity}
-            </aside>
-          ) : null}
+      <div className="lg:min-h-[520px] lg:grid lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)_320px]">
+        <aside aria-label="Mission needs" className="hidden border-r border-line-subtle px-5 py-6 lg:block">
+          {rail}
+        </aside>
+        <div className="min-w-0">
+          <Tabs
+            className="px-4 pt-3 pb-6 sm:px-5 lg:px-6 lg:pt-4"
+            label={wide ? "Theater view" : "Theater sections"}
+            value={["mission", "map", ...(!wide ? ["needs"] : []), ...(!xl ? ["activity"] : [])].includes(tab) ? tab : "mission"}
+            onValueChange={setTab}
+            items={[
+              { value: "mission", label: "Mission", content: center },
+              ...(!wide ? [{ value: "needs", label: "Needs", content: rail }] : []),
+              { value: "map", label: wide ? "Network map" : "Map", content: network },
+              ...(!xl ? [{ value: "activity", label: "Activity", content: activity }] : []),
+            ]}
+          />
         </div>
-      ) : (
-        <Tabs
-          className="px-4 pt-3 pb-6 sm:px-5"
-          label="Theater sections"
-          value={["mission", "needs", "map", "activity"].includes(tab) ? tab : "mission"}
-          onValueChange={setTab}
-          items={[
-            { value: "mission", label: "Mission", content: center },
-            { value: "needs", label: "Needs", content: rail },
-            { value: "map", label: "Map", content: network },
-            { value: "activity", label: "Activity", content: activity },
-          ]}
-        />
-      )}
+        <aside aria-label="Activity" className="hidden border-l border-line-subtle px-5 py-6 xl:block">
+          <h2 className="eyebrow mb-3">Activity · committed events</h2>
+          {activity}
+        </aside>
+      </div>
       {footer}
     </Panel>
     </CueProvider>

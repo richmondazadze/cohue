@@ -41,3 +41,7 @@ Browser access restored. CUA inspected lead-reported b412e35 production build at
 - Defect: Escape dismissed review but focus returned to body. Source corrected by optional native Radix Sheet trigger, used by creator review; awaiting lead rebuild for browser confirmation. Responsive breakpoint changes also remount Theater and dismiss sheet; no completed draft lost in observed original-only review, no preservation pass claimed.
 
 No production mutation, microphone prompt or participant consent performed. Remaining private screens, reduced-motion/profiled graph, real audio/phone/screenreader and final deployed journey gates remain open. Lead owns combined build/audit/E2E/deploy.
+
+## Breakpoint review continuity correction
+
+Static diagnosis confirms wide conditional replaced the entire Tabs/CenterPanel subtree at1024px, unmounting CreatorInvitationReview and OrganizerReview's local text state. CUA had actually observed original-only sheet dismissal; translated draft loss was not browser-reproduced because local providers disabled, but follows directly from unmounted useState. Unified stable layout/Tabs ancestry now uses the same responsive classes and tab choices, preserving open sheet/draft across breakpoints. Added synthetic E2E assertions at390/1024/1440/768 for open dialog+exact edited text and Escape trigger focus. Authored assertions pending lead execution/rebuild, not a pass. Owned ESLint/types/38unit tests pass before final class-only adjustment.
