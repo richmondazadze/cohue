@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T04:05:16.085Z (America/Chicago display dates apply).
+Last update: 2026-10-25T04:07:08.207Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -596,3 +596,20 @@ RealSpanishaudio readyState4 duration28.606984s currentTime5.670248s pausedfalse
 CancelledonlyownsyntheticmissionthroughnormalUI withreason acceptancecomplete; finalUI Cancelled/reservationsreleased/pendinginvitationsdisabled, noactivation. NoLIVEdata/reseed/reset. Viewportreset. No sourceedits thismilestone. Pairedhandoffsserialized; frozenidentityunchanged.
 
 Remaining: finaldeployedcommit/provider/journey/reducedmotion/privateviewportchecks; realSTT/extraction pipeline andphysicalphone/screenreader/graphperformance evidence. Localrealproviderresult doesnotcomplete thosegates. Leadhandlesbuild/audit/E2E/deploy; priorcombined97tests reportedbylead, notrerunhere.
+
+
+## Milestone from docs/status/backend/ON_HOST_ACCEPTANCE_HARNESS.md
+
+# On-host acceptance fallback
+
+Preceding baseline f4952f6, shared main. Lead explicitly approved an operator-only harness fallback after local SSH and direct TigerData high-port connections timed out. Existing authenticated Vultr noVNC root console remains available; SSHservice/listener/UFW22 verified healthy, fail2ban not installed. No firewall relaxation, new public port, credential rotation, new host or administrator DB transfer.
+
+Worker8385a34 stopped through authenticated console; is-active returned inactive, console date SunOct25 04:03:46UTC2026. Screenshot ignored artifacts/worker-stopped-before-retention.png. Lead notified and owns reviewed migration/runtime grant/web release. No migration or final archive update performed by this milestone; eventretention remains off.
+
+scripts/worker/prove-d7.ts now optionally accepts COHUE_D7_ON_HOST=1 in addition to required COHUE_D7_ACCEPTANCE=1: same proof, systemctl controls run locally only when rootoperator and hostnamecohue-worker verified. Runtime worker service still runs unprivilegedcohue. Existing SSHstrictknownhost behavior remains default. Optional local.env loading supports systemd/runtime environment; artifacts directory created before traces. No HTTP/after()/drain added. Original8385proof retained in docs/operations; finalhash/timestamp trace will be separate.
+
+scripts/worker/privacy-smoke.ts is explicitly gated COHUE_PRIVACY_ACCEPTANCE=1, creates a new random SHOWCASE scope and two clearly synthetic profiles through real domain commands, waits for independent deployed worker only, explicitly simulates consent, activates, deletes only its owned testinvitee, verifies session/source/historical-term denial and originalhash retention, active review/tombstone/capacity, and worker-only expiration of its own synthetic media/audit fixtures. Deletes its own creator last. No LIVE records or existing installed showcase profiles reset/deleted. Synthetic audio bytes are NOT provider evidence. Prepared, not executed; production acceptance remains pending reviewed finalrelease.
+
+Authorized console operator commands after exact finalcommit and migration are verified: `set -a; . /etc/cohue/worker.env; set +a` (no echo/cat of values), `cd /opt/cohue`, then `COHUE_D7_ACCEPTANCE=1 COHUE_D7_ON_HOST=1 npx tsx --conditions=react-server scripts/worker/prove-d7.ts` while workerheld, followed by privacy harness after D7/quietcoordination. Environment contains only leastprivilege runtime DB/providers, never DATABASE_MIGRATION_URL/admin. No SSHprivatekey copied tohost. Record exacthash/serviceuser/envflag status and sourcechecksum before execution; lead coordinates productionbrowserquiet.
+
+Actual validation: `npx tsc --noEmit` passed; targeted ESLint passed; `npx vitest run tests/backend/acceptance-guards.test.ts`2passed proving both CLI scripts reject absent explicit opt-in BEFORE environment/DB access; gitdiffcheck and foundationpass. These guards/syntax checks do not prove final deployed behavior. No sharedbuild/push/webdeploy. Both handoffs serialized through append script, only owned paths committed. Immediate next action: lead reviewed migration/grant/runtimeprobe + compatible finalweb; exacthash supplied for existinghost update, then actual final D7/SHOWCASEprivacy evidence.

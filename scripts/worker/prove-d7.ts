@@ -4,10 +4,11 @@
 import type { PoolClient } from "pg";
 import { randomUUID } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 if (process.env.COHUE_D7_ACCEPTANCE !== "1") throw new Error("Explicit D7 acceptance flag required");
-process.loadEnvFile(".env.local");
+try { process.loadEnvFile(".env.local"); } catch {}
+mkdirSync("artifacts", { recursive: true });
 const { query, transaction, db, closeDb } = await import("../../src/server/db/client");
 const { createSessionRecord } = await import("../../src/server/auth/sessions");
 const { createMission, startMission, selectProposal, respond, activate, cancel } = await import("../../src/server/domain/missions/service");
@@ -24,9 +25,18 @@ const record = (step: string, fields: Record<string, unknown> = {}) => {
   trace.push(line); console.log(JSON.stringify(line));
   writeFileSync("artifacts/d7-trace.json", JSON.stringify(trace, null, 2));
 };
-const ssh = (command: string) => execFileSync("ssh", ["-n","-o","BatchMode=yes","-o","ConnectTimeout=10","-i","credentials/cohue-worker-ed25519","-o","IdentitiesOnly=yes","-o","StrictHostKeyChecking=yes","-o","UserKnownHostsFile=credentials/cohue-worker-known-hosts","root@155.138.162.102",command], { encoding: "utf8", timeout: 30000 }).trim();
+// On-host acceptance is an explicit operator-only alternative when local high-port egress is blocked.
+// Run from the existing approved root console, with runtime-only environment; application worker stays cohue.
+const ssh = (command: string) => process.env.COHUE_D7_ON_HOST === "1"
+  ? execFileSync("/bin/sh", ["-c", command], { encoding: "utf8", timeout: 30000 }).trim()
+  : execFileSync("ssh", ["-n","-o","BatchMode=yes","-o","ConnectTimeout=10","-i","credentials/cohue-worker-ed25519","-o","IdentitiesOnly=yes","-o","StrictHostKeyChecking=yes","-o","UserKnownHostsFile=credentials/cohue-worker-known-hosts","root@155.138.162.102",command], { encoding: "utf8", timeout: 30000 }).trim();
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve,ms));
 const assert = (condition: unknown, message: string) => { if (!condition) throw new Error(message); };
+if (process.env.COHUE_D7_ON_HOST === "1") {
+  assert(process.getuid?.() === 0, "On-host process control requires the authorized operator");
+  assert(execFileSync("hostname", { encoding: "utf8" }).trim() === "cohue-worker", "Wrong acceptance host");
+}
 let lock: PoolClient | undefined;
 try {
   if (!resume) assert(ssh("systemctl is-active cohue-worker || true") === "inactive", "Worker must be held before queueing");
