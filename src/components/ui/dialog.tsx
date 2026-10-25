@@ -15,6 +15,7 @@ export function Sheet({
   description,
   children,
   footer,
+  trigger,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -22,9 +23,11 @@ export function Sheet({
   description?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
+  trigger?: ReactNode;
 }) {
   return (
     <D.Root open={open} onOpenChange={onOpenChange}>
+      {trigger ? <D.Trigger asChild>{trigger}</D.Trigger> : null}
       <D.Portal>
         <D.Overlay className="fixed inset-0 z-[60] bg-overlay data-[state=open]:animate-[cohue-fade_240ms_var(--ease-standard)]" />
         <D.Content

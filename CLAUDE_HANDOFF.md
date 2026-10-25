@@ -1,6 +1,6 @@
 # COHUE synchronized engineering handoff
 
-Last update: 2026-10-25T03:52:56.619Z (America/Chicago display dates apply).
+Last update: 2026-10-25T03:59:55.110Z (America/Chicago display dates apply).
 Current milestone: user-authorized delegated release hardening integrated. Core frontend/backend/CI fixes and real provider checks pass; Tiger Data and all vendor credentials configured. Vercel project/Git/production secrets and cohue.tech DNS configured; web deployment next. User selected Vultr credits for persistent worker; sign-in pending. Deployed D7 remains UNVERIFIED. Later timestamped reports below are authoritative; see INTEGRATED_RELEASE_PREP.md.
 
 This current summary supersedes stale pending-design/build-hold labels in historical milestone text below. Both handoffs remain byte-identical. Read both, AGENTS.md and your user-delivered work order before resuming. Snapshot of module status at this foundation milestone; later serialized appended reports supersede per-module status.
@@ -544,3 +544,14 @@ Actual checks after resume:
 Product Engineer notified immediately. No alternate browser automation was used to bypass disabled CUA. Needs user to enable local browser use or lead to perform required checks through its enabled authorized context. Freshbuild1024onboarding overflow correction,44pxcheckbox checked/unchecked/focus behavior and creator review sheet remain unverified by this engineer. Existing synthetic E2E spec remains authored, run results belong to lead's integration runner when executed.
 
 Independent source/unit review continued without further speculative changes. No root/backend/schema/config/build/push/deploy performed. Real three-language audio/phone/screenreader/30node60edge profiling and final deployed two-session acceptance remain pending, not waived. Immediate next action: after browser capability is restored, run targeted freshbuild CUA matrix then final deployed checks on lead-confirmed reviewed commit. Lead may continue integrated acceptance in parallel; user-authorized coordination is active.
+
+
+## Milestone from docs/status/frontend/BROWSER_ACCEPTANCE_RESUMED.md
+
+# Frontend browser acceptance resumed
+
+24 October2026 America/Chicago. Preceding baseline14ddfc9. Browser enabled; actual fresh localhost3100 b412e35 checks now recorded in RELEASE_ACCEPTANCE.md.1024 onboarding overflow fixed; composer all five widths no overflow,44px checkbox/24px visual, Space toggle both ways and2px blue focus verified. Actual synthetic UI discovery/select/creator review succeeded, no participant decision.390px original-terms sheet fits; safe screenshot retained.
+
+Found Escape focus return defect; optional Radix Sheet trigger added to dialog.tsx and used in creator-review.tsx so trigger participates in native focus restoration. Source verification pending below; fresh browser proof requires lead rebuild. No design changes or root/backend edits. Browser access blocker superseded, remaining multilingual/provider/deployed/device/performance gates explicitly open. Both handoffs appended only with shared script. Lead notified for integration and rebuild; no push/deploy by frontend.
+
+Actual source checks: targeted ESLint and tsc --noEmit passed; frontend38tests/8files passed. Screenshot documents original terms only. Focus correction remains browser-unverified until lead rebuild.

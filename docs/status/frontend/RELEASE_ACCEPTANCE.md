@@ -25,6 +25,19 @@ No root/schema/config/backend paths staged; no app build/push/deploy by frontend
 
 Use dedicated labeled SHOWCASE. Open synthetic entry, confirm organizer profile, speak or type mission, review extracted requirements/time/size before starting. Inspect actual proposals and requirement/approval distinction. Review original/localized invitation as organizer; approval only reviews translation. Share participant-specific link/QR into separate browser session; explicitly redeem and decline one, inspect real repair/reconsent, then answer current invitations and activate through server gate. Open Room, update authorized task, inspect replay read-only evidence. Demonstrate voice/text fallbacks and current-source media. Keep LIVE unrelated data untouched. Capture actual run only once deployed checks pass; user/lead handles recording/submission per release plan.
 
-## Resume blocker
+## Resume blocker (resolved for local browser access)
 
 See BROWSER_ACCEPTANCE_BLOCKER.md: local3100HTTP200, but CUA navigation rejected because local browser use is disabled in Work settings.38unit tests rerun pass. No freshbuild responsive/checkbox/creatorreview browser pass claimed. Product Engineer notified; awaiting enabled browser capability or lead-owned acceptance evidence.
+
+
+## Fresh local browser acceptance — 24 October, 11 PM America/Chicago
+
+Browser access restored. CUA inspected lead-reported b412e35 production build at localhost3100, isolated synthetic database, providers disabled. This is local UI evidence, not final deployed acceptance.
+
+- Onboarding1024x900: loaded fonts, innerWidth1024=scrollWidth1024, all summary DD right<=967. Previous overflow corrected.
+- Composer320/390/768/1024/1440x900: scrollWidth equals each viewport, checkbox44x44 with unchanged24x24 visual. Space checked and unchecked; focused checkbox matched focus-visible with2px blue outline.
+- Through visible UI entered labeled SHOWCASE, created synthetic mission86a3cb40-78db-4157-9e31-b999942ab1df, reviewed brief, started real discovery, selected proposal, opened creator review. Original objective/output/role/schedule/responsibilities/group/revision displayed; organizer-only notice, no accept/redeem controls. Approvals remained1/4, activation disabled.
+- At390px creator sheet width390/right390, document width390. Screenshot artifacts/creator-review-390.png. Original English listen offered; no provider playback/translation approval attempted. Providers disabled means three-language acceptance remains pending.
+- Defect: Escape dismissed review but focus returned to body. Source corrected by optional native Radix Sheet trigger, used by creator review; awaiting lead rebuild for browser confirmation. Responsive breakpoint changes also remount Theater and dismiss sheet; no completed draft lost in observed original-only review, no preservation pass claimed.
+
+No production mutation, microphone prompt or participant consent performed. Remaining private screens, reduced-motion/profiled graph, real audio/phone/screenreader and final deployed journey gates remain open. Lead owns combined build/audit/E2E/deploy.

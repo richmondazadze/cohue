@@ -12,8 +12,7 @@ import { Translations } from "./translations";
 export function CreatorInvitationReview({ invitationId, personLabel }: { invitationId: string; personLabel: string }) {
   const [open, setOpen] = useState(false);
   return <>
-    <Button size="sm" onClick={() => setOpen(true)}>Review terms &amp; translations</Button>
-    <Sheet open={open} onOpenChange={setOpen} title={`Invitation for ${personLabel}`} description="Organizer review only. Reviewing or playing a translation never accepts the invitation.">
+    <Sheet open={open} onOpenChange={setOpen} trigger={<Button size="sm">Review terms &amp; translations</Button>} title={`Invitation for ${personLabel}`} description="Organizer review only. Reviewing or playing a translation never accepts the invitation.">
       {open ? <CreatorInvitationReviewContent key={invitationId} invitationId={invitationId} /> : null}
     </Sheet>
   </>;
