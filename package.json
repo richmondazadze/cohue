@@ -20,7 +20,8 @@
     "handoff:append": "node scripts/append-handoff.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/worker/migrate.ts",
-    "worker": "tsx --conditions=react-server scripts/worker/run.ts"
+    "worker": "tsx --conditions=react-server scripts/worker/run.ts",
+    "seed:showcase": "tsx scripts/worker/seed-showcase.ts"
   },
   "dependencies": {
     "next": "16.4.3",

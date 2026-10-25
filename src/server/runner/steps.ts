@@ -138,6 +138,7 @@ const scout: StepResult = async (tx, mission, dto, job, prefetch) => {
   await enqueueJob(tx, next, "STRATEGIST", "STRATEGIST", "DISCOVERING");
 };
 
+// PAUSED_FOR_HUMAN.checkpoint carries this job's id, which the creator passes back as checkpointId to resume.
 const strategist: StepResult = async (tx, mission, dto, job) => {
   const c = randomUUID();
   const replan = job.checkpoint.kind === "REPLAN";
@@ -201,7 +202,7 @@ const strategist: StepResult = async (tx, mission, dto, job) => {
     if (replan) await appendEvent(tx, next, "REPLAN_COMPLETED", { proposalId: proposals[0].id }, { correlationId: c, proposalRevision: revision });
   } else {
     const next = await bumpMission(tx, mission, { state: "PAUSED_FOR_HUMAN", current_proposal_revision: revision });
-    await appendEvent(tx, next, "PAUSED_FOR_HUMAN", { reason: result.feasibility === "NO_SOLUTION" ? "NO_SOLUTION" : "SEARCH_LIMIT_REACHED", checkpoint: replan ? "REPLAN" : "STRATEGIST" }, { correlationId: c, status: "WAITING" });
+    await appendEvent(tx, next, "PAUSED_FOR_HUMAN", { reason: result.feasibility === "NO_SOLUTION" ? "NO_SOLUTION" : "SEARCH_LIMIT_REACHED", checkpoint: job.id }, { correlationId: c, status: "WAITING" });
   }
 };
 
