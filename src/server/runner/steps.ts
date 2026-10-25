@@ -14,6 +14,7 @@ import {
 import { claimCommit, enqueueJob, leaseJob, recordFailure, type JobRow } from "./jobs";
 import { serpConfigured, webSearch, type SearchHit } from "../providers/serpapi";
 import { iso } from "../auth/sessions";
+import { sweep } from "./sweeper";
 
 const ms = (s: string) => Date.parse(s);
 
@@ -285,6 +286,7 @@ async function failMission(job: JobRow): Promise<void> {
 export async function drain(owner = randomUUID(), maxJobs = 20, budgetMs = 20_000): Promise<number> {
   const started = Date.now();
   let processed = 0;
+  await sweep().catch((error) => console.error("sweep failed", error instanceof Error ? error.message : "unknown"));
   while (processed < maxJobs && Date.now() - started < budgetMs) {
     const outcome = await runOne(owner);
     if (outcome === "IDLE") break;
